@@ -23,6 +23,10 @@ if (!client) {
 
 app.use(bodyParser.json());
 
+app.post('/', async (req, res) => {
+  res.status(200).send("The server is running perfectly");
+});
+
 app.post('/api/insertUser', async (req, res) => {
   const { _id, name, coins } = req.body;
 
