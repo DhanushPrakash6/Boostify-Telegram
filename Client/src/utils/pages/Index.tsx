@@ -46,7 +46,9 @@ const Index = () => {
 
       const fetchUserCoins = async () => {
         try {
-          const response = await fetch(`/api/getUserCoin?id=${user.id}`);
+          const response = await fetch(
+            `https://boostify-server.vercel.app/api/getUserCoin?id=${user.id}`
+          );
           if (!response.ok) {
             throw new Error("Network response was not ok");
           }

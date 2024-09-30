@@ -35,7 +35,7 @@ export default function Home() {
 
     const insertUserData = async () => {
       try {
-        const apiUrl = "/api/insertUser";
+        const apiUrl = "https://boostify-server.vercel.app/api/insertUser";
 
         const response = await fetch(apiUrl, {
           method: "POST",
