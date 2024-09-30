@@ -23,7 +23,7 @@ if (!client) {
 
 app.use(bodyParser.json());
 
-app.post('/', async (req, res) => {
+app.get('/', async (req, res) => {
   res.status(200).send("The server is running perfectly");
 });
 
