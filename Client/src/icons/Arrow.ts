@@ -1,0 +1,17 @@
+import discord from "./discord.gif"
+import facebook from "./facebook.gif"
+import instagram from "./instagram.gif"
+import reddit from "./reddit.gif"
+import soundcloud from "./soundcloud.gif"
+import tiktok from "./tiktok.gif"
+import twitch from "./twitch.gif"
+import wechat from "./wechat.gif"
+import X from "./x.gif"
+import youtube from "./youtube.gif"
+import telegram from "./telegram.gif"
+import linkedin from "./linkedin.gif"
+import whatsapp from "./whatsapp.gif"
+import spotify from "./Spotify.gif"
+import wifi from "./wifi.gif"
+
+export { telegram, discord, facebook, instagram, reddit, soundcloud, tiktok, twitch, wechat, X, youtube, linkedin, whatsapp, spotify, wifi };
