@@ -130,7 +130,7 @@ const Index = () => {
                   "wifi",
                 ];
                 const socialMedia =
-                  socialMediaNames[index * group.length + idx]; // Calculate the current social media name
+                  socialMediaNames[index * group.length + idx];
                 return (
                   <a key={idx} href={`/subfile/${socialMedia}`}>
                     <img
