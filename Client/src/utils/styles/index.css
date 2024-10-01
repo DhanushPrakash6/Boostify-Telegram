@@ -78,3 +78,33 @@ footer a {
   border-radius: 30px;
   right: 0;
 }
+
+.alert {
+  position: fixed;
+  left: 50%;
+  transform: translateX(-50%);
+  transition: all 0.5s ease;
+  animation: alert-box 5s ease-in-out forwards;
+}
+
+@keyframes alert-box {
+  0% {
+    top: -3vw;
+    opacity: 0;
+  }
+
+  10% {
+    top: 3vw;
+    opacity: 1;
+  }
+
+  90% {
+    top: 3vw;
+    opacity: 1;
+  }
+
+  100% {
+    top: -3vw;
+    opacity: 0;
+  }
+}

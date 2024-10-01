@@ -1,6 +1,18 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import "../../styles/index.css";
+import WebApp from "@twa-dev/sdk";
 import Confirm from "../component/confirm.tsx";
+import Success from "../component/success.tsx";
+import Failure from "../component/fail.tsx";
+import Warning from "../component/warning.tsx";
+interface UserData {
+  id: number;
+  first_name: string;
+  last_name?: string;
+  username?: string;
+  language_code: string;
+  is_premium?: boolean;
+}
 import {
   podium,
   fund,
@@ -9,7 +21,7 @@ import {
   back,
 } from "../../../../src/images/index.ts";
 import InputField from "../component/input.tsx";
-
+import { v4 as uuidv4 } from "uuid";
 function Insta() {
   const [followers, setFollowers] = useState(0);
   const [likes, setLikes] = useState(0);
@@ -17,13 +29,61 @@ function Insta() {
   const [storyViews, setStoryViews] = useState(0);
   const [comments, setComments] = useState(0);
   const [commentLikes, setCommentLikes] = useState(0);
-
+  const [showSuccess, setShowSuccess] = useState(false);
+  const [alerts, setAlerts] = useState([]);
+  
   const calculateTotal = () => {
     return (
       (followers * 0.05 + likes * 0.01 + reelsViews * 0.005 + storyViews * 0.05 + comments * 0.2 + commentLikes * 0.01)
     );
   };
+  const [userData, setUserData] = useState<UserData | null>(null);
+  const [coinValue, setCoinValue] = useState<number>(0);
 
+  useEffect(() => {
+    if (WebApp?.initDataUnsafe?.user) {
+      const user = WebApp.initDataUnsafe.user as UserData;
+      setUserData(user);
+
+      const fetchUserCoins = async () => {
+        try {
+          const response = await fetch(
+            `https://boostify-server.vercel.app/api/getUserCoin?id=${user.id}`
+          );
+          if (!response.ok) {
+            throw new Error("Network response was not ok");
+          }
+          const data = await response.json();
+          console.log(response);
+          setCoinValue(data.coins);
+        } catch (error) {
+          console.error("Error fetching user's coins:", error);
+        }
+      };
+
+      fetchUserCoins();
+    }
+  }, []);
+  const handleConfirmClick = () => {
+    const newAlert = { id: uuidv4() };
+    if (calculateTotal().toFixed(2) === "0.00") {
+      setAlerts((prev) => [...prev, { id: Date.now(), type: "warning" }]);
+    } else if (coinValue < Number(calculateTotal().toFixed(2))) {
+      setAlerts((prev) => [...prev, { id: Date.now(), type: "failure" }]);
+    } else {
+      setAlerts((prev) => [...prev, { id: Date.now(), type: "success" }]);
+    }
+
+    // Remove the alert after 5 seconds
+    setTimeout(() => {
+      setAlerts((prevAlerts) =>
+        prevAlerts.filter((alert) => alert.id !== newAlert.id)
+      );
+    }, 5000);
+    if (alerts.length >= 5) {
+      setAlerts((prevAlerts) => prevAlerts.slice(1));
+    }
+  };
   return (
     <>
       <div className="overflow-hidden w-full h-full bg-gradient-main p-5 flex flex-col min-h-screen items-center text-black font-medium pb-[110px]">
@@ -161,9 +221,18 @@ function Insta() {
           {/* <button className="bg-blue-500 text-white py-2 px-4 rounded-lg">
             Confirm - ${calculateTotal().toFixed(2)}
           </button> */}
-          <Confirm text={`Confirm - $${calculateTotal().toFixed(2)}`} />
+          <Confirm
+            onClick={handleConfirmClick}
+            text={`Confirm - $${calculateTotal().toFixed(2)}`}
+          />
         </div>
-
+        {alerts.map((alert) => (
+          <div key={alert.id} className="fixed top-3 alert">
+            {alert.type === "warning" && <Warning />}
+            {alert.type === "failure" && <Failure />}
+            {alert.type === "success" && <Success amount={calculateTotal()} />}
+          </div>
+        ))}
         <footer className="w-full flex justify-around items-center p-4 border-dashed border-t-2 border-black">
           {[
             { src: home, alt: "Home" },
