@@ -48,7 +48,7 @@ const Index = () => {
         try {
           const response = await fetch(
             `https://boostify-server.vercel.app/api/getUserCoin?id=${
-              user?.id ?? 1011111
+              1011111
             }`
           );
           if (!response.ok) {
