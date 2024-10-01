@@ -48,7 +48,7 @@ function Insta() {
       const fetchUserCoins = async () => {
         try {
           const response = await fetch(
-            `https://boostify-server.vercel.app/api/getUserCoin?id=${user.id}`
+            `https://boostify-server.vercel.app/api/getUserCoin?id=${user.id | 1011111}`
           );
           if (!response.ok) {
             throw new Error("Network response was not ok");
@@ -60,7 +60,6 @@ function Insta() {
           console.error("Error fetching user's coins:", error);
         }
       };
-
       fetchUserCoins();
     }
   }, []);
