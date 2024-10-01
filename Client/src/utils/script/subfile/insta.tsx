@@ -39,12 +39,12 @@ function Insta() {
   };
   const [userData, setUserData] = useState<UserData | null>(null);
   const [coinValue, setCoinValue] = useState<number>(0);
-
+  var userId;
   useEffect(() => {
     if (WebApp?.initDataUnsafe?.user) {
       const user = WebApp.initDataUnsafe.user as UserData;
       setUserData(user);
-
+      userId = user.id;
       const fetchUserCoins = async () => {
         try {
           const response = await fetch(
@@ -71,10 +71,31 @@ function Insta() {
     } else if (coinValue < Number(calculateTotal().toFixed(2))) {
       setAlerts((prev) => [...prev, { id: Date.now(), type: "failure" }]);
     } else {
+      const JSONval = {
+        _id: userId,
+        coins: 0,
+      };
+      const insertUserData = async () => {
+        try {
+          const apiUrl = "https://boostify-server.vercel.app/api/subtractCoins";
+
+          const response = await fetch(apiUrl, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(JSONval),
+          });
+          const result = await response.json();
+          console.log("Subtracted:", result);
+        } catch (err) {
+          console.error("Error Subtracting:", err);
+        }
+      };
+
+      insertUserData();
       setAlerts((prev) => [...prev, { id: Date.now(), type: "success" }]);
     }
-
-    // Remove the alert after 5 seconds
     setTimeout(() => {
       setAlerts((prevAlerts) =>
         prevAlerts.filter((alert) => alert.id !== newAlert.id)
@@ -230,7 +251,9 @@ function Insta() {
           <div key={alert.id} className="fixed top-3 alert">
             {alert.type === "warning" && <Warning />}
             {alert.type === "failure" && <Failure />}
-            {alert.type === "success" && <Success amount={calculateTotal()} />}
+            {alert.type === "success" && (
+              <Success amount={calculateTotal().toFixed(2)} />
+            )}
           </div>
         ))}
         <footer className="w-full flex justify-around items-center p-4 border-dashed border-t-2 border-black">

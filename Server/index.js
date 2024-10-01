@@ -29,7 +29,8 @@ app.get('/', async (req, res) => {
 
 app.post('/api/insertUser', async (req, res) => {
   const { _id, name, coins } = req.body;
-
+  console.log(_id);
+  
   try {
     const connection = await clientPromise;
     const db = connection.db("Boostify");
@@ -45,6 +46,36 @@ app.post('/api/insertUser', async (req, res) => {
   } catch (error) {
     console.error("Error inserting user data:", error);
     res.status(500).json({ error: "Error inserting user data" });
+  }
+});
+
+app.post('/api/subtractCoins', async (req, res) => {
+  const { _id, amount } = req.query; 
+
+  try {
+    const connection = await clientPromise;
+    const db = connection.db("Boostify");
+    const collection = db.collection("Users");
+
+    const user = await collection.findOne({ _id: Number(_id) });
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    if (user.coins < amount) {
+      return res.status(400).json({ message: "Insufficient coins" });
+    }
+
+    const result = await collection.updateOne(
+      { _id: Number(_id) },
+      { $inc: { coins: -amount } } 
+    );
+
+    res.status(200).json({ message: "Coins subtracted successfully", result });
+  } catch (error) {
+    console.error("Error subtracting coins:", error);
+    res.status(500).json({ error: "Error subtracting coins" });
   }
 });
 
