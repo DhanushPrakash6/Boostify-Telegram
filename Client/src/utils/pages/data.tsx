@@ -2,7 +2,6 @@
 import WebApp from "@twa-dev/sdk";
 import { useEffect, useState } from "react";
 import "../styles/index.css";
-import { log } from "node:console";
 
 interface UserData {
   id: number;
@@ -26,16 +25,14 @@ export default function Home() {
       ? {
           _id: user.id,
           name: `${user.first_name} ${user.last_name}`,
-          coins: 0,
+          coins: 0
         }
       : {
           _id: 1011111,
           name: "Unknown User",
-          coins: 10000,
+          coins: 0
         };
 
-    console.log(userToInsert);
-    
     const insertUserData = async () => {
       try {
         const apiUrl = "https://boostify-server.vercel.app/api/insertUser";
