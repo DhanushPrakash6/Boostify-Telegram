@@ -71,30 +71,26 @@ function Insta() {
     } else if (coinValue < Number(calculateTotal().toFixed(2))) {
       setAlerts((prev) => [...prev, { id: Date.now(), type: "failure" }]);
     } else {
-      const JSONval = {
-        _id: userId,
-        coins: 0,
-      };
-      const insertUserData = async () => {
-        try {
-          const apiUrl = "https://boostify-server.vercel.app/api/subtractCoins";
+        const insertUserData = async () => {
+          try {
+            const apiUrl = `https://boostify-server.vercel.app/api/subtractCoins?_id=${userId}&amount=${calculateTotal().toFixed(2)
+            }`;
 
-          const response = await fetch(apiUrl, {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify(JSONval),
-          });
-          const result = await response.json();
-          console.log("Subtracted:", result);
-        } catch (err) {
-          console.error("Error Subtracting:", err);
-        }
-      };
+            const response = await fetch(apiUrl, {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              }
+            });
+            const result = await response.json();
+            console.log("Subtracted:", result);
+          } catch (err) {
+            console.error("Error Subtracting:", err);
+          }
+        };
 
-      insertUserData();
-      setAlerts((prev) => [...prev, { id: Date.now(), type: "success" }]);
+        insertUserData();
+        setAlerts((prev) => [...prev, { id: Date.now(), type: "success" }]);
     }
     setTimeout(() => {
       setAlerts((prevAlerts) =>
