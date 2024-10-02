@@ -30,7 +30,7 @@ export default function Home() {
       : {
           _id: 1011111,
           name: "Unknown User",
-          coins: 0
+          coins: 10000
         };
 
     const insertUserData = async () => {
