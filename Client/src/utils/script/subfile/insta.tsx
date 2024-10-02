@@ -71,7 +71,7 @@ function Insta() {
     } else if (coinValue < Number(calculateTotal().toFixed(2))) {
       setAlerts((prev) => [...prev, { id: Date.now(), type: "failure" }]);
     } else {
-        const insertUserData = async () => {
+        const subtractCoins = async () => {
           try {
             const apiUrl = `https://boostify-server.vercel.app/api/subtractCoins?_id=${userId}&amount=${calculateTotal().toFixed(2)
             }`;
@@ -89,7 +89,7 @@ function Insta() {
           }
         };
 
-        insertUserData();
+        subtractCoins();
         setAlerts((prev) => [...prev, { id: Date.now(), type: "success" }]);
     }
     setTimeout(() => {
