@@ -43,7 +43,7 @@ const Index = () => {
     if (WebApp?.initDataUnsafe?.user) {
       const user = WebApp.initDataUnsafe.user as UserData;
       setUserData(user);
-
+      console.log(user.id);
       const fetchUserCoins = async () => {
         try {
           const response = await fetch(
