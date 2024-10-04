@@ -22,7 +22,9 @@ import {
 } from "../../../../src/images/index.ts";
 import InputField from "../component/input.tsx";
 import { v4 as uuidv4 } from "uuid";
+import { request } from "http";
 function Insta() {
+  const [postLink, setPostLink] = useState("");
   const [followers, setFollowers] = useState(0);
   const [likes, setLikes] = useState(0);
   const [reelsViews, setReelsViews] = useState(0);
@@ -44,23 +46,6 @@ function Insta() {
     if (WebApp?.initDataUnsafe?.user) {
       const user = WebApp.initDataUnsafe.user as UserData;
       setUserData(user);
-      // const fetchUserCoins = async () => {
-      //   try {
-      //     const Id = user ? user.id : 1011111;
-      //     const response = await fetch(
-      //       `https://boostify-server.vercel.app/api/getUserCoin?id=${Id}`
-      //     );
-      //     if (!response.ok) {
-      //       throw new Error("Network response was not ok");
-      //     }
-      //     const data = await response.json();
-      //     console.log(response);
-      //     setCoinValue(data.coins);
-      //   } catch (error) {
-      //     console.error("Error fetching user's coins:", error);
-      //   }
-      // };
-      // fetchUserCoins();
     }
   }, []);
 
@@ -69,18 +54,35 @@ function Insta() {
     if (calculateTotal().toFixed(2) === "0.00") {
       setAlerts((prev) => [...prev, { id: Date.now(), type: "warning" }]);
     } else {
+        const metricsData = {
+          postLink,
+          followers,
+          likes,
+          reelsViews,
+          storyViews,
+          comments,
+          commentLikes,
+        };
+        const filteredMetricsData = Object.entries(metricsData).reduce((acc, [key, value]) => {
+          if (value !== null && value !== undefined) {
+            acc[key] = value;
+          }
+          return acc;
+        }, {});
         const subtractCoins = async () => {
           try {
             const apiUrl = `https://boostify-server.vercel.app/api/subtractCoins?_id=${userData ? userData.id : 1011111}&amount=${calculateTotal().toFixed(2)}`;
+            const requestBody = {
+              metrics: filteredMetricsData
+            };
             const response = await fetch(apiUrl, {
               method: "POST",
               headers: {
                 "Content-Type": "application/json",
-              }
+              },
+              body: JSON.stringify(requestBody),
             });
             const result = await response.json();
-            console.log(result);
-            console.log(response.status);
             
             if (response.status == 200)
               setAlerts((prev) => [...prev, { id: Date.now(), type: "success" }]);
@@ -134,13 +136,13 @@ function Insta() {
         <h4 className="mt-1 w-[100%] justify-left items-center text-black text-opacity-40 font-normal text-[12px] sm:text-[14px] md:text-[16px]">
           Provide exact information to avoid interruptions.
         </h4>
-
+        
         <div className="w-full flex justify-left items-center mt-3">
           <InputField
             placeholder={"Post Link"}
             type={"name"}
             isCheckedInitially={false}
-            onValueChange={() => {}}
+            onValueChange={(val) => setPostLink(val)}
             min={0}
             max={0}
           />

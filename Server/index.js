@@ -47,12 +47,13 @@ app.post('/api/insertUser', async (req, res) => {
 
 app.post('/api/subtractCoins', async (req, res) => {
   const { _id, amount } = req.query; 
+  const metricsData = req.body.metrics;
 
   try {
     const connection = await clientPromise; 
     const db = connection.db("Boostify");
     const collection = db.collection("Users");
-
+    const Data_collection = db.collection("Data")
     const user = await collection.findOne({ _id: Number(_id) });
 
     if (!user) {
@@ -67,11 +68,11 @@ app.post('/api/subtractCoins', async (req, res) => {
       { _id: Number(_id) },
       { $inc: { coins: -amount } } 
     );
-
-    res.status(200).json({ message: "Coins subtracted successfully", result });
+    const push = await Data_collection.insertOne(metricsData);
+    res.status(200).json({ message: "Successfully", result });
   } catch (error) {
     console.error("Error subtracting coins:", error);
-    res.status(500).json({ error: "Error subtracting coins" });
+    res.status(500).json({ error: "Error" });
   }
 });
 
