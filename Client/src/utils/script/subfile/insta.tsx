@@ -88,7 +88,7 @@ function Insta() {
               headers: {
                 "Content-Type": "application/json",
               },
-              body: JSON.stringify(requestBody),
+              body: JSON.stringify({metrices: requestBody}),
             });
             const result = await response.json();
             
