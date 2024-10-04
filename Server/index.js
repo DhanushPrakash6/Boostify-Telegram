@@ -6,7 +6,7 @@ const cors = require('cors');
 const app = express();
 const port = process.env.PORT || 3000;
 
-const uri = "mongodb+srv://Admin:dhanushprakash194@cluster0.jd3xg.mongodb.net/?retryWrites=true&w=majority";
+const uri = "mongodb+srv://Admin:vetrivel6@cluster0.jd3xg.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
 app.use(cors({
   origin: ["https://boostify-telegram.vercel.app"],
   methods: ["POST", "GET"],
