@@ -47,7 +47,7 @@ app.post('/api/insertUser', async (req, res) => {
 
 app.post('/api/subtractCoins', async (req, res) => {
   const { _id, amount } = req.query; 
-  const metricsData = req.body.metrics;
+  const metricsData = req.body;
 
   try {
     const connection = await clientPromise; 
