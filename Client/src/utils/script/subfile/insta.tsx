@@ -79,10 +79,13 @@ function Insta() {
               }
             });
             const result = await response.json();
+            console.log(result);
             if (result.message == 200)
               setAlerts((prev) => [...prev, { id: Date.now(), type: "success" }]);
             else if (result.message == 400)
               setAlerts((prev) => [...prev, { id: Date.now(), type: "failure" }]);
+            else
+              setAlerts((prev) => [...prev, { id: Date.now(), type: "error" }]);
           }
           catch (error) {
             setAlerts((prev) => [...prev, { id: Date.now(), type: "error" }]);
