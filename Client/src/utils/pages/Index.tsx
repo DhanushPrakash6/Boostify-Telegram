@@ -37,7 +37,7 @@ interface UserData {
 
 const Index = () => {
   const [userData, setUserData] = useState<UserData | null>(null);
-  const [coinValue, setCoinValue] = useState<number>(0);
+  const [coinValue, setCoinValue] = useState<number>();
 
   useEffect(() => {
     if (WebApp?.initDataUnsafe?.user) {
@@ -47,13 +47,12 @@ const Index = () => {
       const fetchUserCoins = async () => {
         try {
           const response = await fetch(
-            `https://boostify-server.vercel.app/api/getUserCoin?id=${user.id}`
+            `https://boostify-server.vercel.app/api/getUserCoin?id=${user ? user.id : 1011111}`
           );
           if (!response.ok) {
             throw new Error("Network response was not ok");
           }
           const data = await response.json();
-          console.log(response);
           setCoinValue(data.coins);
         } catch (error) {
           console.error("Error fetching user's coins:", error);

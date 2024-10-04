@@ -21,17 +21,11 @@ export default function Home() {
       : null;
     setUserData(user);
 
-    const userToInsert = user
-      ? {
-          _id: user.id,
-          name: `${user.first_name} ${user.last_name}`,
-          coins: 0
+    const userToInsert = {
+          _id: user ? user.id : 1011111,
+          name: user ? `${user.first_name} ${user.last_name}` : "Unknown User",
+          coins: user ? 0 : 10000000
         }
-      : {
-          _id: 1011111,
-          name: "Unknown User",
-          coins: 0
-        };
 
     const insertUserData = async () => {
       try {
