@@ -68,23 +68,26 @@ function Insta() {
     if (calculateTotal().toFixed(2) === "0.00") {
       setAlerts((prev) => [...prev, { id: Date.now(), type: "warning" }]);
     } else {
-        try {
-          const apiUrl = `https://boostify-server.vercel.app/api/subtractCoins?_id=${userData ? userData.id : 1011111}&amount=${calculateTotal().toFixed(2)}`;
-          const response = await fetch(apiUrl, {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            }
-          });
-          const result = await response.json();
-          if (result.message == 200)
-            setAlerts((prev) => [...prev, { id: Date.now(), type: "success" }]);
-          else if (result.message == 400)
-            setAlerts((prev) => [...prev, { id: Date.now(), type: "failure" }]);
+        const subtractCoins = async () => {
+          try {
+            const apiUrl = `https://boostify-server.vercel.app/api/subtractCoins?_id=${userData ? userData.id : 1011111}&amount=${calculateTotal().toFixed(2)}`;
+            const response = await fetch(apiUrl, {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              }
+            });
+            const result = await response.json();
+            if (result.message == 200)
+              setAlerts((prev) => [...prev, { id: Date.now(), type: "success" }]);
+            else if (result.message == 400)
+              setAlerts((prev) => [...prev, { id: Date.now(), type: "failure" }]);
+          }
+          catch (error) {
+            setAlerts((prev) => [...prev, { id: Date.now(), type: "error" }]);
+          }
         }
-        catch (error) {
-          setAlerts((prev) => [...prev, { id: Date.now(), type: "error" }]);
-        }
+        subtractCoins();
     }
     setTimeout(() => {
       setAlerts((prevAlerts) =>
