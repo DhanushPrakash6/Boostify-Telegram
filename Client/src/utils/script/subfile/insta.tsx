@@ -39,12 +39,11 @@ function Insta() {
   };
   const [userData, setUserData] = useState<UserData | null>(null);
   const [coinValue, setCoinValue] = useState<number>(0);
-  var userId;
+  
   useEffect(() => {
     if (WebApp?.initDataUnsafe?.user) {
       const user = WebApp.initDataUnsafe.user as UserData;
       setUserData(user);
-      userId = user.id;
       const fetchUserCoins = async () => {
         try {
           const Id = user && user.id ? user.id : 1011111;
@@ -73,7 +72,7 @@ function Insta() {
     } else {
         const subtractCoins = async () => {
           try {
-            const apiUrl = `https://boostify-server.vercel.app/api/subtractCoins?_id=${userId}&amount=${calculateTotal().toFixed(2)
+            const apiUrl = `https://boostify-server.vercel.app/api/subtractCoins?_id=${userData.id}&amount=${calculateTotal().toFixed(2)
             }`;
 
             const response = await fetch(apiUrl, {
