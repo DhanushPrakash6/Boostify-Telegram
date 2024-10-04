@@ -101,7 +101,7 @@ app.get('/api/getUserCoin', async (req, res) => {
     }
   } catch (error) {
     console.error("Failed to fetch user coins:", error);
-    res.status(500).json({ error: "Failed to fetch user coins" });
+    res.status(500).json({ error: "Failed to fetch user coins", error});
   }
 });
 
