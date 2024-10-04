@@ -31,17 +31,19 @@ const InputField = ({
     }
   };
   const handleInputBlur = () => {
-    let value = Number(inputValue);
-
-    if (value < min) {
-      value = min;
-    } else if (value > max) {
-      value = max;
-    }
-
-    setInputValue(value.toString());
-    if (onValueChange) {
-      onValueChange(value.toString());
+    if (type === "number") { 
+      let value = Number(inputValue);
+      if (isNaN(value)) {
+        value = ""; 
+      } else if (value < min) {
+        value = min;
+      } else if (value > max) {
+        value = max;
+      }
+      setInputValue(value.toString());
+      if (onValueChange) {
+        onValueChange(value.toString());
+      }
     }
   };
 

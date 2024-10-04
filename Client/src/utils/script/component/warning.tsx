@@ -1,5 +1,5 @@
 import "./warning.css";
-const Warning = () => {
+const Warning = ({message}) => {
   return (
     <>
       <div className="card">
@@ -27,7 +27,7 @@ const Warning = () => {
           </svg>
         </div>
         <div className="message-text-container">
-          <p className="message-text">Choose any Service</p>
+          <p className="message-text">{message}</p>
           {/* <p className="sub-text">We think you should check it</p> */}
         </div>
         {/* <svg

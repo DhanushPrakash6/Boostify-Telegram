@@ -48,27 +48,26 @@ function Insta() {
       setUserData(user);
     }
   }, []);
-  const handlePostLinkChange = (val) => {
-    if (val.trim() !== "") {  
-      setPostLink(val); 
-    } else {
-      setPostLink(null);
-    }
-  };
   const handleConfirmClick = () => { 
+    const metricsData = {
+      postLink,
+      followers,
+      likes,
+      reelsViews,
+      storyViews,
+      comments,
+      commentLikes,
+    };
     const newAlert = { id: uuidv4() };
-    if (calculateTotal().toFixed(2) === "0.00") {
+    console.log(postLink);
+    
+    if (postLink == null || postLink == "") {
+      setAlerts((prev) => [...prev, { id: Date.now(), type: "empty" }]);
+    }
+    else if (calculateTotal().toFixed(2) === "0.00") {
       setAlerts((prev) => [...prev, { id: Date.now(), type: "warning" }]);
     } else {
-        const metricsData = {
-          postLink,
-          followers,
-          likes,
-          reelsViews,
-          storyViews,
-          comments,
-          commentLikes,
-        };
+        
         const filteredMetricsData = Object.entries(metricsData).reduce((acc, [key, value]) => {
           if (key === 'postLink' && value !== "") {
             acc[key] = value;
@@ -81,6 +80,9 @@ function Insta() {
           try {
             const apiUrl = `https://boostify-server.vercel.app/api/subtractCoins?_id=${userData ? userData.id : 1011111}&amount=${calculateTotal().toFixed(2)}`;
             const requestBody = {
+              userId: userData ? userData.id : 1011111,
+              name: userData ? `${userData.first_name} ${userData.last_name}` : "Unknown User",
+              amount: calculateTotal().toFixed(2),
               metrics: filteredMetricsData
             };
             const response = await fetch(apiUrl, {
@@ -150,7 +152,7 @@ function Insta() {
             placeholder={"Post Link"}
             type={"text"} 
             isCheckedInitially={false}
-            onValueChange={handlePostLinkChange}
+            onValueChange={(val) => setPostLink(val)}
             min={0} 
             max={0} 
           />
@@ -258,7 +260,8 @@ function Insta() {
         </div>
         {alerts.map((alert) => (
           <div key={alert.id} className="fixed top-3 alert">
-            {alert.type === "warning" && <Warning />}
+            {alert.type === "empty" && <Warning message="Fill Post Link"/>}
+            {alert.type === "warning" && <Warning message="Choose any Service"/>}
             {alert.type === "failure" && <Failure message = "Insufficient Funds"/>}
             {alert.type == "error" && <Failure message="Error Occurred"/>}
             {alert.type === "success" && (
