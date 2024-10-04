@@ -53,7 +53,7 @@ const Index = () => {
             throw new Error("Network response was not ok");
           }
           const data = await response.json();
-          setCoinValue(data.coins);
+          setCoinValue(data.coins.toFixed(2));
         } catch (error) {
           console.error("Error fetching user's coins:", error);
         }
@@ -79,7 +79,7 @@ const Index = () => {
               className="h-14 w-14 sm:h-16 sm:w-16 md:h-20 md:w-20"
             />
             <span className="font-bold text-4xl sm:text-5xl md:text-6xl">
-              {coinValue.toFixed(2)}
+              {coinValue}
             </span>
           </div>
           <h1 className="w-full flex justify-center items-center text-black text-opacity-50 font-normal text-xl sm:text-2xl md:text-3xl">
