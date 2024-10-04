@@ -24,13 +24,13 @@ import InputField from "../component/input.tsx";
 import { v4 as uuidv4 } from "uuid";
 import { request } from "http";
 function Insta() {
-  const [postLink, setPostLink] = useState("");
-  const [followers, setFollowers] = useState(0);
-  const [likes, setLikes] = useState(0);
-  const [reelsViews, setReelsViews] = useState(0);
-  const [storyViews, setStoryViews] = useState(0);
-  const [comments, setComments] = useState(0);
-  const [commentLikes, setCommentLikes] = useState(0);
+  const [postLink, setPostLink] = useState<string | null>(null);
+  const [followers, setFollowers] = useState<number | null>(null);
+  const [likes, setLikes] = useState<number | null>(null);
+  const [reelsViews, setReelsViews] = useState<number | null>(null);
+  const [storyViews, setStoryViews] = useState<number | null>(null);
+  const [comments, setComments] = useState<number | null>(null);
+  const [commentLikes, setCommentLikes] = useState<number | null>(null);
   const [showSuccess, setShowSuccess] = useState(false);
   const [alerts, setAlerts] = useState([]);
   
@@ -64,7 +64,9 @@ function Insta() {
           commentLikes,
         };
         const filteredMetricsData = Object.entries(metricsData).reduce((acc, [key, value]) => {
-          if (value !== null && value !== undefined) {
+          if (key === 'postLink' && value !== "") {
+            acc[key] = value;
+          } else if (key !== 'postLink' && value !== 0 && value !== null && value !== undefined) {
             acc[key] = value;
           }
           return acc;
@@ -140,13 +142,13 @@ function Insta() {
         <div className="w-full flex justify-left items-center mt-3">
           <InputField
             placeholder={"Post Link"}
-            type={"name"}
+            type={"text"} 
             isCheckedInitially={false}
-            onValueChange={(val) => setPostLink(val)}
-            min={0}
-            max={0}
+            onValueChange={(val) => setPostLink(val)} 
+            min={0} 
+            max={0} 
           />
-        </div>
+      </div>
 
         <h1 className="w-full flex justify-left items-center text-black text-opacity-90 font-normal text-xl sm:text-2xl md:text-3xl mt-4">
           Engagement Metrics
