@@ -44,52 +44,47 @@ function Insta() {
     if (WebApp?.initDataUnsafe?.user) {
       const user = WebApp.initDataUnsafe.user as UserData;
       setUserData(user);
-      const fetchUserCoins = async () => {
-        try {
-          const Id = user ? user.id : 1011111;
-          const response = await fetch(
-            `https://boostify-server.vercel.app/api/getUserCoin?id=${Id}`
-          );
-          if (!response.ok) {
-            throw new Error("Network response was not ok");
-          }
-          const data = await response.json();
-          console.log(response);
-          setCoinValue(data.coins);
-        } catch (error) {
-          console.error("Error fetching user's coins:", error);
-        }
-      };
-      fetchUserCoins();
-    }
-  }, []);
+    //   const fetchUserCoins = async () => {
+    //     try {
+    //       const Id = user ? user.id : 1011111;
+    //       const response = await fetch(
+    //         `https://boostify-server.vercel.app/api/getUserCoin?id=${Id}`
+    //       );
+    //       if (!response.ok) {
+    //         throw new Error("Network response was not ok");
+    //       }
+    //       const data = await response.json();
+    //       console.log(response);
+    //       setCoinValue(data.coins);
+    //     } catch (error) {
+    //       console.error("Error fetching user's coins:", error);
+    //     }
+    //   };
+    //   fetchUserCoins();
+    // }
+  // }, []);
   const handleConfirmClick = () => { 
     const newAlert = { id: uuidv4() };
     if (calculateTotal().toFixed(2) === "0.00") {
       setAlerts((prev) => [...prev, { id: Date.now(), type: "warning" }]);
-    } else if (coinValue < Number(calculateTotal().toFixed(2))) {
-      setAlerts((prev) => [...prev, { id: Date.now(), type: "failure" }]);
     } else {
-        const subtractCoins = async () => {
-          try {
-            const apiUrl = `https://boostify-server.vercel.app/api/subtractCoins?_id=${userData ? userData.id : 1011111}&amount=${calculateTotal().toFixed(2)
-            }`;
-
-            const response = await fetch(apiUrl, {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-              }
-            });
-            const result = await response.json();
-            console.log("Subtracted:", result);
-          } catch (err) {
-            console.error("Error Subtracting:", err);
-          }
-        };
-
-        subtractCoins();
-        setAlerts((prev) => [...prev, { id: Date.now(), type: "success" }]);
+        try {
+          const apiUrl = `https://boostify-server.vercel.app/api/subtractCoins?_id=${userData ? userData.id : 1011111}&amount=${calculateTotal().toFixed(2)}`;
+          const response = await fetch(apiUrl, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            }
+          });
+          const result = await response.json();
+          if (result.message == 200)
+            setAlerts((prev) => [...prev, { id: Date.now(), type: "success" }]);
+          else if (result.message == 400)
+            setAlerts((prev) => [...prev, { id: Date.now(), type: "failure" }]);
+        }
+        catch (error) {
+          setAlerts((prev) => [...prev, { id: Date.now(), type: "error" }]);
+        }
     }
     setTimeout(() => {
       setAlerts((prevAlerts) =>
@@ -245,7 +240,8 @@ function Insta() {
         {alerts.map((alert) => (
           <div key={alert.id} className="fixed top-3 alert">
             {alert.type === "warning" && <Warning />}
-            {alert.type === "failure" && <Failure />}
+            {alert.type === "failure" && <Failure message = "Insufficient Funds"/>}
+            {alert.type == "error" && <Failure message="Error Occurred"/>}
             {alert.type === "success" && (
               <Success amount={calculateTotal().toFixed(2)} />
             )}

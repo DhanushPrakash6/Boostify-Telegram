@@ -49,7 +49,7 @@ app.post('/api/subtractCoins', async (req, res) => {
   const { _id, amount } = req.query; 
 
   try {
-    const connection = await clientPromise;
+    const connection = await clientPromise; 
     const db = connection.db("Boostify");
     const collection = db.collection("Users");
 

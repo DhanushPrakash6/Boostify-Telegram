@@ -1,5 +1,5 @@
 import "./failure.css";
-const Failure = () => {
+const Failure = ({message}) => {
   return (
     <>
       <div className="card">
@@ -27,7 +27,7 @@ const Failure = () => {
           </svg>
         </div>
         <div className="message-text-container">
-          <p className="message-text">Insufficient Balance</p>
+          <p className="message-text">{message}</p>
         </div>
         {/* <svg
           xmlns="http://www.w3.org/2000/svg"
