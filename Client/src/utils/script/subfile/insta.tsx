@@ -48,7 +48,13 @@ function Insta() {
       setUserData(user);
     }
   }, []);
-
+  const handlePostLinkChange = (val) => {
+    if (val.trim() !== "") {  
+      setPostLink(val); 
+    } else {
+      setPostLink(null);
+    }
+  };
   const handleConfirmClick = () => { 
     const newAlert = { id: uuidv4() };
     if (calculateTotal().toFixed(2) === "0.00") {
@@ -144,7 +150,7 @@ function Insta() {
             placeholder={"Post Link"}
             type={"text"} 
             isCheckedInitially={false}
-            onValueChange={(val) => setPostLink(val)} 
+            onValueChange={handlePostLinkChange}
             min={0} 
             max={0} 
           />
