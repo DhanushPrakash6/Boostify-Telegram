@@ -80,6 +80,8 @@ function Insta() {
             });
             const result = await response.json();
             console.log(result);
+            console.log(result.status);
+            
             if (result.status == 200)
               setAlerts((prev) => [...prev, { id: Date.now(), type: "success" }]);
             else if (result.status == 400)
