@@ -1,6 +1,5 @@
 import "./input.css";
 import { useState } from "react";
-import PropTypes from "prop-types"; 
 
 const InputField = ({
   placeholder,
@@ -10,7 +9,7 @@ const InputField = ({
   min,
   max,
 }) => {
-  const [isChecked, setIsChecked] = useState(isCheckedInitially);
+  const [isChecked, setIsChecked] = useState(false);
   const [inputValue, setInputValue] = useState("");
 
   const handleCheckboxChange = (event) => {
@@ -31,7 +30,6 @@ const InputField = ({
       onValueChange(value);
     }
   };
-
   const handleInputBlur = () => {
     let value = Number(inputValue);
 
@@ -48,49 +46,36 @@ const InputField = ({
   };
 
   return (
-    <div className="flex flex-row items-center w-full">
-      <div className="w-full">
-        <input
-          className="flip-card__input"
-          placeholder={placeholder}
-          type={type}
-          value={inputValue}
-          onChange={handleInputChange}
-          onBlur={handleInputBlur}
-          disabled={!isChecked} // Disable if checkbox is not checked
-          min={min}
-          max={max}
-          aria-label={placeholder} // Accessibility improvement
-        />
-      </div>
-      {isCheckedInitially && (
-        <div>
-          <label className="container">
-            <input
-              checked={isChecked}
-              onChange={handleCheckboxChange}
-              type="checkbox"
-            />
-            <div className="checkmark"></div>
-          </label>
+    <>
+      <div className="flex flex-row items-center w-full">
+        <div className="w-full">
+          <input
+            className="flip-card__input"
+            placeholder={placeholder}
+            type={type}
+            value={inputValue}
+            onChange={handleInputChange}
+            onBlur={handleInputBlur}
+            disabled={isCheckedInitially ? !isChecked : false}
+            min={min}
+            max={max}
+          />
         </div>
-      )}
-    </div>
+        {isCheckedInitially && (
+          <div>
+            <label className="container">
+              <input
+                checked={isChecked}
+                onChange={handleCheckboxChange}
+                type="checkbox"
+              />
+              <div className="checkmark"></div>
+            </label>
+          </div>
+        )}
+      </div>
+    </>
   );
-};
-
-InputField.propTypes = {
-  placeholder: PropTypes.string.isRequired,
-  type: PropTypes.string.isRequired,
-  isCheckedInitially: PropTypes.bool,
-  onValueChange: PropTypes.func,
-  min: PropTypes.number.isRequired,
-  max: PropTypes.number.isRequired,
-};
-
-InputField.defaultProps = {
-  isCheckedInitially: false,
-  onValueChange: () => {},
 };
 
 export default InputField;
