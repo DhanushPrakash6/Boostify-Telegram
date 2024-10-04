@@ -24,7 +24,7 @@ export default function Home() {
     const userToInsert = {
           _id: user ? user.id : 1011111,
           name: user ? `${user.first_name} ${user.last_name}` : "Unknown User",
-          coins: user ? 0 : 10000000
+          coins: user ? 0.00 : 10000000.00
         }
 
     const insertUserData = async () => {
