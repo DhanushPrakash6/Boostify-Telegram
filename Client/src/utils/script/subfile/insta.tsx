@@ -167,7 +167,7 @@ function Insta() {
           <InputField
             placeholder={"Number of Followers"}
             type={"number"}
-            isCheckedInitially={true}
+            isCheckedInitially={false}
             onValueChange={(val) => setFollowers(Number(val))}
             min={10}
             max={50000}
@@ -181,7 +181,7 @@ function Insta() {
           <InputField
             placeholder={"Likes Count"}
             type={"number"}
-            isCheckedInitially={true}
+            isCheckedInitially={false}
             onValueChange={(val) => setLikes(Number(val))}
             min={50}
             max={50000}
@@ -195,7 +195,7 @@ function Insta() {
           <InputField
             placeholder={"Reels Views"}
             type={"number"}
-            isCheckedInitially={true}
+            isCheckedInitially={false}
             onValueChange={(val) => setReelsViews(Number(val))}
             min={100}
             max={100000}
@@ -209,7 +209,7 @@ function Insta() {
           <InputField
             placeholder={"Story Views"}
             type={"number"}
-            isCheckedInitially={true}
+            isCheckedInitially={false}
             onValueChange={(val) => setStoryViews(Number(val))}
             min={10}
             max={100000}
@@ -223,7 +223,7 @@ function Insta() {
           <InputField
             placeholder={"Comments"}
             type={"number"}
-            isCheckedInitially={true}
+            isCheckedInitially={false}
             onValueChange={(val) => setComments(Number(val))}
             min={10}
             max={5000}
@@ -237,7 +237,7 @@ function Insta() {
           <InputField
             placeholder={"Comment Likes"}
             type={"number"}
-            isCheckedInitially={true}
+            isCheckedInitially={false}
             onValueChange={(val) => setCommentLikes(Number(val))}
             min={50}
             max={10000}
