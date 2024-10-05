@@ -119,10 +119,10 @@ const Orders = () => {
           </div>
         </div>
         <span className="w-[500%] border-dashed border-t-2 border-black m-6"/>
-        <div className="w-full flex justify-left items-center">
-            <h1 className="w-full flex justify-left items-center text-black text-opacity-90 font-normal text-l sm:text-2xl md:text-3xl">
+        <h1 className="w-full flex justify-left items-center text-black text-opacity-90 font-normal text-l sm:text-2xl md:text-3xl">
                 Transactions
-            </h1>
+        </h1>
+        <div className="w-full flex flex-row justify-left items-center">
             <div>
             {orders.length > 0 ? (
                 orders.map((order) => (
@@ -138,12 +138,12 @@ const Orders = () => {
                         </div>
                     </div>
                 ))
-            ) : (
-                <h1 className="text-black text-opacity-50 font-normal text-xl sm:text-2xl md:text-3xl">
-                    No Transactions Found
-                </h1>
+                ) : (
+                    <h1 className="text-black text-opacity-50 font-normal text-xl sm:text-2xl md:text-3xl">
+                        No Transactions Found
+                    </h1>
             )}
-        </div>
+            </div>
         </div>
         <div className="w-full flex flex-col flex-grow justify-around pb-[120px] overflow-auto">
             
