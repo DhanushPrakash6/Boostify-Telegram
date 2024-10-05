@@ -118,7 +118,7 @@ function Insta() {
   return (
     <>
       <div className="overflow-hidden w-full h-full bg-gradient-main p-5 flex flex-col min-h-screen items-center text-black font-medium pb-[110px]">
-        <div className="w-full flex justify-left items-center z-10">
+        <div className="w-full flex justify-left items-center">
           <a href="/">
             <div
               style={{
