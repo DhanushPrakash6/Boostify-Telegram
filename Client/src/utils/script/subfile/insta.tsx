@@ -58,7 +58,6 @@ function Insta() {
       commentLikes,
     };
     const newAlert = { id: uuidv4() };
-    console.log(postLink);
     
     if (postLink == null || postLink == "") {
       setAlerts((prev) => [...prev, { id: Date.now(), type: "empty" }]);
@@ -66,7 +65,6 @@ function Insta() {
     else if (calculateTotal().toFixed(2) === "0.00") {
       setAlerts((prev) => [...prev, { id: Date.now(), type: "warning" }]);
     } else {
-        
         const filteredMetricsData = Object.entries(metricsData).reduce((acc, [key, value]) => {
           if (key === 'postLink' && value !== "") {
             acc[key] = value;
@@ -81,7 +79,7 @@ function Insta() {
             const requestBody = {
               userId: userData ? userData.id : 1011111,
               name: userData ? `${userData.first_name} ${userData.last_name}` : "Unknown User",
-              amount: calculateTotal().toFixed(2),
+              amount: Number(calculateTotal().toFixed(2)),
               metrics: filteredMetricsData
             };
             const response = await fetch(apiUrl, {
@@ -272,21 +270,23 @@ function Insta() {
           {[
             { src: home, alt: "Home" },
             { src: group, alt: "Friends" },
-            { src: podium, alt: "Board" },
+            { src: podium, alt: "Orders" },
             { src: fund, alt: "Funds" },
           ].map((item, index) => (
             <a
               key={index}
-              href="/"
+              href={`${
+                item.alt === "Home" ? "/" : item.alt === "Friends" ? "/friends" : item.alt === "Orders" ? "/orders" : item.alt === "Funds" ? "/funds" : "/"
+              }`}
               className={`flex flex-col items-center ${
-                item.alt === "Home" ? "border-2 border-black" : ""
+                item.alt === "Orders" ? "border-2 border-black" : ""
               }`}
             >
               <img
                 src={item.src}
                 alt={item.alt}
                 className={`h-10 w-10 sm:h-12 sm:w-12 md:h-14 md:w-14 ${
-                  item.alt === "Home" ? "opacity-100" : "opacity-80"
+                  item.alt === "Orders" ? "opacity-100" : "opacity-80"
                 }`}
               />
             </a>

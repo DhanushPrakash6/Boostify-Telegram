@@ -12,10 +12,13 @@ import Spotify from "./utils/script/subfile/spotify.tsx";
 import Linkedin from "./utils/script/subfile/linkedin.tsx";
 import Whatsapp from "./utils/script/subfile/whatsapp.tsx";
 import Wifi from "./utils/script/subfile/wifi.tsx";
+import Orders from "./utils/pages/order.tsx";
+
   function App() {
     return (
       <Routes>
         <Route element={<Index />} path="/" />
+        <Route element={<Orders />} path="/orders" />
         <Route element={<Insta />} path="/subfile/instagram" />
         <Route element={<Telegram />} path="/subfile/telegram" />
         <Route element={<Youtube />} path="/subfile/youtube" />

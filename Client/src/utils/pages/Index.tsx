@@ -43,7 +43,7 @@ const Index = () => {
     if (WebApp?.initDataUnsafe?.user) {
       const user = WebApp.initDataUnsafe.user as UserData;
       setUserData(user);
-      console.log(user.id);
+    }
       const fetchUserCoins = async () => {
         try {
           const response = await fetch(user ? `https://boostify-server.vercel.app/api/getUserCoin?id=${user.id}` :
@@ -60,7 +60,6 @@ const Index = () => {
       };
 
       fetchUserCoins();
-    }
   }, []);
   return (
     <>
@@ -90,7 +89,7 @@ const Index = () => {
             className="w-fit h-fit border-2 border-black font-bold rounded-3xl p-3 cursor-pointer mt-5"
           >
             <a
-              href=""
+              href="/funds"
               className="w-full flex justify-center items-center gap-2"
             >
               <img
@@ -148,12 +147,14 @@ const Index = () => {
           {[
             { src: home, alt: "Home" },
             { src: group, alt: "Friends" },
-            { src: podium, alt: "Board" },
+            { src: podium, alt: "Orders" },
             { src: fund, alt: "Funds" },
           ].map((item, index) => (
             <a
               key={index}
-              href="/"
+              href={`${
+                item.alt === "Home" ? "/" : item.alt === "Friends" ? "/friends" : item.alt === "Orders" ? "/orders" : item.alt === "Funds" ? "/funds" : "/"
+              }`}
               className={`flex flex-col items-center ${
                 item.alt === "Home" ? "border-2 border-black" : ""
               }`}

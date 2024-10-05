@@ -102,6 +102,38 @@ app.get('/api/getUserCoin', async (req, res) => {
   }
 });
 
+app.get('/api/getOrders', async (req, res) => {
+  const _id = req.query.id; 
+
+  if (!_id) {
+    return res.status(400).json({ message: "User ID is required" });
+  }
+  try {
+    const connection = await clientPromise;
+    const db = connection.db("Boostify");
+    const collection = db.collection("Data");
+
+    const options = {
+        projection: { metrics: 1, amount: 1, postLink: 1 }
+    };
+
+    const query = { userId: Number(_id) };  
+
+    const result = await collection.find(query, options).toArray();  
+
+    if (result.length > 0) {  // Check if any documents were found
+        res.setHeader('Content-Type', 'application/json');
+        res.status(200).json({ result });
+    } else {
+        res.status(404).json({ message: "No orders found for this user" });
+    }
+  } catch (error) {
+      console.error("Failed to fetch data:", error);
+      res.status(500).json({ error: "Failed to fetch data", error });
+  }
+
+});
+
 app.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);
 });
