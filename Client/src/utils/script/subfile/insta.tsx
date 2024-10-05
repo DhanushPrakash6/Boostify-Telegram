@@ -22,7 +22,6 @@ import {
 } from "../../../../src/images/index.ts";
 import InputField from "../component/input.tsx";
 import { v4 as uuidv4 } from "uuid";
-import { request } from "http";
 function Insta() {
   const [postLink, setPostLink] = useState<string | null>(null);
   const [followers, setFollowers] = useState<number | null>(null);
@@ -119,7 +118,7 @@ function Insta() {
   return (
     <>
       <div className="overflow-hidden w-full h-full bg-gradient-main p-5 flex flex-col min-h-screen items-center text-black font-medium pb-[110px]">
-        <div className="w-full flex justify-left items-center">
+        <div className="w-full flex justify-left items-center z-10">
           <a href="/">
             <div
               style={{
