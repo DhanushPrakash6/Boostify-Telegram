@@ -46,7 +46,7 @@ const Index = () => {
     }
       const fetchUserCoins = async () => {
         try {
-          const response = await fetch((userData !== null) ? `https://boostify-server.vercel.app/api/getUserCoin?id=${user.id}` :
+          const response = await fetch((WebApp?.initDataUnsafe?.user) ? `https://boostify-server.vercel.app/api/getUserCoin?id=${user.id}` :
             `https://boostify-server.vercel.app/api/getUserCoin?id=1011111`
           );
           if (!response.ok) {
