@@ -120,13 +120,14 @@ const Orders = () => {
         </div>
         <span className="w-[500%] border-dashed border-t-2 border-black m-6"/>
         <h1 className="w-full flex justify-left items-center text-black text-opacity-90 font-normal text-l sm:text-2xl md:text-3xl">
-                Transactions
+            Transactions
         </h1>
         <div className="w-full flex flex-row justify-left items-center">
             <div>
             {orders.length > 0 ? (
                 orders.map((order) => (
                     <div key={order._id} className="order-item">
+                        <p><strong>Social:</strong> ${order.social}</p>
                         <h3>Order for {order.metrics.postLink}</h3>
                         <p><strong>Amount Spent:</strong> ${order.amount}</p>
                         <div className="metrics">

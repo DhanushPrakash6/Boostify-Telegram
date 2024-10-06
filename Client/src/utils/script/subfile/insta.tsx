@@ -280,14 +280,14 @@ function Insta() {
                 item.alt === "Home" ? "/" : item.alt === "Friends" ? "/friends" : item.alt === "Orders" ? "/orders" : item.alt === "Funds" ? "/funds" : "/"
               }`}
               className={`flex flex-col items-center ${
-                item.alt === "Orders" ? "border-2 border-black" : ""
+                item.alt === "Home" ? "border-2 border-black" : ""
               }`}
             >
               <img
                 src={item.src}
                 alt={item.alt}
                 className={`h-10 w-10 sm:h-12 sm:w-12 md:h-14 md:w-14 ${
-                  item.alt === "Orders" ? "opacity-100" : "opacity-80"
+                  item.alt === "Home" ? "opacity-100" : "opacity-80"
                 }`}
               />
             </a>
