@@ -67,7 +67,7 @@ const Index = () => {
     } else {
       fetchUserCoins(1011111); 
     }
-  }, []);
+  }, [userData]);
 
   return (
     <>
