@@ -37,31 +37,37 @@ interface UserData {
 
 const Index = () => {
   const [coinValue, setCoinValue] = useState<number>();
-  const [userData, setUserData] = useState<UserData | null>(null)
+  const [userData, setUserData] = useState<UserData | null>(null);
 
   useEffect(() => {
-    if (WebApp.initDataUnsafe.user) {
-      const user = WebApp.initDataUnsafe.user as UserData;
-      setUserData(user)
+    const user = WebApp?.initDataUnsafe?.user as UserData;
+    if (user) {
+      setUserData(user);
     }
-      const fetchUserCoins = async () => {
-        try {
-          // const response = await fetch((WebApp?.initDataUnsafe?.user) ? `https://boostify-server.vercel.app/api/getUserCoin?id=${userData.id}` :
-          //   `https://boostify-server.vercel.app/api/getUserCoin?id=1011111`
-          // );
-          const response = await fetch(`https://boostify-server.vercel.app/api/getUserCoin?id=${user.id}`);
-          if (!response.ok) {
-            throw new Error("Network response was not ok");
-          }
-          const data = await response.json();
-          setCoinValue(data.coins.toFixed(2));
-        } catch (error) {
-          console.error("Error fetching user's coins:", error);
-        }
-      };
 
-      fetchUserCoins();
-    }, []);
+    const fetchUserCoins = async (userId: number) => {
+      try {
+        const response = await fetch(
+          `https://boostify-server.vercel.app/api/getUserCoin?id=${userId}`
+        );
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
+        const data = await response.json();
+        setCoinValue(data.coins.toFixed(2));
+      } catch (error) {
+        console.error("Error fetching user's coins:", error);
+      }
+    };
+
+    if (user) {
+      fetchUserCoins(user.id);
+    } else {
+      // Optionally handle a default user case
+      fetchUserCoins(1011111); // default id as fallback
+    }
+  }, []);
+
   return (
     <>
       <div className="overflow-auto w-full h-full bg-gradient-main p-5 flex flex-col min-h-screen items-center text-black font-medium">
@@ -154,7 +160,15 @@ const Index = () => {
             <a
               key={index}
               href={`${
-                item.alt === "Home" ? "/" : item.alt === "Friends" ? "/friends" : item.alt === "Orders" ? "/orders" : item.alt === "Funds" ? "/funds" : "/"
+                item.alt === "Home"
+                  ? "/"
+                  : item.alt === "Friends"
+                  ? "/friends"
+                  : item.alt === "Orders"
+                  ? "/orders"
+                  : item.alt === "Funds"
+                  ? "/funds"
+                  : "/"
               }`}
               className={`flex flex-col items-center ${
                 item.alt === "Home" ? "border-2 border-black" : ""
