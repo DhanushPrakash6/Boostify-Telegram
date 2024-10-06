@@ -38,15 +38,15 @@ function Insta() {
       (followers * 0.05 + likes * 0.01 + reelsViews * 0.005 + storyViews * 0.05 + comments * 0.2 + commentLikes * 0.01)
     );
   };
-  const [userData, setUserData] = useState<UserData>();
   const [coinValue, setCoinValue] = useState<number>(0);
   
+  const [userData, setUserData] = useState<UserData | null>(null)
+
   useEffect(() => {
-    if (WebApp?.initDataUnsafe?.user) {
-      const user = WebApp.initDataUnsafe.user as UserData;
-      setUserData(user);
+    if (WebApp.initDataUnsafe.user) {
+      setUserData(WebApp.initDataUnsafe.user as UserData)
     }
-  }, []);
+  }, [])
   const handleConfirmClick = () => { 
     const metricsData = {
       postLink,

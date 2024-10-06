@@ -36,14 +36,16 @@ interface UserData {
 }
 
 const Orders = () => {
-  const [userData, setUserData] = useState<UserData>();
   const [coinValue, setCoinValue] = useState<number>();
   const [orders, setOrders] = useState([]);
+  const [userData, setUserData] = useState<UserData | null>(null)
+
   useEffect(() => {
-    if (WebApp?.initDataUnsafe?.user) {
-      const user = WebApp.initDataUnsafe.user as UserData;
-      setUserData(user); 
+    if (WebApp.initDataUnsafe.user) {
+      setUserData(WebApp.initDataUnsafe.user as UserData)
     }
+  }, []);
+  useEffect(() => {
     const fetchUserCoins = async () => {
         try {
           // const response = await fetch((WebApp?.initDataUnsafe?.user) ? `https://boostify-server.vercel.app/api/getUserCoin?id=${userData.id}` :
