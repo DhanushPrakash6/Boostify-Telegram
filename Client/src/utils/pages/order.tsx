@@ -122,34 +122,29 @@ const Orders = () => {
         <h1 className="w-full flex justify-left items-center text-black text-opacity-90 font-normal text-l sm:text-2xl md:text-3xl">
             Transactions
         </h1>
-        <div className="w-full flex flex-row justify-left items-center">
-            <div>
-            {orders.length > 0 ? (
-                orders.map((order) => (
-                    <div key={order._id} className="order-item">
-                        <p><strong>Social:</strong> ${order.social}</p>
-                        <h3>Order for {order.metrics.postLink}</h3>
-                        <p><strong>Amount Spent:</strong> ${order.amount}</p>
-                        <div className="metrics">
-                            <h4>Metrics:</h4>
-                            <p><strong>Post Link:</strong> <a href={order.metrics.postLink} target="_blank" rel="noopener noreferrer">{order.metrics.postLink}</a></p>
-                            {Object.entries(order.metrics).map(([key, value]) => key !== 'postLink' && (
-                                <p key={key}><strong>{key}:</strong>{value}</p>
-                            ))}
-                        </div>
-                    </div>
-                ))
-                ) : (
-                    <h1 className="text-black text-opacity-50 font-normal text-xl sm:text-2xl md:text-3xl">
-                        No Transactions Found
-                    </h1>
-            )}
+        <div className="m-3 w-full h-[410px] pb-[12px] flex flex-col gap-4 overflow-y-scroll no-scrollbar">
+          {orders.length > 0 ? (
+            orders.map((order) => (
+              <div key={order._id} className="w-full border rounded-2xl bg-white flex justify-between items-center p-4">
+                <div className="w-full flex flex-col overflow-x-auto gap-1">
+                  <h1 className="font-normal text-opacity-50 text-[1.7vh] sm:text-2xl md:text-3xl">{order.social}</h1>
+                  <h1 className="text-black text-opacity-50 font-medium text-xs sm:text-2xl md:text-3xl">{order.metrics.postLink}</h1>
+                </div>
+                <div>
+                  <h1 className="text-red-600 font-normal text-lg sm:text-2xl md:text-3xl text-opacity-90">
+                    -{order.amount}$
+                  </h1>
+                </div>
+              </div>
+            ))
+          ) : (
+            <div className="w-full flex justify-center items-center">
+              <h1 className="text-black text-opacity-50 font-normal text-sm sm:text-2xl md:text-3xl">
+                No Transactions Found
+              </h1>
             </div>
+          )}
         </div>
-        <div className="w-full flex flex-col flex-grow justify-around pb-[120px] overflow-auto">
-            
-        </div>
-
         <footer className="w-full flex justify-around items-center p-4 border-dashed border-t-2 border-black">
           {[
             { src: home, alt: "Home" },

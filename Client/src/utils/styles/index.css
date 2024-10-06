@@ -1,6 +1,15 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+@layer utilities {
+  .no-scrollbar::-webkit-scrollbar {
+      display: none;
+  }
+  .no-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;  
+}
+}
 @font-face {
   font-family:"Mori-Serif";
   src: url("../../../src/font/mori/PPMori-SemiBold.otf") format("opentype"),
