@@ -75,7 +75,8 @@ function Insta() {
         }, {});
         const subtractCoins = async () => {
           try {
-            const apiUrl = `https://boostify-server.vercel.app/api/subtractCoins?_id=${(WebApp?.initDataUnsafe?.user) ? userData.id : 1011111}&amount=${calculateTotal().toFixed(2)}`;
+            // const apiUrl = `https://boostify-server.vercel.app/api/subtractCoins?_id=${(WebApp?.initDataUnsafe?.user) ? userData.id : 1011111}&amount=${calculateTotal().toFixed(2)}`;
+            const apiUrl = `https://boostify-server.vercel.app/api/subtractCoins?_id=${userData.id}&amount=${calculateTotal().toFixed(2)}`;
             const requestBody = {
               social: "Instagram",
               userId: userData ? userData.id : 1011111,
