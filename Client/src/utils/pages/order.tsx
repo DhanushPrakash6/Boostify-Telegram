@@ -26,11 +26,10 @@ const Orders = () => {
 
   useEffect(() => {
     const user = WebApp.initDataUnsafe.user as UserData | undefined;
-    if (user) setUserData(user);
+    if (user) setUserData(user); 
 
-    const fetchUserCoins = async () => {
+    const fetchUserCoins = async (userId: number) => {
       try {
-        const userId = user?.id || 1011111; // Fallback to a default user ID
         const response = await fetch(
           `https://boostify-server.vercel.app/api/getUserCoin?id=${userId}`
         );
@@ -38,16 +37,16 @@ const Orders = () => {
 
         const data = await response.json();
         setCoinValue(Number(data.coins).toLocaleString(undefined, {
-          minimumFractionDigits: 2, maximumFractionDigits: 2,
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2,
         }));
       } catch (error) {
         console.error("Error fetching user's coins:", error);
       }
     };
 
-    const fetchOrders = async () => {
+    const fetchOrders = async (userId: number) => {
       try {
-        const userId = user?.id || 1011111;
         const response = await fetch(
           `https://boostify-server.vercel.app/api/getOrders?id=${userId}`
         );
@@ -60,11 +59,13 @@ const Orders = () => {
       }
     };
 
-    if (userData) {
-      fetchUserCoins();
-      fetchOrders();
-    }
-  }, [userData]); 
+    const userId = user?.id || 1011111;
+
+    
+    fetchUserCoins(userId);
+    fetchOrders(userId);
+  }, [userData]);  
+
 
   return (
     <div className="overflow-auto w-full h-full bg-gradient-main p-5 flex flex-col min-h-screen items-center text-black font-medium">

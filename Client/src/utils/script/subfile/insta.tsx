@@ -40,14 +40,14 @@ function Insta() {
   };
   const [userData, setUserData] = useState<UserData | null>(null);
   const [coinValue, setCoinValue] = useState<number>(0);
-  
   useEffect(() => {
     if (WebApp?.initDataUnsafe?.user) {
       const user = WebApp.initDataUnsafe.user as UserData;
       setUserData(user);
     }
   }, []);
-  const handleConfirmClick = () => { 
+  
+  const handleConfirmClick = async () => {
     const metricsData = {
       postLink,
       followers,
@@ -57,64 +57,81 @@ function Insta() {
       comments,
       commentLikes,
     };
+  
     const newAlert = { id: uuidv4() };
-    
-    if (postLink == null || postLink == "") {
+  
+    if (!postLink) {
       setAlerts((prev) => [...prev, { id: Date.now(), type: "empty" }]);
-    }
+    } 
+    // Alert for zero total
     else if (calculateTotal().toFixed(2) === "0.00") {
       setAlerts((prev) => [...prev, { id: Date.now(), type: "warning" }]);
-    } else {
-        const filteredMetricsData = Object.entries(metricsData).reduce((acc, [key, value]) => {
+    } 
+    else {
+      const filteredMetricsData = Object.entries(metricsData).reduce(
+        (acc, [key, value]) => {
           if (key === 'postLink' && value !== "") {
             acc[key] = value;
-          } else if (key !== 'postLink' && value !== 0 && value !== null && value !== undefined) {
+          } else if (
+            key !== 'postLink' && 
+            value !== 0 && value !== null && value !== undefined
+          ) {
             acc[key] = value;
           }
           return acc;
-        }, {});
-        const subtractCoins = async () => {
-          try {
-            // const apiUrl = `https://boostify-server.vercel.app/api/subtractCoins?_id=${(WebApp?.initDataUnsafe?.user) ? userData.id : 1011111}&amount=${calculateTotal().toFixed(2)}`;
-            const apiUrl = `https://boostify-server.vercel.app/api/subtractCoins?_id=${userData.id}&amount=${calculateTotal().toFixed(2)}`;
-            const requestBody = {
-              social: "Instagram",
-              userId: userData ? userData.id : 1011111,
-              name: userData ? `${userData.first_name} ${userData.last_name}` : "Unknown User",
-              amount: Number(calculateTotal().toFixed(2)),
-              metrics: filteredMetricsData
-            };
-            const response = await fetch(apiUrl, {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify(requestBody),
-            });
-            const result = await response.json();
-            
-            if (response.status == 200)
-              setAlerts((prev) => [...prev, { id: Date.now(), type: "success" }]);
-            else if (response.status == 400)
-              setAlerts((prev) => [...prev, { id: Date.now(), type: "failure" }]);
-            else
-              setAlerts((prev) => [...prev, { id: Date.now(), type: "error" }]);
-          }
-          catch (error) {
+        }, 
+        {}
+      );
+  
+      const subtractCoins = async () => {
+        try {
+          const userId = userData?.id || 1011111; // Fallback for user ID
+          const totalAmount = calculateTotal().toFixed(2);
+          const apiUrl = `https://boostify-server.vercel.app/api/subtractCoins?_id=${userId}&amount=${totalAmount}`;
+          
+          const requestBody = {
+            social: "Instagram",
+            userId,
+            name: userData ? `${userData.first_name} ${userData.last_name}` : "Unknown User",
+            amount: Number(totalAmount),
+            metrics: filteredMetricsData
+          };
+  
+          const response = await fetch(apiUrl, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(requestBody),
+          });
+  
+          if (response.ok) {
+            setAlerts((prev) => [...prev, { id: Date.now(), type: "success" }]);
+          } else if (response.status === 400) {
+            setAlerts((prev) => [...prev, { id: Date.now(), type: "failure" }]);
+          } else {
             setAlerts((prev) => [...prev, { id: Date.now(), type: "error" }]);
           }
+        } catch (error) {
+          console.error("Error in subtractCoins:", error);
+          setAlerts((prev) => [...prev, { id: Date.now(), type: "error" }]);
         }
-        subtractCoins();
+      };
+  
+      await subtractCoins();
     }
+  
     setTimeout(() => {
       setAlerts((prevAlerts) =>
         prevAlerts.filter((alert) => alert.id !== newAlert.id)
       );
     }, 5000);
+  
     if (alerts.length >= 5) {
       setAlerts((prevAlerts) => prevAlerts.slice(1));
     }
   };
+  
   return (
     <>
       <div className="overflow-hidden w-full h-full bg-gradient-main p-5 flex flex-col min-h-screen items-center text-black font-medium pb-[110px]">

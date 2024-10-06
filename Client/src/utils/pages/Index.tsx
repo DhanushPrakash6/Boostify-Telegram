@@ -40,11 +40,12 @@ const Index = () => {
   const [userData, setUserData] = useState<UserData | null>(null);
 
   useEffect(() => {
-    const user = WebApp?.initDataUnsafe?.user as UserData;
+    const user = WebApp?.initDataUnsafe?.user as UserData | undefined;
+    
     if (user) {
       setUserData(user);
     }
-
+  
     const fetchUserCoins = async (userId: number) => {
       try {
         const response = await fetch(
@@ -54,20 +55,25 @@ const Index = () => {
           throw new Error("Network response was not ok");
         }
         const data = await response.json();
-        setCoinValue(Number(data.coins).toLocaleString(undefined, {
-          minimumFractionDigits: 2, maximumFractionDigits: 2,
-        }));
+        setCoinValue(
+          Number(data.coins).toLocaleString(undefined, {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
+          })
+        );
       } catch (error) {
         console.error("Error fetching user's coins:", error);
       }
     };
-
+  
     if (user) {
       fetchUserCoins(user.id);
     } else {
-      fetchUserCoins(1011111); 
+      fetchUserCoins(1011111);
     }
-  }, [userData]);
+  
+  }, []); 
+  
 
   return (
     <>
