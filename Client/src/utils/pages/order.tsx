@@ -46,7 +46,7 @@ const Orders = () => {
     }
     const fetchUserCoins = async () => {
         try {
-          const response = await fetch(userData ? `https://boostify-server.vercel.app/api/getUserCoin?id=${user.id}` :
+          const response = await fetch(user.id ? `https://boostify-server.vercel.app/api/getUserCoin?id=${user.id}` :
             `https://boostify-server.vercel.app/api/getUserCoin?id=1011111`
           );
           if (!response.ok) {
@@ -61,7 +61,7 @@ const Orders = () => {
     fetchUserCoins();
     const fetchOrders = async () => {
         try {
-            const response = await fetch(userData ? `https://boostify-server.vercel.app/api/getOrders?id=${user.id}` :
+            const response = await fetch(user.id ? `https://boostify-server.vercel.app/api/getOrders?id=${user.id}` :
                 `https://boostify-server.vercel.app/api/getOrders?id=1011111`
             );
             if (!response.ok) {
@@ -122,7 +122,7 @@ const Orders = () => {
         <h1 className="w-full flex justify-left items-center text-black text-opacity-90 font-normal text-l sm:text-2xl md:text-3xl">
             Transactions
         </h1>
-        <div className="m-3 w-full h-[410px] pb-[12px] flex flex-col gap-4 overflow-y-scroll no-scrollbar">
+        <div className="m-3 w-full h-[410px] pb-[110px] flex flex-col gap-4 overflow-y-scroll no-scrollbar">
           {orders.length > 0 ? (
             orders.map((order) => (
               <div key={order._id} className="w-full border rounded-2xl bg-white flex justify-between items-center p-4">
