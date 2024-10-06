@@ -38,10 +38,9 @@ interface UserData {
 const Orders = () => {
   const [coinValue, setCoinValue] = useState<number>();
   const [orders, setOrders] = useState([]);
-  
+  const [userData, setUserData] = useState<UserData | null>(null)
 
   useEffect(() => {
-    const [user, setUserData] = useState<UserData | null>(null)
     if (WebApp.initDataUnsafe.user) {
       const user = WebApp.initDataUnsafe.user as UserData;
       setUserData(user)

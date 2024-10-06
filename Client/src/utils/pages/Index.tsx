@@ -37,13 +37,12 @@ interface UserData {
 
 const Index = () => {
   const [coinValue, setCoinValue] = useState<number>();
-  
+  const [userData, setUserData] = useState<UserData | null>(null)
 
   useEffect(() => {
-    const [user, setUserData] = useState<UserData | null>(null)
     if (WebApp.initDataUnsafe.user) {
       const user = WebApp.initDataUnsafe.user as UserData;
-      setUserData(user);
+      setUserData(user)
     }
       const fetchUserCoins = async () => {
         try {
