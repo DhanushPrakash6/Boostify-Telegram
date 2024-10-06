@@ -36,7 +36,7 @@ interface UserData {
 }
 
 const Index = () => {
-  const [userData, setUserData] = useState<UserData | null>(null);
+  const [userData, setUserData] = useState<UserData>();
   const [coinValue, setCoinValue] = useState<number>();
 
   useEffect(() => {
