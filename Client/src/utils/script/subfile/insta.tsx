@@ -39,7 +39,6 @@ function Insta() {
     );
   };
   const [userData, setUserData] = useState<UserData | null>(null);
-  const [coinValue, setCoinValue] = useState<number>(0);
   useEffect(() => {
     if (WebApp?.initDataUnsafe?.user) {
       const user = WebApp.initDataUnsafe.user as UserData;
@@ -165,7 +164,7 @@ function Insta() {
         
         <div className="w-full flex justify-left items-center mt-3">
           <InputField
-            placeholder={"Post Link"}
+            placeholder={"Link"}
             type={"text"} 
             isCheckedInitially={false}
             onValueChange={(val) => setPostLink(val)}
@@ -276,7 +275,7 @@ function Insta() {
         </div>
         {alerts.map((alert) => (
           <div key={alert.id} className="fixed top-3 alert">
-            {alert.type === "empty" && <Warning message="Fill Post Link"/>}
+            {alert.type === "empty" && <Warning message="Fill the Link"/>}
             {alert.type === "warning" && <Warning message="Choose any Service"/>}
             {alert.type === "failure" && <Failure message = "Insufficient Funds"/>}
             {alert.type == "error" && <Failure message="Error Occurred"/>}

@@ -3,10 +3,6 @@ import { useState, useEffect } from "react";
 import WebApp from "@twa-dev/sdk";
 import Home from "./data.tsx";
 import {
-  wifi, telegram, spotify, linkedin, whatsapp, facebook,
-  instagram, soundcloud, tiktok, twitch, X, youtube,
-} from "../../icons/Arrow.ts";
-import {
   profile, coin, podium, fund, home, group, wallet
 } from "../../images/index.ts";
 
@@ -116,34 +112,47 @@ const Orders = () => {
       </h1>
 
       <div className="m-3 w-full h-[410px] pb-[110px] flex flex-col gap-4 overflow-y-scroll no-scrollbar">
-        {orders.length > 0 ? (
-          orders.map((order) => (
-            <div
-              key={order._id}
-              className="w-full border rounded-2xl bg-white flex justify-between items-center p-4"
-            >
-              <div className="w-full flex flex-col overflow-x-auto gap-1">
-                <h1 className="font-normal text-opacity-50 text-[1.7vh] sm:text-2xl md:text-3xl">
-                  {order.social}
-                </h1>
-                <h1 className="text-black text-opacity-50 font-medium text-xs sm:text-2xl md:text-3xl">
-                  {order.metrics.postLink}
-                </h1>
-              </div>
-              <div>
-                <h1 className="text-red-600 font-normal text-lg sm:text-2xl md:text-3xl text-opacity-90">
-                  -{order.amount}$
-                </h1>
+      {orders.length > 0 ? (
+        orders.map((order) => (
+          <div key={order._id} className="w-full border rounded-2xl bg-white flex justify-between items-center p-4">
+            <div className="w-full flex flex-col overflow-x-auto gap-1">
+              <h1 className="font-normal text-opacity-50 text-[1.7vh] sm:text-2xl md:text-3xl">
+                {order.social}
+              </h1>
+              <h1 className="text-black text-opacity-50 font-medium text-xs sm:text-2xl md:text-3xl">
+                {order.metrics.postLink}
+              </h1>
+              <div className="w-fit">
+                <details className="bg-gray-100 rounded-lg p-2">
+                  <summary className="text-blue-600 font-normal text-xs sm:text-2xl md:text-3xl">
+                    Show Metrics
+                  </summary>
+                  <div className="flex flex-col mt-2 gap-1">
+                    {Object.entries(order.metrics).map(([key, value]) => (
+                      key !== 'postLink' && value ? (
+                        <div key={key} className="text-gray-800 text-xs sm:text-2xl md:text-3xl">
+                          <strong>{key.charAt(0).toUpperCase() + key.slice(1)}: </strong> {value}
+                        </div>
+                      ) : null
+                    ))}
+                  </div>
+                </details>
               </div>
             </div>
-          ))
-        ) : (
-          <div className="w-full flex justify-center items-center">
-            <h1 className="text-black text-opacity-50 font-normal text-sm sm:text-2xl md:text-3xl">
-              No Transactions Found
-            </h1>
+            <div>
+              <h1 className="text-red-600 font-normal text-lg sm:text-2xl md:text-3xl text-opacity-90">
+                -{order.amount}$
+              </h1>
+            </div>
           </div>
-        )}
+        ))
+        ) : (
+        <div className="w-full flex justify-center items-center">
+          <h1 className="text-black text-opacity-50 font-normal text-sm sm:text-2xl md:text-3xl">
+            No Transactions Found
+          </h1>
+        </div>
+      )}
       </div>
 
       <footer className="w-full flex justify-around items-center p-4 border-dashed border-t-2 border-black">
