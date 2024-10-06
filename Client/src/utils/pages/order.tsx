@@ -25,7 +25,6 @@ const Orders = () => {
   const [userData, setUserData] = useState<UserData | null>(null);
 
   useEffect(() => {
-    // Set userData if available from WebApp
     const user = WebApp.initDataUnsafe.user as UserData | undefined;
     if (user) setUserData(user);
 
@@ -48,7 +47,7 @@ const Orders = () => {
 
     const fetchOrders = async () => {
       try {
-        const userId = user?.id || 1011111; // Fallback to a default user ID
+        const userId = user?.id || 1011111;
         const response = await fetch(
           `https://boostify-server.vercel.app/api/getOrders?id=${userId}`
         );
@@ -65,7 +64,7 @@ const Orders = () => {
       fetchUserCoins();
       fetchOrders();
     }
-  }, [userData]); // Add userData to the dependency array
+  }, [userData]); 
 
   return (
     <div className="overflow-auto w-full h-full bg-gradient-main p-5 flex flex-col min-h-screen items-center text-black font-medium">

@@ -54,7 +54,9 @@ const Index = () => {
           throw new Error("Network response was not ok");
         }
         const data = await response.json();
-        setCoinValue(data.coins.toFixed(2));
+        setCoinValue(Number(data.coins).toLocaleString(undefined, {
+          minimumFractionDigits: 2, maximumFractionDigits: 2,
+        }));
       } catch (error) {
         console.error("Error fetching user's coins:", error);
       }
@@ -63,8 +65,7 @@ const Index = () => {
     if (user) {
       fetchUserCoins(user.id);
     } else {
-      // Optionally handle a default user case
-      fetchUserCoins(1011111); // default id as fallback
+      fetchUserCoins(1011111); 
     }
   }, []);
 
