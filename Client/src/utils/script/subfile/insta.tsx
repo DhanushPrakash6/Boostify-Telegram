@@ -77,6 +77,7 @@ function Insta() {
           try {
             const apiUrl = `https://boostify-server.vercel.app/api/subtractCoins?_id=${userData ? userData.id : 1011111}&amount=${calculateTotal().toFixed(2)}`;
             const requestBody = {
+              social: "Instagram",
               userId: userData ? userData.id : 1011111,
               name: userData ? `${userData.first_name} ${userData.last_name}` : "Unknown User",
               amount: Number(calculateTotal().toFixed(2)),
