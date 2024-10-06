@@ -114,7 +114,7 @@ app.get('/api/getOrders', async (req, res) => {
     const collection = db.collection("Data");
 
     const options = {
-        projection: { metrics: 1, amount: 1, postLink: 1 }
+        projection: { social: 1, metrics: 1, amount: 1, postLink: 1 }
     };
 
     const query = { userId: Number(_id) };  
