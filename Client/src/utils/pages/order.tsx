@@ -46,7 +46,7 @@ const Orders = () => {
     }
     const fetchUserCoins = async () => {
         try {
-          const response = await fetch(user.id ? `https://boostify-server.vercel.app/api/getUserCoin?id=${user.id}` :
+          const response = await fetch((userData !== null) ? `https://boostify-server.vercel.app/api/getUserCoin?id=${user.id}` :
             `https://boostify-server.vercel.app/api/getUserCoin?id=1011111`
           );
           if (!response.ok) {
@@ -61,7 +61,7 @@ const Orders = () => {
     fetchUserCoins();
     const fetchOrders = async () => {
         try {
-            const response = await fetch(user.id ? `https://boostify-server.vercel.app/api/getOrders?id=${user.id}` :
+            const response = await fetch((userData !== null) ? `https://boostify-server.vercel.app/api/getOrders?id=${user.id}` :
                 `https://boostify-server.vercel.app/api/getOrders?id=1011111`
             );
             if (!response.ok) {
