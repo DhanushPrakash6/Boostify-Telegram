@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 import WebApp from "@twa-dev/sdk";
 import Home from "./data.tsx";
 import {
-  profile, coin, podium, fund, home, group
+  profile, coin, podium, fund, home, group, btc, bnb, eth, usdt, sol
 } from "../../images/index.ts";
 
 interface UserData {
@@ -153,9 +153,67 @@ const Funds: React.FC = () => {
       </div>
     
       <div className={`modal-container ${modelOpen ? 'trans-container' : ''}`}>
-          <h2 className="modal-title">Boost Your Balance</h2>
-          <p>Here you can modify the funds...</p>
+          <div className="w-full gap-2 flex flex-col items-start justify-start">
+            <h1 className="font-normal text-2xl sm:text-2xl md:text-1xl">Top up your wallet with any chains below</h1>
+            <h1 className="font-light text-1xl sm:text-1xl md:text-sm opacity-50">Choose coin for deposit</h1>
+          </div>
+          <div className="w-full mt-1 h-[100px] rounded-3xl crypto-container flex items-center justify-between p-5">
+            <div className="flex justify-center items-center">
+              <div className="w-[50px] h-[50px] rounded-full flex items-center justify-center crypto-icon">
+                <img src={usdt} alt="" width="30px" height="30px"/>
+              </div>
+              <h1 className="ml-5 font-bold text-2xl sm:text-2xl md:text-3xl text-white">USDT</h1>
+            </div>
+            <div>
+              <h1 className="ml-5 font-bold text-2xl sm:text-2xl md:text-3xl text-white">1.00$</h1>
+            </div>
+          </div>
+          <div className="w-full h-[100px] rounded-3xl crypto-container flex items-center justify-between p-5">
+            <div className="flex justify-center items-center">
+              <div className="w-[50px] h-[50px] rounded-full flex items-center justify-center crypto-icon">
+                  <img src={btc} alt="" width="30px" height="30px"/>
+              </div>
+              <h1 className="ml-5 font-bold text-2xl sm:text-2xl md:text-3xl text-white">BTC</h1>
+            </div>
+            <div>
+              <h1 className="ml-5 font-bold text-2xl sm:text-2xl md:text-3xl text-white">63,126.50$</h1>
+            </div>
+          </div>
+          <div className="w-full h-[100px] rounded-3xl crypto-container flex items-center justify-between p-5">
+            <div className="flex justify-center items-center">
+              <div className="w-[50px] h-[50px] rounded-full flex items-center justify-center crypto-icon">
+                <img src={eth} alt="" width="30px" height="30px"/>
+              </div>
+              <h1 className="ml-5 font-bold text-2xl sm:text-2xl md:text-3xl text-white">ETH</h1>
+            </div>
+            <div>
+              <h1 className="ml-5 font-bold text-2xl sm:text-2xl md:text-3xl text-white">2376.40$</h1>
+            </div>
+          </div>
+          <div className="w-full h-[100px] rounded-3xl crypto-container flex items-center justify-between p-5">
+            <div className="flex justify-center items-center">
+              <div className="w-[50px] h-[50px] rounded-full flex items-center justify-center crypto-icon">
+                <img src={sol} alt="" width="30px" height="30px"/>
+              </div>
+              <h1 className="ml-5 font-bold text-2xl sm:text-2xl md:text-3xl text-white">SOL</h1>
+            </div>
+            <div>
+              <h1 className="ml-5 font-bold text-2xl sm:text-2xl md:text-3xl text-white">137.33$</h1>
+            </div>
+          </div>
+          <div className="w-full h-[100px] rounded-3xl crypto-container flex items-center justify-between p-5">
+            <div className="flex justify-center items-center">
+              <div className="w-[50px] h-[50px] rounded-full flex items-center justify-center crypto-icon">
+                <img src={bnb} alt="" width="30px" height="30px"/>
+              </div>
+              <h1 className="ml-5 font-bold text-2xl sm:text-2xl md:text-3xl text-white">BNB</h1>
+            </div>
+            <div>
+              <h1 className="ml-5 font-bold text-2xl sm:text-2xl md:text-3xl text-white">563.84$</h1>
+            </div>
+          </div>
       </div>
+
       <button className={`close modal-button ${modelOpen ? '' : 'trans-button'}`} onClick={handleModel}>
         <span></span>
         <span></span>
@@ -170,9 +228,7 @@ const Funds: React.FC = () => {
           />
         </svg>
       </button>
-      {modelOpen && (
-        <div className="absolute h-full w-full top-0 bg-black opacity-70 z-50"></div>
-      )}
+      {modelOpen && (<div className="absolute h-full w-full top-0 bg-black opacity-70 z-50"></div>)}
       <footer className={`w-full flex justify-around items-center p-4 border-dashed border-t-2 border-black ${modelOpen ? 'bg-black bg-opacity-70' : 'bg-gradient-main'} `}>
         {[
           { src: home, alt: "Home" },

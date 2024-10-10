@@ -11,6 +11,12 @@ import group from "./group.png";
 import home from "./home.png";
 import back from "./back.png";
 import wallet from "./wallet.png"
+import btc from "./btc.png"
+import usdt from "./usdt.png"
+import bnb from "./bnb.png"
+import sol from "./sol.png"
+import eth from "./eth.png"
+
 
 export {
     wallet,
@@ -25,5 +31,10 @@ export {
     podium,
     fund,
     group,
-    home
+    home,
+    usdt,
+    bnb,
+    sol,
+    eth,
+    btc
 }
