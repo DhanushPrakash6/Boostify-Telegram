@@ -19,7 +19,7 @@ const Funds: React.FC = () => {
   const [coinValue, setCoinValue] = useState<string | null>(null);
   const [userData, setUserData] = useState<UserData | null>(null);
   const [fundInput, setFundInput] = useState<string>("");
-
+  const [modelOpen, setModelOpen] = useState<boolean>(false);
   useEffect(() => {
     const user = WebApp.initDataUnsafe.user as UserData | undefined;
     if (user) setUserData(user);
@@ -94,8 +94,15 @@ const Funds: React.FC = () => {
     setFundInput(formattedValue);
   };
 
+  const handleModel = () => {
+    if(modelOpen)
+      setModelOpen(false);
+    else 
+      setModelOpen(true);
+  }
+
   return (
-    <div className="overflow-auto w-full h-full bg-gradient-main p-5 flex flex-col min-h-screen items-center text-black font-medium">
+    <div className={`overflow-hidden w-full h-full bg-gradient-main p-5 flex flex-col min-h-screen items-center text-black font-medium`}>
       <div className="w-full flex justify-end items-center">
         <div className="w-full flex justify-left items-center">
           <img src={profile} alt="Profile" className="h-10 w-10" />
@@ -139,10 +146,34 @@ const Funds: React.FC = () => {
             <button onClick={() => handleButtonClick(1000)} className="comic-button">1000$</button>
             <button onClick={() => handleButtonClick(5000)} className="comic-button">5000$</button>
           </div>
+          <button className="txn-btn mt-6" onClick={handleModel}>
+            Boost Balance
+          </button>
         </div>
       </div>
-
-      <footer className="w-full flex justify-around items-center p-4 border-dashed border-t-2 border-black">
+    
+      <div className={`modal-container ${modelOpen ? 'trans-container' : ''}`}>
+          <h2 className="modal-title">Boost Your Balance</h2>
+          <p>Here you can modify the funds...</p>
+      </div>
+      <button className={`close modal-button ${modelOpen ? '' : 'trans-button'}`} onClick={handleModel}>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <svg viewBox="0 0 36 36" className="circle">
+          <path
+            stroke-dasharray="100, 100"
+            d="M18 2.0845
+              a 15.9155 15.9155 0 0 1 0 31.831
+              a 15.9155 15.9155 0 0 1 0 -31.831"
+          />
+        </svg>
+      </button>
+      {modelOpen && (
+        <div className="absolute h-full w-full top-0 bg-black opacity-70 z-50"></div>
+      )}
+      <footer className={`w-full flex justify-around items-center p-4 border-dashed border-t-2 border-black ${modelOpen ? 'bg-black bg-opacity-70' : 'bg-gradient-main'} `}>
         {[
           { src: home, alt: "Home" },
           { src: group, alt: "Friends" },
