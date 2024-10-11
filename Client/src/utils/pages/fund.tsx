@@ -158,61 +158,61 @@ const Funds: React.FC = () => {
             <h1 className="font-light text-1xl sm:text-1xl md:text-sm opacity-50">Choose coin for deposit</h1>
           </div>
           <div className="flex flex-col gap-4 mt-3 h-[85%] overflow-y-auto">
-            <div className="w-full mt-1 h-[90px] rounded-3xl crypto-container flex items-center justify-between p-5">
+            <button name="usdt" className="w-full mt-1 h-[83px] rounded-3xl crypto-container flex items-center justify-between p-5">
               <div className="flex justify-center items-center">
                 <div className="w-[50px] h-[50px] rounded-full flex items-center justify-center crypto-icon">
                   <img src={usdt} alt="" width="30px" height="30px"/>
                 </div>
-                <h1 className="ml-5 font-bold text-2xl sm:text-2xl md:text-3xl text-white">USDT</h1>
+                <h1 className="ml-5 font-bold text-[1.9vh] sm:text-[1.9vh] md:text-[2.5vh] text-white">USDT</h1>
               </div>
               <div>
-                <h1 className="ml-5 font-bold text-2xl sm:text-2xl md:text-3xl text-white">1.00$</h1>
+                <h1 className="ml-5 font-bold text-[1.9vh] sm:text-[1.9vh] md:text-[2.5vh] text-white">1.00$</h1>
               </div>
-            </div>
-            <div className="w-full h-[90px] rounded-3xl crypto-container flex items-center justify-between p-5">
+            </button>
+            <button name="btc" className="w-full h-[83px] rounded-3xl crypto-container flex items-center justify-between p-5">
               <div className="flex justify-center items-center">
                 <div className="w-[50px] h-[50px] rounded-full flex items-center justify-center crypto-icon">
                     <img src={btc} alt="" width="30px" height="30px"/>
                 </div>
-                <h1 className="ml-5 font-bold text-2xl sm:text-2xl md:text-3xl text-white">BTC</h1>
+                <h1 className="ml-5 font-bold text-[1.9vh] sm:text-[1.9vh] md:text-[2.5vh] text-white">BTC</h1>
               </div>
               <div>
-                <h1 className="ml-5 font-bold text-2xl sm:text-2xl md:text-3xl text-white">63,126.50$</h1>
+                <h1 className="ml-5 font-bold text-[1.9vh] sm:text-[1.9vh] md:text-[2.5vh] text-white">63,126.50$</h1>
               </div>
-            </div>
-            <div className="w-full h-[90px] rounded-3xl crypto-container flex items-center justify-between p-5">
+            </button>
+            <button name="eth" className="w-full h-[83px] rounded-3xl crypto-container flex items-center justify-between p-5">
               <div className="flex justify-center items-center">
                 <div className="w-[50px] h-[50px] rounded-full flex items-center justify-center crypto-icon">
                   <img src={eth} alt="" width="30px" height="30px"/>
                 </div>
-                <h1 className="ml-5 font-bold text-2xl sm:text-2xl md:text-3xl text-white">ETH</h1>
+                <h1 className="ml-5 font-bold text-[1.9vh] sm:text-[1.9vh] md:text-[2.5vh] text-white">ETH</h1>
               </div>
               <div>
-                <h1 className="ml-5 font-bold text-2xl sm:text-2xl md:text-3xl text-white">2376.40$</h1>
+                <h1 className="ml-5 font-bold text-[1.9vh] sm:text-[1.9vh] md:text-[2.5vh] text-white">2376.40$</h1>
               </div>
-            </div>
-            <div className="w-full h-[90px] rounded-3xl crypto-container flex items-center justify-between p-5">
+            </button>
+            <button name="sol" className="w-full h-[83px] rounded-3xl crypto-container flex items-center justify-between p-5">
               <div className="flex justify-center items-center">
                 <div className="w-[50px] h-[50px] rounded-full flex items-center justify-center crypto-icon">
                   <img src={sol} alt="" width="30px" height="30px"/>
                 </div>
-                <h1 className="ml-5 font-bold text-2xl sm:text-2xl md:text-3xl text-white">SOL</h1>
+                <h1 className="ml-5 font-bold text-[1.9vh] sm:text-[1.9vh] md:text-[2.5vh] text-white">SOL</h1>
               </div>
               <div>
-                <h1 className="ml-5 font-bold text-2xl sm:text-2xl md:text-3xl text-white">137.33$</h1>
+                <h1 className="ml-5 font-bold text-[1.9vh] sm:text-[1.9vh] md:text-[2.5vh] text-white">137.33$</h1>
               </div>
-            </div>
-            <div className="w-full h-[90px] rounded-3xl crypto-container flex items-center justify-between p-5">
+            </button>
+            <button name="bnb" className="w-full h-[83px] rounded-3xl crypto-container flex items-center justify-between p-5">
               <div className="flex justify-center items-center">
                 <div className="w-[50px] h-[50px] rounded-full flex items-center justify-center crypto-icon">
                   <img src={bnb} alt="" width="30px" height="30px"/>
                 </div>
-                <h1 className="ml-5 font-bold text-2xl sm:text-2xl md:text-3xl text-white">BNB</h1>
+                <h1 className="ml-5 font-bold text-[1.9vh] sm:text-[1.9vh] md:text-[2.5vh] text-white">BNB</h1>
               </div>
               <div>
-                <h1 className="ml-5 font-bold text-2xl sm:text-2xl md:text-3xl text-white">563.84$</h1>
+                <h1 className="ml-5 font-bold text-[1.9vh] sm:text-[1.9vh] md:text-[2.5vh] text-white">563.84$</h1>
               </div>
-            </div>
+            </button>
           </div>
           
       </div>

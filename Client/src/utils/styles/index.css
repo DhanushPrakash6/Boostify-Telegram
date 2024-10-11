@@ -316,3 +316,32 @@ footer a {
 .crypto-icon { 
   background: rgba(255, 255, 255, 0.1);
 }
+
+.crypto-container[name="usdt"], .crypto-container[name="btc"], .crypto-container[name="eth"], .crypto-container[name="bnb"] {
+  transition: all 0.2s;
+}
+
+.crypto-container[name="sol"] {
+  transition: transform 0.2s;
+}
+
+.crypto-container[name="usdt"]:active {
+  background: #26A17B;
+}
+
+.crypto-container[name="btc"]:active {
+  background: #F7931A;
+}
+
+.crypto-container[name="eth"]:active {
+  background: #2436ac;
+}
+
+.crypto-container[name="sol"]:active {
+  background: rgb(0,255,163);
+  background: linear-gradient(200deg, rgba(0,255,163,1) 0%, rgba(3,225,255,1) 35%, rgba(220,31,255,1) 65%, rgba(0,0,0,1) 100%);
+}
+
+.crypto-container[name="bnb"]:active {
+  background: #F0B90B;
+}
