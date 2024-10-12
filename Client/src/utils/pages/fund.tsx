@@ -5,7 +5,8 @@ import Home from "./data.tsx";
 import {
   profile, coin, podium, fund, home, group, btc, bnb, eth, usdt, sol
 } from "../../images/index.ts";
-
+import { v4 as uuidv4 } from "uuid";
+import Warning from "../script/component/warning.tsx";
 interface UserData {
   id: number;
   first_name: string;
@@ -20,6 +21,7 @@ const Funds: React.FC = () => {
   const [userData, setUserData] = useState<UserData | null>(null);
   const [fundInput, setFundInput] = useState<string>("");
   const [modelOpen, setModelOpen] = useState<boolean>(false);
+  const [alerts, setAlerts] = useState([]);
   useEffect(() => {
     const user = WebApp.initDataUnsafe.user as UserData | undefined;
     if (user) setUserData(user);
@@ -93,12 +95,26 @@ const Funds: React.FC = () => {
     const formattedValue = formatCurrency(value.toString(), true);
     setFundInput(formattedValue);
   };
-
+  const newAlert = { id: uuidv4() };
   const handleModel = () => {
-    if(modelOpen)
+    if(modelOpen) {
       setModelOpen(false);
-    else 
-      setModelOpen(true);
+    }
+    else {
+      if(fundInput !== "")
+        setModelOpen(true);
+      else
+        setAlerts((prev) => [...prev, { id: Date.now(), type: "success" }]);
+    }
+  }
+  setTimeout(() => {
+    setAlerts((prevAlerts) =>
+      prevAlerts.filter((alert) => alert.id !== newAlert.id)
+    );
+  }, 5000);
+
+  if (alerts.length >= 5) {
+    setAlerts((prevAlerts) => prevAlerts.slice(1));
   }
 
   return (
@@ -157,16 +173,17 @@ const Funds: React.FC = () => {
             <h1 className="font-normal text-2xl sm:text-2xl md:text-1xl">Top up your wallet with any chains below</h1>
             <h1 className="font-light text-1xl sm:text-1xl md:text-sm opacity-50">Choose coin for deposit</h1>
           </div>
+          <h1 className="font-normal text-[1.8vh] sm:text-[1.8vh] md:text-[2.1vh] mt-3 w-full flex justify-center">Amount : {fundInput}</h1>
           <div className="flex flex-col gap-4 mt-3 h-[85%] overflow-y-auto">
             <button name="usdt" className="w-full mt-1 h-[83px] rounded-3xl crypto-container flex items-center justify-between p-5">
               <div className="flex justify-center items-center">
                 <div className="w-[50px] h-[50px] rounded-full flex items-center justify-center crypto-icon">
                   <img src={usdt} alt="" width="30px" height="30px"/>
                 </div>
-                <h1 className="ml-5 font-bold text-[1.9vh] sm:text-[1.9vh] md:text-[2.5vh] text-white">USDT</h1>
+                <h1 className="ml-5 font-bold text-[2.1vh] sm:text-[2.1vh] md:text-[2.5vh] text-white">USDT</h1>
               </div>
               <div>
-                <h1 className="ml-5 font-bold text-[1.9vh] sm:text-[1.9vh] md:text-[2.5vh] text-white">1.00$</h1>
+                <h1 className="ml-5 font-bold text-[2.1vh] sm:text-[2.1vh] md:text-[2.5vh] text-white">1.00$</h1>
               </div>
             </button>
             <button name="btc" className="w-full h-[83px] rounded-3xl crypto-container flex items-center justify-between p-5">
@@ -174,10 +191,10 @@ const Funds: React.FC = () => {
                 <div className="w-[50px] h-[50px] rounded-full flex items-center justify-center crypto-icon">
                     <img src={btc} alt="" width="30px" height="30px"/>
                 </div>
-                <h1 className="ml-5 font-bold text-[1.9vh] sm:text-[1.9vh] md:text-[2.5vh] text-white">BTC</h1>
+                <h1 className="ml-5 font-bold text-[2.1vh] sm:text-[2.1vh] md:text-[2.5vh] text-white">BTC</h1>
               </div>
               <div>
-                <h1 className="ml-5 font-bold text-[1.9vh] sm:text-[1.9vh] md:text-[2.5vh] text-white">63,126.50$</h1>
+                <h1 className="ml-5 font-bold text-[2.1vh] sm:text-[2.1vh] md:text-[2.5vh] text-white">63,126.50$</h1>
               </div>
             </button>
             <button name="eth" className="w-full h-[83px] rounded-3xl crypto-container flex items-center justify-between p-5">
@@ -185,10 +202,10 @@ const Funds: React.FC = () => {
                 <div className="w-[50px] h-[50px] rounded-full flex items-center justify-center crypto-icon">
                   <img src={eth} alt="" width="30px" height="30px"/>
                 </div>
-                <h1 className="ml-5 font-bold text-[1.9vh] sm:text-[1.9vh] md:text-[2.5vh] text-white">ETH</h1>
+                <h1 className="ml-5 font-bold text-[2.1vh] sm:text-[2.1vh] md:text-[2.5vh] text-white">ETH</h1>
               </div>
               <div>
-                <h1 className="ml-5 font-bold text-[1.9vh] sm:text-[1.9vh] md:text-[2.5vh] text-white">2376.40$</h1>
+                <h1 className="ml-5 font-bold text-[2.1vh] sm:text-[2.1vh] md:text-[2.5vh] text-white">2376.40$</h1>
               </div>
             </button>
             <button name="sol" className="w-full h-[83px] rounded-3xl crypto-container flex items-center justify-between p-5">
@@ -196,10 +213,10 @@ const Funds: React.FC = () => {
                 <div className="w-[50px] h-[50px] rounded-full flex items-center justify-center crypto-icon">
                   <img src={sol} alt="" width="30px" height="30px"/>
                 </div>
-                <h1 className="ml-5 font-bold text-[1.9vh] sm:text-[1.9vh] md:text-[2.5vh] text-white">SOL</h1>
+                <h1 className="ml-5 font-bold text-[2.1vh] sm:text-[2.1vh] md:text-[2.5vh] text-white">SOL</h1>
               </div>
               <div>
-                <h1 className="ml-5 font-bold text-[1.9vh] sm:text-[1.9vh] md:text-[2.5vh] text-white">137.33$</h1>
+                <h1 className="ml-5 font-bold text-[2.1vh] sm:text-[2.1vh] md:text-[2.5vh] text-white">137.33$</h1>
               </div>
             </button>
             <button name="bnb" className="w-full h-[83px] rounded-3xl crypto-container flex items-center justify-between p-5">
@@ -207,16 +224,19 @@ const Funds: React.FC = () => {
                 <div className="w-[50px] h-[50px] rounded-full flex items-center justify-center crypto-icon">
                   <img src={bnb} alt="" width="30px" height="30px"/>
                 </div>
-                <h1 className="ml-5 font-bold text-[1.9vh] sm:text-[1.9vh] md:text-[2.5vh] text-white">BNB</h1>
+                <h1 className="ml-5 font-bold text-[2.1vh] sm:text-[2.1vh] md:text-[2.5vh] text-white">BNB</h1>
               </div>
               <div>
-                <h1 className="ml-5 font-bold text-[1.9vh] sm:text-[1.9vh] md:text-[2.5vh] text-white">563.84$</h1>
+                <h1 className="ml-5 font-bold text-[2.1vh] sm:text-[2.1vh] md:text-[2.5vh] text-white">563.84$</h1>
               </div>
             </button>
           </div>
-          
       </div>
-
+      {alerts.map((alert) => (
+          <div key={alert.id} className="fixed top-3 alert">
+            {<Warning message="Fill the Amount"/>}
+          </div>
+        ))}
       <button className={`close modal-button ${modelOpen ? '' : 'trans-button'}`} onClick={handleModel}>
         <span></span>
         <span></span>
@@ -224,14 +244,14 @@ const Funds: React.FC = () => {
         <span></span>
         <svg viewBox="0 0 36 36" className="circle">
           <path
-            stroke-dasharray="100, 100"
+            strokeDasharray="100, 100"
             d="M18 2.0845
               a 15.9155 15.9155 0 0 1 0 31.831
               a 15.9155 15.9155 0 0 1 0 -31.831"
           />
         </svg>
       </button>
-      {modelOpen && (<div className="absolute h-full w-full top-0 bg-black opacity-70 z-50"></div>)}
+      {modelOpen && (<div className="absolute h-[150%] w-full top-0 bg-black opacity-70 z-50"></div>)}
       <footer className={`w-full flex justify-around items-center p-4 border-dashed border-t-2 border-black ${modelOpen ? 'bg-black bg-opacity-70' : 'bg-gradient-main'} `}>
         {[
           { src: home, alt: "Home" },

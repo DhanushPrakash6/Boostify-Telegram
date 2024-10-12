@@ -156,7 +156,6 @@ const Index = () => {
             </div>
           ))}
         </div>
-
         <footer className="w-full flex justify-around items-center p-4 border-dashed border-t-2 border-black">
           {[
             { src: home, alt: "Home" },
