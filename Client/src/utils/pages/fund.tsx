@@ -179,7 +179,7 @@ const Funds: React.FC = () => {
       </div>
     
       <div className={`relative overflow-hidden modal-container ${modelOpen ? 'trans-container' : ''}`}>
-          <div className={`absolute flex flex-col items-center p-[100px] w-[90%] h-[95%] bg-opacity-80 gap-4 rounded-xl duration-[1s] bg-black ${moveDiv ? '' : 'mov1'}`}>
+          <div className={`absolute flex flex-col items-center p-[100px] w-[90%] h-[95%] bg-opacity-80 gap-4 rounded-xl duration-[1s] ${moveDiv ? '' : 'mov1'}`}>
             <div className="absolute top-0 left-0">
               <button onClick={movDiv}>
                 <div
@@ -196,15 +196,15 @@ const Funds: React.FC = () => {
             <div className="w-[50px] h-[50px] rounded-full flex items-center justify-center bg-[#26A17B]">
               <img src={usdt} alt="" width="30px" height="30px"/>
             </div>
-            <h1 className="text-white font-mono text-[10px] sm:text-[2.1vh] md:text-[2.5vh]">0xaf6Dd8Feb4B7BAAe4fb667A3B574a079d35D76AB</h1>
+            <h1 className="text-black font-mono text-[10px] sm:text-[2.1vh] md:text-[2.5vh]">0xaf6Dd8Feb4B7BAAe4fb667A3B574a079d35D76AB</h1>
           </div>
-          <div className={`w-full gap-2 flex flex-col items-start justify-start transition-{transform} duration-1000 ${moveDiv ? 'mov' : ''}`}>
+          <div className={`w-full gap-2 flex flex-col items-start justify-start transition-{transform} duration-[0.8s] ${moveDiv ? 'mov' : ''}`}>
             <h1 className="font-normal text-2xl sm:text-2xl md:text-1xl">Top up your wallet with any chains below</h1>
             <h1 className="font-light text-1xl sm:text-1xl md:text-sm opacity-50">Choose coin for deposit</h1>
           </div>
-          <h1 className={`font-normal text-[1.8vh] sm:text-[1.8vh] md:text-[2.1vh] mt-3 w-full flex justify-center transition-{transform} duration-1000 ${moveDiv ? 'mov' : ''}`}>Amount : {fundInput}</h1>
-          <div className="flex flex-col gap-4 mt-3 h-[85%] overflow-y-auto pb-[25px] no-scrollbar">
-            <button name="usdt" className={`w-full mt-1 h-[83px] rounded-3xl crypto-container flex items-center justify-between p-5 delay-[0.5s] duration-[3s] ${moveDiv ? 'mov' : ''}`}>
+          <h1 className={`font-normal text-[1.8vh] sm:text-[1.8vh] md:text-[2.1vh] mt-3 w-full flex justify-center transition-{transform} duration-[0.8s] ${moveDiv ? 'mov' : ''}`}>Amount : {fundInput}</h1>
+          <div className="flex flex-col gap-4 mt-3 h-[85%] overflow-visible pb-[25px] no-scrollbar">
+            <button name="usdt" onClick={movDiv} className={`w-full mt-1 h-[83px] rounded-3xl crypto-container flex items-center justify-between p-5 duration-[3s] ${moveDiv ? 'mov' : ''}`}>
               <div className="flex justify-center items-center">
                 <div className="w-[50px] h-[50px] rounded-full flex items-center justify-center crypto-icon">
                   <img src={usdt} alt="" width="30px" height="30px"/>
@@ -215,10 +215,11 @@ const Funds: React.FC = () => {
                 <h1 className="ml-5 font-bold text-[2.1vh] sm:text-[2.1vh] md:text-[2.5vh] text-white">1.00$</h1>
               </div>
             </button>
-            <button name="btc" onClick={movDiv} className={`w-full h-[83px] rounded-3xl crypto-container flex items-center justify-between p-5 delay-[0.6s] duration-[3s] ${moveDiv ? 'mov' : ''}`}>
+            
+            <button name="btc" className={`w-full h-[83px] rounded-3xl crypto-container flex items-center justify-between p-5 duration-[3s] ${moveDiv ? 'mov' : ''}`}>
               <div className="flex justify-center items-center">
                 <div className="w-[50px] h-[50px] rounded-full flex items-center justify-center crypto-icon">
-                    <img src={btc} alt="" width="30px" height="30px"/>
+                  <img src={btc} alt="" width="30px" height="30px"/>
                 </div>
                 <h1 className="ml-5 font-bold text-[2.1vh] sm:text-[2.1vh] md:text-[2.5vh] text-white">BTC</h1>
               </div>
@@ -226,7 +227,8 @@ const Funds: React.FC = () => {
                 <h1 className="ml-5 font-bold text-[2.1vh] sm:text-[2.1vh] md:text-[2.5vh] text-white">63,126.50$</h1>
               </div>
             </button>
-            <button name="eth" className={`w-full h-[83px] rounded-3xl crypto-container flex items-center justify-between p-5 delay-[0.8s] duration-[3s] ${moveDiv ? 'mov' : ''}`}>
+            
+            <button name="eth" className={`w-full h-[83px] rounded-3xl crypto-container flex items-center justify-between p-5 duration-[3s] ${moveDiv ? 'mov' : ''}`}>
               <div className="flex justify-center items-center">
                 <div className="w-[50px] h-[50px] rounded-full flex items-center justify-center crypto-icon">
                   <img src={eth} alt="" width="30px" height="30px"/>
@@ -237,7 +239,8 @@ const Funds: React.FC = () => {
                 <h1 className="ml-5 font-bold text-[2.1vh] sm:text-[2.1vh] md:text-[2.5vh] text-white">2376.40$</h1>
               </div>
             </button>
-            <button name="sol" className={`w-full h-[83px] rounded-3xl crypto-container flex items-center justify-between p-5 delay-[1s] duration-[3s] ${moveDiv ? 'mov' : ''}`}>
+
+            <button name="sol" className={`w-full h-[83px] rounded-3xl crypto-container flex items-center justify-between p-5 duration-[3s] ${moveDiv ? 'mov' : ''}`}>
               <div className="flex justify-center items-center">
                 <div className="w-[50px] h-[50px] rounded-full flex items-center justify-center crypto-icon">
                   <img src={sol} alt="" width="30px" height="30px"/>
@@ -248,7 +251,8 @@ const Funds: React.FC = () => {
                 <h1 className="ml-5 font-bold text-[2.1vh] sm:text-[2.1vh] md:text-[2.5vh] text-white">137.33$</h1>
               </div>
             </button>
-            <button name="bnb" className={`w-full h-[83px] rounded-3xl crypto-container flex items-center justify-between p-5 delay-[1.2s] duration-[3s] ${moveDiv ? 'mov' : ''}`}>
+            
+            <button name="bnb" className={`w-full h-[83px] rounded-3xl crypto-container flex items-center justify-between p-5 duration-[3s] ${moveDiv ? 'mov' : ''}`}>
               <div className="flex justify-center items-center">
                 <div className="w-[50px] h-[50px] rounded-full flex items-center justify-center crypto-icon">
                   <img src={bnb} alt="" width="30px" height="30px"/>
@@ -259,28 +263,7 @@ const Funds: React.FC = () => {
                 <h1 className="ml-5 font-bold text-[2.1vh] sm:text-[2.1vh] md:text-[2.5vh] text-white">563.84$</h1>
               </div>
             </button>
-            {/* <button name="bnb" className="w-full h-[83px] rounded-3xl crypto-container flex items-center justify-between p-5">
-              <div className="flex justify-center items-center">
-                <div className="w-[50px] h-[50px] rounded-full flex items-center justify-center crypto-icon">
-                  <img src={bnb} alt="" width="30px" height="30px"/>
-                </div>
-                <h1 className="ml-5 font-bold text-[2.1vh] sm:text-[2.1vh] md:text-[2.5vh] text-white">BNB</h1>
-              </div>
-              <div>
-                <h1 className="ml-5 font-bold text-[2.1vh] sm:text-[2.1vh] md:text-[2.5vh] text-white">563.84$</h1>
-              </div>
-            </button>
-            <button name="bnb" className="w-full h-[83px] rounded-3xl crypto-container flex items-center justify-between p-5">
-              <div className="flex justify-center items-center">
-                <div className="w-[50px] h-[50px] rounded-full flex items-center justify-center crypto-icon">
-                  <img src={bnb} alt="" width="30px" height="30px"/>
-                </div>
-                <h1 className="ml-5 font-bold text-[2.1vh] sm:text-[2.1vh] md:text-[2.5vh] text-white">BNB</h1>
-              </div>
-              <div>
-                <h1 className="ml-5 font-bold text-[2.1vh] sm:text-[2.1vh] md:text-[2.5vh] text-white">563.84$</h1>
-              </div>
-            </button> */}
+            
           </div>
       </div>
       {alerts.map((alert) => (
@@ -302,7 +285,7 @@ const Funds: React.FC = () => {
           />
         </svg>
       </button>
-      {modelOpen && (<div className="absolute h-[150%] w-full top-0 bg-black opacity-70 z-50"></div>)}
+      {modelOpen && (<div className="fixed h-[150%] w-full top-0 bg-black opacity-70 z-50"></div>)}
       <footer className={`w-full flex justify-around items-center p-4 border-dashed border-t-2 border-black ${modelOpen ? 'bg-black bg-opacity-70' : 'bg-gradient-main'} `}>
         {[
           { src: home, alt: "Home" },

@@ -319,12 +319,12 @@ footer a {
 
 .crypto-container[name="usdt"], .crypto-container[name="btc"], .crypto-container[name="eth"], .crypto-container[name="bnb"] {
   transition: background 0.2s;
-  transition: transform 1.5s;
+  transition: transform 0.5s;
   
 }
 
 .crypto-container[name="sol"] {
-  transition: transform 1.5s;
+  transition: transform 0.5s;
 }
 
 .crypto-container[name="usdt"]:active {
@@ -358,4 +358,24 @@ footer a {
 
 .mov1 {
   transform: translateX(150%);
+}
+
+.crypto-container[name="usdt"] {
+  transition-delay: 0.1s;
+}
+
+.crypto-container[name="btc"] {
+  transition-delay: 0.2s;
+}
+
+.crypto-container[name="eth"] {
+  transition-delay: 0.3s;
+}
+
+.crypto-container[name="sol"] {
+  transition-delay: 0.4s;
+}
+
+.crypto-container[name="bnb"] {
+  transition-delay: 0.5s;
 }
