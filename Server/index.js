@@ -181,7 +181,7 @@ app.get('/api/txn', async (req, res) => {
       return res.status(400).json({ error: 'Invalid Transaction Hash' });
     }
 
-    await txnCollection.insertOne({ txnHash: txnHash, userId: userId, valueInUSD: valueInUSD, coin: coin });
+    await txnCollection.insertOne({ txnHash: txnHash, userId: Number(userId), valueInUSD: valueInUSD, coin: coin });
 
     const usersCollection = db.collection("Users");
     const user = await usersCollection.findOne({ _id: Number(userId) });

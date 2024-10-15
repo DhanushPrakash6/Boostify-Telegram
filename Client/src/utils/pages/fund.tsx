@@ -266,10 +266,10 @@ const Funds: React.FC = () => {
               <h1 className="text-[18px] sm:text-[2.1vh] md:text-[2.5vh]">USDT (ERC-20)</h1>
               <h1 className="opacity-60 font-light text-[16px] sm:text-[2.1vh] md:text-[2.5vh]">Wallet Address</h1>
               <h1 
-                onClick={(e) => handleLinkClick(e, "0xaf6Dd8Feb4B7BAAe4fb667A3B574a079d35D76AB")} 
+                onClick={(e) => handleLinkClick(e, "0xee7911f4beaa561ae4f18ffccf52ed49342cb723")} 
                 className="link-text ext-black font-bold font-mono text-[14px] sm:text-[2.1vh] md:text-[2.5vh]"
               >
-                0xaf6Dd8Feb4B7BAAe4fb667A3B574a079d35D76AB
+                0xee7911f4beaa561ae4f18ffccf52ed49342cb723
               </h1>
               <h1 
                 className="font-normal opacity-60 text-[13px] sm:text-[2.1vh] md:text-[2.5vh]"
@@ -288,7 +288,7 @@ const Funds: React.FC = () => {
                 After the deposit, kindly provide the correct Transaction ID for verification on the Ethereum network (ERC-20 USDT)
               </h1>
               <button 
-                onClick={() => handleTxn('0xaf6Dd8Feb4B7BAAe4fb667A3B574a079d35D76AB', 'USDT')} 
+                onClick={() => handleTxn('0xee7911f4beaa561ae4f18ffccf52ed49342cb723', 'USDT')} 
                 className="button-confirm mt-3"
               >
                 Submit →
