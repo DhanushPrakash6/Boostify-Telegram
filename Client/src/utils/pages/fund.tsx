@@ -71,7 +71,7 @@ const Funds: React.FC = () => {
         const data = await res.json();
         console.log(data);
         console.log(data.valueInUSD);
-        setAlerts((prev) => [...prev, { id: Date.now(), type: "success", message: `${data.valueInUSD}` }]);
+        setAlerts((prev) => [...prev, { id: Date.now(), type: "success1", message: `${data.valueInUSD}` }]);
       } else {
         // If the response is not OK, handle errors based on status
         const errorData = await res.json(); // Extract the error message from the response
@@ -238,7 +238,7 @@ const Funds: React.FC = () => {
             <div key={alert.id} className="fixed top-4 alert" style={{ zIndex: 9999 }}>
               {alert.type === "hash" && <Warning message={alert.message}/>}
               {alert.type == "error" && <Failure message={alert.message}/>}
-              {alert.type === "success" && <Success amount={alert.message}/>}
+              {alert.type === "success1" && <Success amount={alert.message}/>}
               {/* {alert.type === "failure" && <Failure message = "Insufficient Funds"/>}
               {alert.type === "success" && (
                 <Success amount={calculateTotal().toFixed(2)} />
