@@ -8,6 +8,7 @@ import {
 import { v4 as uuidv4 } from "uuid";
 import Warning from "../script/component/warning.tsx";
 import {back} from "../../../src/images/index.ts";
+import { link } from "fs";
 interface UserData {
   id: number;
   first_name: string;
@@ -48,6 +49,11 @@ const Funds: React.FC = () => {
     const userId = user?.id || 1011111; // Fallback ID
     fetchUserCoins(userId);
   }, [userData]);
+
+  const handleLinkClick = (e: React.MouseEvent<HTMLAnchorElement, MouseEvent>, link: string) => {
+      navigator.clipboard.writeText(link);
+  };
+
 
   const formatNumber = (n: string) => {
     return n.replace(/\D/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ",");
@@ -196,8 +202,16 @@ const Funds: React.FC = () => {
             <div className="w-[50px] h-[50px] rounded-full flex items-center justify-center bg-[#26A17B]">
               <img src={usdt} alt="" width="30px" height="30px"/>
             </div>
-            <h1 className="text-black font-mono text-[10px] sm:text-[2.1vh] md:text-[2.5vh]">0xaf6Dd8Feb4B7BAAe4fb667A3B574a079d35D76AB</h1>
+            <h1 
+              onClick={(e) => handleLinkClick(e, "0xaf6Dd8Feb4B7BAAe4fb667A3B574a079d35D76AB")} 
+              className="link-text ext-black font-mono text-[10px] sm:text-[2.1vh] md:text-[2.5vh]"
+            >
+              0xaf6Dd8Feb4B7BAAe4fb667A3B574a079d35D76AB
+            </h1>
+
           </div>
+
+
           <div className={`w-full gap-2 flex flex-col items-start justify-start transition-{transform} duration-[0.8s] ${moveDiv ? 'mov' : ''}`}>
             <h1 className="font-normal text-2xl sm:text-2xl md:text-1xl">Top up your wallet with any chains below</h1>
             <h1 className="font-light text-1xl sm:text-1xl md:text-sm opacity-50">Choose coin for deposit</h1>
