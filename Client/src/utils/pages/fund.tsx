@@ -55,7 +55,6 @@ const Funds: React.FC = () => {
   }, [userData]);
   const handleTxn = async (to, coin) => {
     const userId = userData?.id || 1011111;
-    console.log(txnHash);
   
     if (!txnHash) {
       setAlerts((prev) => [...prev, { id: Date.now(), type: "emptyHash" }]);
@@ -63,14 +62,41 @@ const Funds: React.FC = () => {
     }
   
     try {
-      const res = await axios.get(`https://boostify-server.vercel.app/api/txn?txnHash=${txnHash}&to=${to}&userId=${userId}&coin=${coin}`);
-      console.log(res.data);
-
-      setAlerts((prev) => [...prev, { id: Date.now(), type: "success" }]);
+      const res = await fetch(`https://boostify-server.vercel.app/api/txn?txnHash=${txnHash}&to=${to}&userId=${userId}&coin=${coin}`, {
+        method: 'GET',
+      });
+  
+      // Check if the response is OK (status code 200-299)
+      if (res.ok) {
+        const data = await res.json();
+        console.log(data);
+        console.log(data.valueInUSD);
+        setAlerts((prev) => [...prev, { id: Date.now(), type: "success", message: `${data.valueInUSD}` }]);
+      } else {
+        // If the response is not OK, handle errors based on status
+        const errorData = await res.json(); // Extract the error message from the response
+  
+        if (res.status === 400) {
+          if (errorData.error === 'Invalid Transaction Hash') {
+            setAlerts((prev) => [...prev, { id: Date.now(), type: "hash", message: 'Invalid Transaction Hash' }]);
+          } else if (errorData.error === 'These Features will be available soon') {
+            setAlerts((prev) => [...prev, { id: Date.now(), type: "hash", message: 'These Features will be available soon' }]);
+          } else if (errorData.error === 'Parameter Error') {
+            setAlerts((prev) => [...prev, { id: Date.now(), type: "hash", message: 'Parameter Error' }]);
+          }
+        } else if (res.status === 404 && errorData.error === 'Transaction not found') {
+          setAlerts((prev) => [...prev, { id: Date.now(), type: "error", message: 'Transaction not found' }]);
+        } else {
+          setAlerts((prev) => [...prev, { id: Date.now(), type: "error", message: "Unexpected error occurred" }]);
+        }
+      }
     } catch (error) {
-      setAlerts((prev) => [...prev, { id: Date.now(), type: "error" }]);
+      // Handle network errors or fetch-specific errors
+      setAlerts((prev) => [...prev, { id: Date.now(), type: "error", message: "Network error or no response from server" }]);
+      console.error('Network error:', error);
     }
   };
+  
   
 
   const handleLinkClick = (e: React.MouseEvent<HTMLAnchorElement, MouseEvent>, link: string) => {
@@ -210,9 +236,9 @@ const Funds: React.FC = () => {
       <div className={`relative overflow-hidden modal-container ${modelOpen ? 'trans-container' : ''}`}>
           {alerts.map((alert) => (
             <div key={alert.id} className="fixed top-4 alert" style={{ zIndex: 9999 }}>
-              {alert.type === "emptyHash" && <Warning message="Fill Txn Hash"/>}
-              {alert.type === "success" && <Success message="Confirmation Submitted"/>}
-              {alert.type == "error" && <Failure message="Error Occurred"/>}
+              {alert.type === "hash" && <Warning message={alert.message}/>}
+              {alert.type == "error" && <Failure message={alert.message}/>}
+              {alert.type === "success" && <Success amount={alert.message}/>}
               {/* {alert.type === "failure" && <Failure message = "Insufficient Funds"/>}
               {alert.type === "success" && (
                 <Success amount={calculateTotal().toFixed(2)} />
