@@ -84,7 +84,7 @@ function Insta() {
   
       const subtractCoins = async () => {
         try {
-          const userId = userData?.id || 1011111; // Fallback for user ID
+          const userId = userData?.id || 1011111; 
           const totalAmount = calculateTotal().toFixed(2);
           const apiUrl = `https://boostify-server.vercel.app/api/subtractCoins?_id=${userId}&amount=${totalAmount}`;
           

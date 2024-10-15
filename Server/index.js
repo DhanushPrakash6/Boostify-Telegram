@@ -2,7 +2,15 @@ const express = require('express');
 const { MongoClient } = require('mongodb');
 const bodyParser = require('body-parser');
 const cors = require('cors');
+const { Network, Alchemy } = require("alchemy-sdk");
+const axios = require('axios');
 
+const settings = {
+  apiKey: "yv2uBTVdxcrjGhFHoLkX8r1DVBYYGCVW",
+  network: Network.ETH_MAINNET,
+};
+
+const alchemy = new Alchemy(settings);
 const app = express();
 const port = process.env.PORT || 3000;
 
@@ -121,7 +129,7 @@ app.get('/api/getOrders', async (req, res) => {
 
     const result = await collection.find(query, options).toArray();  
 
-    if (result.length > 0) {  // Check if any documents were found
+    if (result.length > 0) {  
         res.setHeader('Content-Type', 'application/json');
         res.status(200).json({ result });
     } else {
@@ -133,6 +141,91 @@ app.get('/api/getOrders', async (req, res) => {
   }
 
 });
+app.get('/api/txn', async (req, res) => {
+  const userId = req.query.userId; 
+  const txnHash = req.query.txnHash; 
+  const toAddress = req.query.to; 
+  const coin = req.query.coin;
+
+  if (!txnHash || !toAddress || !userId) {
+    return res.status(400).json({ error: 'Parameter Error' });
+  }
+
+  if (coin !== "USDT" && coin !== "ETH") {
+    return res.status(400).json({ error: 'These Features will be available soon' });
+  }
+
+  try {
+    const txnDetails = await alchemy.core.getTransaction(txnHash);
+
+    if (!txnDetails) {
+      return res.status(404).json({ error: 'Transaction not found' });
+    }
+
+    if (txnDetails.to.toLowerCase() !== toAddress.toLowerCase()) {
+      return res.status(400).json({ error: 'Invalid Transaction Hash' });
+    }
+
+    const valueInWei = txnDetails.value;
+    const valueInETH = valueInWei / (10 ** 18); 
+    const ethPriceInUSD = await getETHPriceInUSD();
+    const valueInUSD = valueInETH * ethPriceInUSD;
+
+    const connection = await clientPromise;
+    const db = connection.db("Boostify");
+    const txnCollection = db.collection("Transactions");
+    
+    const existingTxn = await txnCollection.findOne({ txnHash: txnHash });
+
+    if (existingTxn) {
+      return res.status(400).json({ error: 'Invalid Transaction Hash' });
+    }
+
+    await txnCollection.insertOne({ txnHash: txnHash, userId: userId, valueInUSD: valueInUSD, coin: coin });
+
+    const usersCollection = db.collection("Users");
+    const user = await usersCollection.findOne({ _id: Number(userId) });
+
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    const updatedCoins = user.coins + valueInUSD;
+
+    await usersCollection.updateOne(
+      { _id: Number(userId) },
+      { $set: { coins: updatedCoins } }
+    );
+
+    res.json({
+      success: true,
+      transactionHash: txnDetails.hash,
+      from: txnDetails.from,
+      to: txnDetails.to,
+      valueInWei: valueInWei.toString(),
+      valueInETH: valueInETH,
+      valueInUSD: valueInUSD.toFixed(2), 
+      gasPrice: txnDetails.gasPrice.toString(),
+      gasLimit: txnDetails.gasLimit.toString(),
+      blockNumber: txnDetails.blockNumber,
+      ethPriceInUSD: ethPriceInUSD
+    });
+  } catch (error) {
+    res.status(500).json({ error: 'Invalid Transaction Hash' });
+  }
+});
+
+
+async function getETHPriceInUSD() {
+  try {
+    const response = await axios.get('https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=usd');
+    return response.data.ethereum.usd;
+  } catch (error) {
+    console.error('Error fetching ETH price:', error);
+    throw new Error('Could not fetch ETH price');
+  }
+}
+
 
 app.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);

@@ -7,8 +7,11 @@ import {
 } from "../../images/index.ts";
 import { v4 as uuidv4 } from "uuid";
 import Warning from "../script/component/warning.tsx";
+import Success from "../script/component/success.tsx";
+import Failure from "../script/component/fail.tsx";
 import {back} from "../../../src/images/index.ts";
-import InputField from "../script/component/input.tsx";
+import axios from 'axios';
+import { log } from "console";
 interface UserData {
   id: number;
   first_name: string;
@@ -25,6 +28,7 @@ const Funds: React.FC = () => {
   const [modelOpen, setModelOpen] = useState<boolean>(false);
   const [alerts, setAlerts] = useState([]);
   const [moveDiv, setMoveDiv] = useState<boolean>(false);
+  const [txnHash, setTxnHash] = useState('');
   useEffect(() => {
     const user = WebApp.initDataUnsafe.user as UserData | undefined;
     if (user) setUserData(user);
@@ -46,9 +50,28 @@ const Funds: React.FC = () => {
       }
     };
 
-    const userId = user?.id || 1011111; // Fallback ID
+    const userId = user?.id || 1011111; 
     fetchUserCoins(userId);
   }, [userData]);
+  const handleTxn = async (to, coin) => {
+    const userId = userData?.id || 1011111;
+    console.log(txnHash);
+  
+    if (!txnHash) {
+      setAlerts((prev) => [...prev, { id: Date.now(), type: "emptyHash" }]);
+      return;
+    }
+  
+    try {
+      const res = await axios.get(`https://boostify-server.vercel.app/api/txn?txnHash=${txnHash}&to=${to}&userId=${userId}&coin=${coin}`);
+      console.log(res.data);
+
+      setAlerts((prev) => [...prev, { id: Date.now(), type: "success" }]);
+    } catch (error) {
+      setAlerts((prev) => [...prev, { id: Date.now(), type: "error" }]);
+    }
+  };
+  
 
   const handleLinkClick = (e: React.MouseEvent<HTMLAnchorElement, MouseEvent>, link: string) => {
       navigator.clipboard.writeText(link);
@@ -185,6 +208,17 @@ const Funds: React.FC = () => {
       </div>
     
       <div className={`relative overflow-hidden modal-container ${modelOpen ? 'trans-container' : ''}`}>
+          {alerts.map((alert) => (
+            <div key={alert.id} className="fixed top-4 alert" style={{ zIndex: 9999 }}>
+              {alert.type === "emptyHash" && <Warning message="Fill Txn Hash"/>}
+              {alert.type === "success" && <Success message="Confirmation Submitted"/>}
+              {alert.type == "error" && <Failure message="Error Occurred"/>}
+              {/* {alert.type === "failure" && <Failure message = "Insufficient Funds"/>}
+              {alert.type === "success" && (
+                <Success amount={calculateTotal().toFixed(2)} />
+              )} */}
+            </div>
+          ))}
           <div className={`absolute flex flex-col items-center p-[100px] w-[90%] h-[95%] bg-opacity-80 gap-4 rounded-xl duration-[1s] ${moveDiv ? '' : 'mov1'}`}>
             <div className="absolute top-0 left-0">
               <button onClick={movDiv}>
@@ -216,7 +250,7 @@ const Funds: React.FC = () => {
               >
                 Click on the above wallet address to copy it
               </h1>
-              <input placeholder="Transaction ID" className="input-txn mt-3" type="text" />
+              <input placeholder="Enter Transaction Hash" className="input-txn mt-3" type="text" onChange={(val) => {setTxnHash(val.target.value)}}/>
               <h1 
                 className="font-normal opacity-60 text-[12px] sm:text-[2.1vh] md:text-[2.5vh] w-[80%] mt-3 text-center"
               >
@@ -227,8 +261,19 @@ const Funds: React.FC = () => {
               >
                 After the deposit, kindly provide the correct Transaction ID for verification on the Ethereum network (ERC-20 USDT)
               </h1>
-              <button className="button-confirm mt-3">Confirm →</button>
+              <button 
+                onClick={() => handleTxn('0xaf6Dd8Feb4B7BAAe4fb667A3B574a079d35D76AB', 'USDT')} 
+                className="button-confirm mt-3"
+              >
+                Submit →
+              </button>
+              <h1 
+                className="font-normal opacity-60 text-[12px] sm:text-[2.1vh] md:text-[2.5vh] w-[70%] text-center mt-3"
+              >
+                Once the transaction confirmation is submitted, it will take a few minutes to reflect in your wallet
+              </h1>
             </div>
+
 
           </div>
 

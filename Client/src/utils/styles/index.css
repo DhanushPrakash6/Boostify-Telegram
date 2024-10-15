@@ -389,8 +389,6 @@ footer a {
   padding: 0.5rem;
   font-size: 0.8rem;
   font: normal;
-  font-weight: 300;
-  
   border: 1.5px solid #000;
   border-radius: 0.5rem;
   box-shadow: 2.5px 3px 0 #000;
@@ -415,7 +413,6 @@ footer a {
   background-color: var(--bg-color);
   box-shadow: 4px 4px var(--main-color);
   font-size: 15px;
-  font-weight: 600;
   color: var(--font-color);
   cursor: pointer;
   transition: all 0.3s;
