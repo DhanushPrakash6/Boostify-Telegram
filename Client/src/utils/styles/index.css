@@ -383,3 +383,40 @@ footer a {
 .link-text:active {
   color: #cacaca;
 }
+
+.input-txn {
+  width: 280px;
+  padding: 0.5rem;
+  font-size: 0.8rem;
+  font: normal;
+  font-weight: 300;
+  
+  border: 1.5px solid #000;
+  border-radius: 0.5rem;
+  box-shadow: 2.5px 3px 0 #000;
+  outline: none;
+  transition: ease 0.25s;
+}
+
+.input-txn:focus {
+  box-shadow: 5.5px 7px 0 black;
+}
+
+.button-confirm:active {
+  box-shadow: 0px 0px var(--main-color);
+  transform: translate(3px, 3px);
+}
+
+.button-confirm {
+  width: 115px;
+  height: 35px;
+  border-radius: 5px;
+  border: 2px solid var(--main-color);
+  background-color: var(--bg-color);
+  box-shadow: 4px 4px var(--main-color);
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--font-color);
+  cursor: pointer;
+  transition: all 0.3s;
+}

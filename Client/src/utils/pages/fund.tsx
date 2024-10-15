@@ -8,7 +8,7 @@ import {
 import { v4 as uuidv4 } from "uuid";
 import Warning from "../script/component/warning.tsx";
 import {back} from "../../../src/images/index.ts";
-import { link } from "fs";
+import InputField from "../script/component/input.tsx";
 interface UserData {
   id: number;
   first_name: string;
@@ -202,12 +202,33 @@ const Funds: React.FC = () => {
             <div className="w-[50px] h-[50px] rounded-full flex items-center justify-center bg-[#26A17B]">
               <img src={usdt} alt="" width="30px" height="30px"/>
             </div>
-            <h1 
-              onClick={(e) => handleLinkClick(e, "0xaf6Dd8Feb4B7BAAe4fb667A3B574a079d35D76AB")} 
-              className="link-text ext-black font-mono text-[10px] sm:text-[2.1vh] md:text-[2.5vh]"
-            >
-              0xaf6Dd8Feb4B7BAAe4fb667A3B574a079d35D76AB
-            </h1>
+            <div className="w-[300%] flex items-center flex-col gap-1">
+              <h1 className="text-[18px] sm:text-[2.1vh] md:text-[2.5vh]">USDT (ERC-20)</h1>
+              <h1 className="opacity-60 font-light text-[16px] sm:text-[2.1vh] md:text-[2.5vh]">Wallet Address</h1>
+              <h1 
+                onClick={(e) => handleLinkClick(e, "0xaf6Dd8Feb4B7BAAe4fb667A3B574a079d35D76AB")} 
+                className="link-text ext-black font-bold font-mono text-[14px] sm:text-[2.1vh] md:text-[2.5vh]"
+              >
+                0xaf6Dd8Feb4B7BAAe4fb667A3B574a079d35D76AB
+              </h1>
+              <h1 
+                className="font-normal opacity-60 text-[13px] sm:text-[2.1vh] md:text-[2.5vh]"
+              >
+                Click on the above wallet address to copy it
+              </h1>
+              <input placeholder="Transaction ID" className="input-txn mt-3" type="text" />
+              <h1 
+                className="font-normal opacity-60 text-[12px] sm:text-[2.1vh] md:text-[2.5vh] w-[80%] mt-3 text-center"
+              >
+                Please deposit exactly {fundInput} USDT to the provided wallet address on the Ethereum network (ERC-20)
+              </h1>
+              <h1 
+                className="font-normal opacity-60 text-[12px] sm:text-[2.1vh] md:text-[2.5vh] w-[80%] text-center"
+              >
+                After the deposit, kindly provide the correct Transaction ID for verification on the Ethereum network (ERC-20 USDT)
+              </h1>
+              <button className="button-confirm mt-3">Confirm →</button>
+            </div>
 
           </div>
 
