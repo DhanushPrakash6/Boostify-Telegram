@@ -10,8 +10,6 @@ import Warning from "../script/component/warning.tsx";
 import Success from "../script/component/success.tsx";
 import Failure from "../script/component/fail.tsx";
 import {back} from "../../../src/images/index.ts";
-import axios from 'axios';
-import { log } from "console";
 interface UserData {
   id: number;
   first_name: string;
@@ -66,15 +64,13 @@ const Funds: React.FC = () => {
         method: 'GET',
       });
   
-      // Check if the response is OK (status code 200-299)
       if (res.ok) {
         const data = await res.json();
         console.log(data);
         console.log(data.valueInUSD);
         setAlerts((prev) => [...prev, { id: Date.now(), type: "success1", message: `${data.valueInUSD}` }]);
       } else {
-        // If the response is not OK, handle errors based on status
-        const errorData = await res.json(); // Extract the error message from the response
+        const errorData = await res.json(); 
   
         if (res.status === 400) {
           if (errorData.error === 'Invalid Transaction Hash') {
@@ -91,14 +87,11 @@ const Funds: React.FC = () => {
         }
       }
     } catch (error) {
-      // Handle network errors or fetch-specific errors
       setAlerts((prev) => [...prev, { id: Date.now(), type: "error", message: "Network error or no response from server" }]);
       console.error('Network error:', error);
     }
   };
   
-  
-
   const handleLinkClick = (e: React.MouseEvent<HTMLAnchorElement, MouseEvent>, link: string) => {
       navigator.clipboard.writeText(link);
   };
@@ -164,12 +157,15 @@ const Funds: React.FC = () => {
   const handleModel = () => {
     if(modelOpen) {
       setModelOpen(false);
+      setTimeout(() => {
+        setMoveDiv(false);
+      }, 600);
     }
     else {
       if(fundInput !== "")
         setModelOpen(true);
       else
-        setAlerts((prev) => [...prev, { id: Date.now(), type: "success" }]);
+        setAlerts((prev) => [...prev, { id: Date.now(), type: "fill_Amount" }]);
     }
   }
   setTimeout(() => {
@@ -238,14 +234,11 @@ const Funds: React.FC = () => {
             <div key={alert.id} className="fixed top-4 alert" style={{ zIndex: 9999 }}>
               {alert.type === "hash" && <Warning message={alert.message}/>}
               {alert.type == "error" && <Failure message={alert.message}/>}
+              {alert.type == "emptyHash" && <Failure message="Fill Transaction Hash"/>}
               {alert.type === "success1" && <Success amount={alert.message}/>}
-              {/* {alert.type === "failure" && <Failure message = "Insufficient Funds"/>}
-              {alert.type === "success" && (
-                <Success amount={calculateTotal().toFixed(2)} />
-              )} */}
             </div>
           ))}
-          <div className={`absolute flex flex-col items-center p-[100px] w-[90%] h-[95%] bg-opacity-80 gap-4 rounded-xl duration-[1s] ${moveDiv ? '' : 'mov1'}`}>
+          <div className={`absolute flex flex-col items-center p-[100px] w-[90%] h-[95%] bg-opacity-80 gap-4 rounded-xl  ${moveDiv ? 'duration-[1.6s]' : 'mov1 duration-[1s]'}`}>
             <div className="absolute top-0 left-0">
               <button onClick={movDiv}>
                 <div
@@ -298,11 +291,13 @@ const Funds: React.FC = () => {
               >
                 Once the transaction confirmation is submitted, it will take a few minutes to reflect in your wallet
               </h1>
+              <h1 
+                className="font-normal opacity-60 text-[12px] sm:text-[2.1vh] md:text-[2.5vh] w-[70%] text-center mt-3"
+              >
+                Note: Only the value after deducting gasPrice will be added to your wallet once the transaction is completed.
+              </h1>
             </div>
-
-
           </div>
-
 
           <div className={`w-full gap-2 flex flex-col items-start justify-start transition-{transform} duration-[0.8s] ${moveDiv ? 'mov' : ''}`}>
             <h1 className="font-normal text-2xl sm:text-2xl md:text-1xl">Top up your wallet with any chains below</h1>
@@ -368,15 +363,14 @@ const Funds: React.FC = () => {
               <div>
                 <h1 className="ml-5 font-bold text-[2.1vh] sm:text-[2.1vh] md:text-[2.5vh] text-white">563.84$</h1>
               </div>
-            </button>
-            
+            </button>       
           </div>
       </div>
       {alerts.map((alert) => (
           <div key={alert.id} className="fixed top-3 alert">
-            {<Warning message="Fill the Amount"/>}
+            {alert.type === "fill_Amount" && <Warning message="Fill the Amount"/>}
           </div>
-        ))}
+      ))}
       <button className={`close modal-button ${modelOpen ? '' : 'trans-button'}`} onClick={handleModel}>
         <span></span>
         <span></span>

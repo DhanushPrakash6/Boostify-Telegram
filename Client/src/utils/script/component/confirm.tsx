@@ -5,7 +5,7 @@ const Confirm = ({ text, onClick }) => {
   const [clicked, setClicked] = useState(false);
 
   const handleButtonClick = (e) => {
-    setClicked(true);
+    setClicked(true); 
 
     if (onClick) {
       onClick(e); 

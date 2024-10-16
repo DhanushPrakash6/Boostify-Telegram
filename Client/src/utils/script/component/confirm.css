@@ -4,7 +4,7 @@
     border: 2px solid #fff;
     font-size: 14px;
     color: #131313;
-    cursor: pointer;
+    cursor: pointer; 
     position: relative;
     overflow: hidden;
     transition: all 0.3s;
