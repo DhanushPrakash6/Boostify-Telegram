@@ -252,7 +252,7 @@ const Funds: React.FC = () => {
                 </div>
               </button>
             </div>
-            <div className="w-[50px] h-[50px] rounded-full flex items-center justify-center bg-[#26A17B]">
+            <div className="w-fit h-fit p-2 rounded-full flex items-center justify-center bg-[#26A17B]">
               <img src={usdt} alt="" width="30px" height="30px"/>
             </div>
             <div className="w-[300%] flex items-center flex-col gap-1">
