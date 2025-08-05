@@ -1,20 +1,7 @@
 import "../styles/index.css";
 import { useState, useEffect } from "react";
 import WebApp from "@twa-dev/sdk";
-import {
-  wifi,
-  telegram,
-  spotify,
-  linkedin,
-  whatsapp,
-  facebook,
-  instagram,
-  soundcloud,
-  tiktok,
-  twitch,
-  X,
-  youtube,
-} from "../../icons/Arrow.ts";
+import { StaticIcons } from "../../icons/StaticIcons";
 import Home from "./data.tsx";
 import {
   profile,
@@ -36,7 +23,7 @@ interface UserData {
 }
 
 const Index = () => {
-  const [coinValue, setCoinValue] = useState<number>();
+  const [coinValue, setCoinValue] = useState<string>();
   const [userData, setUserData] = useState<UserData | null>(null);
 
   useEffect(() => {
@@ -77,7 +64,9 @@ const Index = () => {
 
   return (
     <>
-      <div className="overflow-auto w-full h-full bg-gradient-main p-5 flex flex-col min-h-screen items-center text-black font-medium">
+      <div className="overflow-auto w-full h-full p-5 flex flex-col min-h-screen items-center text-white font-medium" style={{
+        background: "linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%)"
+      }}>
         <div className="w-full flex justify-end items-center">
           <div className="w-full flex justify-left items-center">
             <img src={profile} alt="" className="h-10 w-10" />
@@ -95,24 +84,28 @@ const Index = () => {
               {coinValue}
             </span>
           </div>
-          <h1 className="w-full flex justify-center items-center text-black text-opacity-50 font-normal text-xl sm:text-2xl md:text-3xl">
+          <h1 className="w-full flex justify-center items-center text-white text-opacity-70 font-normal text-xl sm:text-2xl md:text-3xl">
             Available Balance
           </h1>
           <div
-            style={{ background: "#ee9ca7" }}
-            className="w-fit h-fit border-2 border-black font-bold rounded-3xl p-3 cursor-pointer mt-5"
+            style={{ 
+              background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+              boxShadow: "0 8px 32px rgba(102, 126, 234, 0.3), 0 4px 16px rgba(118, 75, 162, 0.2)"
+            }}
+            className="w-fit h-fit border-2 border-white border-opacity-30 font-bold rounded-3xl p-4 cursor-pointer mt-5 transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-purple-500/40 active:scale-95"
           >
             <a
               href="/funds"
-              className="w-full flex justify-center items-center gap-2"
+              className="w-full flex justify-center items-center gap-3"
             >
               <img
                 src={wallet}
                 alt=""
-                className="h-5 w-5 sm:h-6 sm:w-6 md:h-7 md:w-7"
+                className="h-6 w-6 sm:h-7 sm:w-7 md:h-8 md:w-8 drop-shadow-lg"
+                style={{ filter: "brightness(0) invert(1)" }}
               />
-              <h1 className="font-bold text-black text-opacity-90 text-base sm:text-lg md:text-xl">
-                Add Money
+              <h1 className="font-bold text-white text-opacity-95 text-lg sm:text-xl md:text-2xl tracking-wide">
+                Add Money 
               </h1>
             </a>
           </div>
@@ -120,43 +113,28 @@ const Index = () => {
 
         <div className="w-full flex flex-col flex-grow justify-around pb-[120px] overflow-auto">
           {[
-            [instagram, telegram, youtube],
-            [X, twitch, facebook],
-            [tiktok, soundcloud, spotify],
-            [linkedin, whatsapp, wifi],
+            ['instagram', 'telegram', 'youtube'],
+            ['X', 'twitch', 'facebook'],
+            ['tiktok', 'soundcloud', 'spotify'],
+            ['linkedin', 'whatsapp', 'wifi'],
           ].map((group, index) => (
             <div key={index} className="flex justify-around">
-              {group.map((icon, idx) => {
-                const socialMediaNames = [
-                  "instagram",
-                  "telegram",
-                  "youtube",
-                  "X",
-                  "twitch",
-                  "facebook",
-                  "tiktok",
-                  "soundcloud",
-                  "spotify",
-                  "linkedin",
-                  "whatsapp",
-                  "wifi",
-                ];
-                const socialMedia =
-                  socialMediaNames[index * group.length + idx];
+              {group.map((socialMedia, idx) => {
+                const IconComponent = StaticIcons[socialMedia as keyof typeof StaticIcons];
                 return (
                   <a key={idx} href={`/subfile/${socialMedia}`}>
-                    <img
-                      src={icon}
-                      alt={socialMedia}
-                      className="h-14 w-14 sm:h-16 sm:w-16 md:h-20 md:w-20"
-                    />
+                    <div className="h-14 w-14 sm:h-16 sm:w-16 md:h-20 md:w-20 flex items-center justify-center">
+                      <IconComponent />
+                    </div>
                   </a>
                 );
               })}
             </div>
           ))}
         </div>
-        <footer className="w-full flex justify-around items-center p-4 border-dashed border-t-2 border-black">
+        <footer className="w-full flex justify-around items-center p-4 border-dashed border-t-2 border-white border-opacity-20" style={{
+          background: "linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%)"
+        }}>
           {[
             { src: home, alt: "Home" },
             { src: group, alt: "Friends" },
@@ -177,15 +155,16 @@ const Index = () => {
                   : "/"
               }`}
               className={`flex flex-col items-center ${
-                item.alt === "Home" ? "border-2 border-black" : ""
+                item.alt === "Home" ? "border-2 border-white border-opacity-30" : ""
               }`}
             >
               <img
                 src={item.src}
                 alt={item.alt}
                 className={`h-10 w-10 sm:h-12 sm:w-12 md:h-14 md:w-14 ${
-                  item.alt === "Home" ? "opacity-100" : "opacity-80"
+                  item.alt === "Home" ? "opacity-100" : "opacity-50"
                 }`}
+                style={{ filter: "brightness(0) invert(1)" }}
               />
             </a>
           ))}

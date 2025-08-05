@@ -16,7 +16,7 @@ interface UserData {
 }
 
 const Orders = () => {
-  const [coinValue, setCoinValue] = useState<number | null>(null);
+  const [coinValue, setCoinValue] = useState<string | null>(null);
   const [orders, setOrders] = useState<any[]>([]);
   const [userData, setUserData] = useState<UserData | null>(null);
 
@@ -64,7 +64,9 @@ const Orders = () => {
 
 
   return (
-    <div className="overflow-auto w-full h-full bg-gradient-main p-5 flex flex-col min-h-screen items-center text-black font-medium">
+    <div className="overflow-auto w-full h-full p-5 flex flex-col min-h-screen items-center text-white font-medium" style={{
+      background: "linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%)"
+    }}>
       <div className="w-full flex justify-end items-center">
         <div className="w-full flex justify-left items-center">
           <img src={profile} alt="Profile" className="h-10 w-10" />
@@ -83,12 +85,12 @@ const Orders = () => {
             {coinValue !== null ? coinValue : "Loading..."}
           </span>
         </div>
-        <h1 className="w-full flex justify-center items-center text-black text-opacity-50 font-normal text-xl sm:text-2xl md:text-3xl">
+        <h1 className="w-full flex justify-center items-center text-white text-opacity-70 font-normal text-xl sm:text-2xl md:text-3xl">
           Available Balance
         </h1>
         <div
-          style={{ background: "#ee9ca7" }}
-          className="w-fit h-fit border-2 border-black font-bold rounded-3xl p-3 cursor-pointer mt-5"
+          style={{ background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)" }}
+          className="w-fit h-fit border-2 border-white border-opacity-20 font-bold rounded-3xl p-3 cursor-pointer mt-5"
         >
           <a
             href="/funds"
@@ -96,51 +98,52 @@ const Orders = () => {
           >
             <img
               src={wallet}
-              alt="Wallet"
-              className="h-5 w-5 sm:h-6 sm:w-6 md:h-7 md:w-7"
+              alt=""
+              className="h-6 w-6 sm:h-7 sm:w-7 md:h-8 md:w-8 drop-shadow-lg"
+              style={{ filter: "brightness(0) invert(1)" }}
             />
-            <h1 className="font-bold text-black text-opacity-90 text-base sm:text-lg md:text-xl">
-              Add Money
+            <h1 className="font-bold text-white text-opacity-95 text-lg sm:text-xl md:text-2xl tracking-wide">
+                Add Money 
             </h1>
           </a>
         </div>
       </div>
 
-      <span className="w-[500%] border-dashed border-t-2 border-black m-6" />
-      <h1 className="w-full flex justify-left items-center text-black text-opacity-90 font-normal text-l sm:text-2xl md:text-3xl">
+      <span className="w-[500%] border-dashed border-t-2 border-white border-opacity-20 m-6" />
+      <h1 className="w-full flex justify-left items-center text-white text-opacity-90 font-normal text-l sm:text-2xl md:text-3xl">
         Transactions
       </h1>
 
       <div className="m-3 w-full h-[410px] pb-[110px] flex flex-col gap-4 overflow-y-scroll no-scrollbar">
       {orders.length > 0 ? (
         orders.map((order) => (
-          <div key={order._id} className="w-full border rounded-2xl bg-white flex justify-between items-center p-4">
+          <div key={order._id} className="w-full border rounded-2xl bg-white bg-opacity-10 flex justify-between items-center p-4">
             <div className="w-full flex flex-col overflow-x-auto gap-1">
-              <h1 className="font-normal text-opacity-50 text-[1.7vh] sm:text-2xl md:text-3xl">
+              <h1 className="font-normal text-white text-opacity-70 text-[1.7vh] sm:text-2xl md:text-3xl">
                 {order.social}
               </h1>
-              <h1 className="text-black text-opacity-50 font-medium text-xs sm:text-2xl md:text-3xl">
+              <h1 className="text-white text-opacity-60 font-medium text-xs sm:text-2xl md:text-3xl">
                 {order.metrics.postLink}
               </h1>
               <div className="w-fit">
-                <details className="bg-gray-100 rounded-lg p-2">
-                  <summary className="text-blue-600 font-normal text-xs sm:text-2xl md:text-3xl">
+                <details className="bg-white bg-opacity-10 rounded-lg p-2">
+                  <summary className="text-blue-400 font-normal text-xs sm:text-2xl md:text-3xl">
                     Show Metrics
                   </summary>
                   <div className="flex flex-col mt-2 gap-1">
-                    {Object.entries(order.metrics).map(([key, value]) => (
-                      key !== 'postLink' && value ? (
-                        <div key={key} className="text-gray-800 text-xs sm:text-2xl md:text-3xl">
-                          <strong>{key.charAt(0).toUpperCase() + key.slice(1)}: </strong> {value}
+                    {Object.entries(order.metrics)
+                      .filter(([key, value]) => key !== 'postLink' && value)
+                      .map(([key, value]) => (
+                        <div key={key} className="text-white text-opacity-80 text-xs sm:text-2xl md:text-3xl">
+                          <strong>{key.charAt(0).toUpperCase() + key.slice(1)}: </strong> {String(value)}
                         </div>
-                      ) : null
-                    ))}
+                      ))}
                   </div>
                 </details>
               </div>
             </div>
             <div>
-              <h1 className="text-red-600 font-normal text-lg sm:text-2xl md:text-3xl text-opacity-90">
+              <h1 className="text-red-400 font-normal text-lg sm:text-2xl md:text-3xl text-opacity-90">
                 -{order.amount}$
               </h1>
             </div>
@@ -148,14 +151,16 @@ const Orders = () => {
         ))
         ) : (
         <div className="w-full flex justify-center items-center">
-          <h1 className="text-black text-opacity-50 font-normal text-sm sm:text-2xl md:text-3xl">
+          <h1 className="text-white text-opacity-60 font-normal text-sm sm:text-2xl md:text-3xl">
             No Transactions Found
           </h1>
         </div>
       )}
       </div>
 
-      <footer className="w-full flex justify-around items-center p-4 border-dashed border-t-2 border-black">
+      <footer className="w-full flex justify-around items-center p-4 border-dashed border-t-2 border-white border-opacity-20" style={{
+        background: "linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%)"
+      }}>
         {[
           { src: home, alt: "Home" },
           { src: group, alt: "Friends" },
@@ -174,15 +179,16 @@ const Orders = () => {
                 : "/funds"
             }`}
             className={`flex flex-col items-center ${
-              item.alt === "Orders" ? "border-2 border-black" : ""
+              item.alt === "Orders" ? "border-2 border-white border-opacity-30" : ""
             }`}
           >
             <img
               src={item.src}
               alt={item.alt}
               className={`h-10 w-10 sm:h-12 sm:w-12 md:h-14 md:w-14 ${
-                item.alt === "Orders" ? "opacity-100" : "opacity-80"
+                item.alt === "Orders" ? "opacity-100" : "opacity-50"
               }`}
+              style={{ filter: "brightness(0) invert(1)" }}
             />
           </a>
         ))}

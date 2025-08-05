@@ -24,7 +24,7 @@ const Funds: React.FC = () => {
   const [userData, setUserData] = useState<UserData | null>(null);
   const [fundInput, setFundInput] = useState<string>("");
   const [modelOpen, setModelOpen] = useState<boolean>(false);
-  const [alerts, setAlerts] = useState([]);
+  const [alerts, setAlerts] = useState<any[]>([]);
   const [moveDiv, setMoveDiv] = useState<boolean>(false);
   const [txnHash, setTxnHash] = useState('');
   useEffect(() => {
@@ -49,7 +49,7 @@ const Funds: React.FC = () => {
     };
 
     const userId = user?.id || 1011111; 
-    fetchUserCoins(userId);
+    fetchUserCoins(userId); 
   }, [userData]);
   const handleTxn = async (to, coin) => {
     const userId = userData?.id || 1011111;
@@ -92,7 +92,7 @@ const Funds: React.FC = () => {
     }
   };
   
-  const handleLinkClick = (e: React.MouseEvent<HTMLAnchorElement, MouseEvent>, link: string) => {
+  const handleLinkClick = (e: React.MouseEvent<HTMLHeadingElement, MouseEvent>, link: string) => {
       navigator.clipboard.writeText(link);
   };
 
@@ -179,7 +179,9 @@ const Funds: React.FC = () => {
   }
 
   return (
-    <div className={`overflow-hidden w-full h-full bg-gradient-main p-5 flex flex-col min-h-screen items-center text-black font-medium`}>
+    <div className={`overflow-hidden w-full h-full p-5 flex flex-col min-h-screen items-center text-white font-medium`} style={{
+      background: "linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%)"
+    }}>
       <div className="w-full flex justify-end items-center">
         <div className="w-full flex justify-left items-center">
           <img src={profile} alt="Profile" className="h-10 w-10" />
@@ -187,7 +189,7 @@ const Funds: React.FC = () => {
         </div>
       </div>
 
-      <div className="bg-white bg-opacity-80 mt-4 w-full flex flex-col justify-center items-center pt-[30px] pb-[30px] rounded-3xl">
+      <div className="bg-white bg-opacity-10 mt-4 w-full flex flex-col justify-center items-center pt-[30px] pb-[30px] rounded-3xl">
         <div className="w-full flex justify-center items-center gap-1">
           <img
             src={coin}
@@ -198,13 +200,13 @@ const Funds: React.FC = () => {
             {coinValue !== null ? coinValue : "Loading..."}
           </span>
         </div>
-        <h1 className="w-full flex justify-center items-center text-black text-opacity-50 font-normal text-xl sm:text-2xl md:text-3xl">
+        <h1 className="w-full flex justify-center items-center text-white text-opacity-70 font-normal text-xl sm:text-2xl md:text-3xl">
           Available Balance
         </h1>
       </div>
 
       <div className="w-full">
-        <h1 className="w-full mt-7 flex justify-left text-black font-normal text-lg sm:text-1xl md:text-2xl">
+        <h1 className="w-full mt-7 flex justify-left text-white font-normal text-lg sm:text-1xl md:text-2xl">
           Add Funds
         </h1>
         <div className="w-full flex flex-col justify-center items-center mt-3">
@@ -216,7 +218,7 @@ const Funds: React.FC = () => {
             onChange={handleFundInputChange}
             onBlur={handleBlur}
             placeholder="$0.00"
-            className="w-[70%] bg-transparent p-2 text-lg text-center"
+            className="w-[70%] bg-transparent p-2 text-lg text-center text-white"
           />
           <div className="flex gap-4 mt-4">
             <button onClick={() => handleButtonClick(100)} className="comic-button">100$</button>
@@ -245,10 +247,10 @@ const Funds: React.FC = () => {
                   style={{
                     padding: "7px",
                     borderRadius: "10px",
-                    border: "1px solid black",
+                    border: "1px solid rgba(255, 255, 255, 0.3)",
                   }}
                 >
-                  <img src={back} alt="" height="20px" width="20px" />
+                  <img src={back} alt="" height="20px" width="20px" style={{ filter: "brightness(0) invert(1)" }} />
                 </div>
               </button>
             </div>
@@ -256,27 +258,27 @@ const Funds: React.FC = () => {
               <img src={usdt} alt="" width="30px" height="30px"/>
             </div>
             <div className="w-[300%] flex items-center flex-col gap-1">
-              <h1 className="text-[18px] sm:text-[2.1vh] md:text-[2.5vh]">USDT (ERC-20)</h1>
-              <h1 className="opacity-60 font-light text-[16px] sm:text-[2.1vh] md:text-[2.5vh]">Wallet Address</h1>
+              <h1 className="text-[18px] sm:text-[2.1vh] md:text-[2.5vh] text-white">USDT (ERC-20)</h1>
+              <h1 className="text-white text-opacity-60 font-light text-[16px] sm:text-[2.1vh] md:text-[2.5vh]">Wallet Address</h1>
               <h1 
                 onClick={(e) => handleLinkClick(e, "0xee7911f4beaa561ae4f18ffccf52ed49342cb723")} 
-                className="link-text ext-black font-bold font-mono text-[14px] sm:text-[2.1vh] md:text-[2.5vh]"
+                className="link-text text-white font-bold font-mono text-[14px] sm:text-[2.1vh] md:text-[2.5vh]"
               >
                 0xee7911f4beaa561ae4f18ffccf52ed49342cb723
               </h1>
               <h1 
-                className="font-normal opacity-60 text-[13px] sm:text-[2.1vh] md:text-[2.5vh]"
+                className="text-white text-opacity-60 font-normal text-[13px] sm:text-[2.1vh] md:text-[2.5vh]"
               >
                 Click on the above wallet address to copy it
               </h1>
               <input placeholder="Enter Transaction Hash" className="input-txn mt-3" type="text" onChange={(val) => {setTxnHash(val.target.value)}}/>
               <h1 
-                className="font-normal opacity-60 text-[12px] sm:text-[2.1vh] md:text-[2.5vh] w-[80%] mt-3 text-center"
+                className="text-white text-opacity-60 font-normal text-[12px] sm:text-[2.1vh] md:text-[2.5vh] w-[80%] mt-3 text-center"
               >
                 Please deposit exactly {fundInput} USDT to the provided wallet address on the Ethereum network (ERC-20)
               </h1>
               <h1 
-                className="font-normal opacity-60 text-[12px] sm:text-[2.1vh] md:text-[2.5vh] w-[80%] text-center"
+                className="text-white text-opacity-60 font-normal text-[12px] sm:text-[2.1vh] md:text-[2.5vh] w-[80%] text-center"
               >
                 After the deposit, kindly provide the correct Transaction ID for verification on the Ethereum network (ERC-20 USDT)
               </h1>
@@ -287,12 +289,12 @@ const Funds: React.FC = () => {
                 Submit →
               </button>
               <h1 
-                className="font-normal opacity-60 text-[12px] sm:text-[2.1vh] md:text-[2.5vh] w-[70%] text-center mt-3"
+                className="text-white text-opacity-60 font-normal text-[12px] sm:text-[2.1vh] md:text-[2.5vh] w-[70%] text-center mt-3"
               >
                 Once the transaction confirmation is submitted, it will take a few minutes to reflect in your wallet
               </h1>
               <h1 
-                className="font-normal opacity-60 text-[12px] sm:text-[2.1vh] md:text-[2.5vh] w-[70%] text-center mt-3"
+                className="text-white text-opacity-60 font-normal text-[12px] sm:text-[2.1vh] md:text-[2.5vh] w-[70%] text-center mt-3"
               >
                 Note: Only the value after deducting gasPrice will be added to your wallet once the transaction is completed.
               </h1>
@@ -300,10 +302,10 @@ const Funds: React.FC = () => {
           </div>
 
           <div className={`w-full gap-2 flex flex-col items-start justify-start transition-{transform} duration-[0.8s] ${moveDiv ? 'mov' : ''}`}>
-            <h1 className="font-normal text-2xl sm:text-2xl md:text-1xl">Top up your wallet with any chains below</h1>
-            <h1 className="font-light text-1xl sm:text-1xl md:text-sm opacity-50">Choose coin for deposit</h1>
+            <h1 className="text-white font-normal text-2xl sm:text-2xl md:text-1xl">Top up your wallet with any chains below</h1>
+            <h1 className="text-white text-opacity-60 font-light text-1xl sm:text-1xl md:text-sm">Choose coin for deposit</h1>
           </div>
-          <h1 className={`font-normal text-[1.8vh] sm:text-[1.8vh] md:text-[2.1vh] mt-3 w-full flex justify-center transition-{transform} duration-[0.8s] ${moveDiv ? 'mov' : ''}`}>Amount : {fundInput}</h1>
+          <h1 className={`text-white font-normal text-[1.8vh] sm:text-[1.8vh] md:text-[2.1vh] mt-3 w-full flex justify-center transition-{transform} duration-[0.8s] ${moveDiv ? 'mov' : ''}`}>Amount : {fundInput}</h1>
           <div className="flex flex-col gap-4 mt-3 h-[85%] overflow-visible pb-[25px] no-scrollbar">
             <button name="usdt" onClick={movDiv} className={`w-full mt-1 h-[83px] rounded-3xl crypto-container flex items-center justify-between p-5 duration-[3s] ${moveDiv ? 'mov' : ''}`}>
               <div className="flex justify-center items-center">
@@ -386,7 +388,9 @@ const Funds: React.FC = () => {
         </svg>
       </button>
       {modelOpen && (<div className="fixed h-[150%] w-full top-0 bg-black opacity-70 z-50"></div>)}
-      <footer className={`w-full flex justify-around items-center p-4 border-dashed border-t-2 border-black ${modelOpen ? 'bg-black bg-opacity-70' : 'bg-gradient-main'} `}>
+      <footer className={`w-full flex justify-around items-center p-4 border-dashed border-t-2 border-white border-opacity-20 ${modelOpen ? 'bg-black bg-opacity-70' : ''} `} style={{
+        background: modelOpen ? "rgba(0, 0, 0, 0.7)" : "linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%)"
+      }}>
         {[
           { src: home, alt: "Home" },
           { src: group, alt: "Friends" },
@@ -405,15 +409,16 @@ const Funds: React.FC = () => {
                 : "/funds"
             }`}
             className={`flex flex-col items-center ${
-              item.alt === "Funds" ? "border-2 border-black" : ""
+              item.alt === "Funds" ? "border-2 border-white border-opacity-30" : ""
             }`}
           >
             <img
               src={item.src}
               alt={item.alt}
               className={`h-10 w-10 sm:h-12 sm:w-12 md:h-14 md:w-14 ${
-                item.alt === "Funds" ? "opacity-100" : "opacity-80"
+                item.alt === "Funds" ? "opacity-100" : "opacity-50"
               }`}
+              style={{ filter: "brightness(0) invert(1)" }}
             />
           </a>
         ))}
