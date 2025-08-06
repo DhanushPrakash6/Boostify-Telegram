@@ -33,9 +33,13 @@ const Index = () => {
       setUserData(user);
     }
 
-    // Check for referral code in URL
-    const urlParams = new URLSearchParams(window.location.search);
-    const referralCode = urlParams.get('ref');
+    // Check for referral code in Telegram start parameter
+    const startParam = WebApp?.initDataUnsafe?.start_param;
+    let referralCode = null;
+    
+    if (startParam && startParam.startsWith('ref_')) {
+      referralCode = startParam.substring(4); // Remove 'ref_' prefix
+    }
     
     if (referralCode && user) {
       // Register user with referral code
