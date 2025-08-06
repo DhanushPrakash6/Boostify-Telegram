@@ -15,6 +15,9 @@ const alchemy = new Alchemy(settings);
 const app = express();
 const port = process.env.PORT || 3000;
 
+// Telegram Bot Configuration
+const TELEGRAM_BOT_USERNAME = process.env.TELEGRAM_BOT_USERNAME || "Quick_DBot"; // Your Telegram bot username
+
 const uri = "mongodb+srv://Admin:vetrivel6@cluster0.jd3xg.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
 app.use(cors({}));
 
@@ -349,23 +352,23 @@ app.get('/api/getReferralInfo', async (req, res) => {
       
       // Fetch updated user data
       const updatedUser = await collection.findOne({ _id: Number(userId) });
-      const referralInfo = {
-        referralCode: updatedUser.referralCode,
-        referralLink: `${req.protocol}://${req.get('host')}/?ref=${updatedUser.referralCode}`,
-        referredUsers: updatedUser.referredUsers || [],
-        referralEarnings: updatedUser.referralEarnings || 0,
-        referredBy: updatedUser.referredBy ? {
-          userId: updatedUser.referredBy,
-          username: updatedUser.referredByUsername
-        } : null
-      };
+             const referralInfo = {
+         referralCode: updatedUser.referralCode,
+         referralLink: `https://t.me/${TELEGRAM_BOT_USERNAME}?start=ref_${updatedUser.referralCode}`,
+         referredUsers: updatedUser.referredUsers || [],
+         referralEarnings: updatedUser.referralEarnings || 0,
+         referredBy: updatedUser.referredBy ? {
+           userId: updatedUser.referredBy,
+           username: updatedUser.referredByUsername
+         } : null
+       };
 
       return res.status(200).json(referralInfo);
     }
 
     const referralInfo = {
       referralCode: user.referralCode,
-      referralLink: `${req.protocol}://${req.get('host')}/?ref=${user.referralCode}`,
+      referralLink: `https://t.me/${TELEGRAM_BOT_USERNAME}?start=ref_${user.referralCode}`,
       referredUsers: user.referredUsers || [],
       referralEarnings: user.referralEarnings || 0,
       referredBy: user.referredBy ? {
