@@ -33,52 +33,12 @@ const Index = () => {
       setUserData(user);
     }
 
-    // Check for referral code in Telegram start parameter
-    const startParam = WebApp?.initDataUnsafe?.start_param;
-    console.log('=== REFERRAL DEBUG ===');
-    console.log('Telegram start parameter:', startParam);
-    console.log('Full WebApp data:', WebApp?.initDataUnsafe);
+    // Note: Referral logic is now handled by the Telegram bot in bot.js
+    // The bot handles /start commands with referral codes
+    console.log('=== MINI APP START ===');
     console.log('User data:', user);
-    
-    let referralCode = null;
-    
-    if (startParam && startParam.startsWith('ref_')) {
-      referralCode = startParam.substring(4); // Remove 'ref_' prefix
-      console.log('✅ Extracted referral code from start_param:', referralCode);
-    }
-    
-    // Alternative: Check URL parameters as fallback
-    if (!referralCode) {
-      const urlParams = new URLSearchParams(window.location.search);
-      const urlRefCode = urlParams.get('ref');
-      if (urlRefCode) {
-        referralCode = urlRefCode;
-        console.log('✅ Found referral code in URL:', referralCode);
-      }
-    }
-    
-    // Additional check: Look for referral in WebApp init data
-    if (!referralCode && WebApp?.initDataUnsafe?.query_id) {
-      console.log('Checking WebApp init data for referral...');
-      const initData = WebApp.initDataUnsafe;
-      if (initData.start_param && initData.start_param.startsWith('ref_')) {
-        referralCode = initData.start_param.substring(4);
-        console.log('✅ Found referral code in init data:', referralCode);
-      }
-    }
-    
-    if (referralCode && user) {
-      console.log('🎯 User and referral code found, registering...');
-      console.log('User ID:', user.id);
-      console.log('Referral Code:', referralCode);
-      // Register user with referral code
-      registerUserWithReferral(user, referralCode);
-    } else {
-      console.log('❌ No referral code or user found');
-      console.log('Referral code:', referralCode);
-      console.log('User:', user);
-    }
-    console.log('=== END REFERRAL DEBUG ===');
+    console.log('WebApp data:', WebApp?.initDataUnsafe);
+    console.log('=== END MINI APP START ===');
   
     const fetchUserCoins = async (userId: number) => {
       try {
@@ -108,33 +68,7 @@ const Index = () => {
   
   }, []);
 
-  const registerUserWithReferral = async (user: UserData, referralCode: string) => {
-    try {
-      console.log('Registering user with referral code:', referralCode);
-      
-      const response = await fetch('https://boostify-server.vercel.app/api/insertUser', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          _id: user.id,
-          name: user.first_name + (user.last_name ? ' ' + user.last_name : ''),
-          coins: 0,
-          referralCode: referralCode
-        }),
-      });
-      
-      if (response.ok) {
-        const result = await response.json();
-        console.log('User registered with referral code:', result);
-      } else {
-        console.error('Failed to register user with referral');
-      }
-    } catch (error) {
-      console.error('Error registering user with referral:', error);
-    }
-  }; 
+ 
   
 
   return (
