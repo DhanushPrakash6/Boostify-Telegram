@@ -35,15 +35,33 @@ const Index = () => {
 
     // Check for referral code in Telegram start parameter
     const startParam = WebApp?.initDataUnsafe?.start_param;
+    console.log('Telegram start parameter:', startParam);
+    console.log('Full WebApp data:', WebApp?.initDataUnsafe);
+    
     let referralCode = null;
     
     if (startParam && startParam.startsWith('ref_')) {
       referralCode = startParam.substring(4); // Remove 'ref_' prefix
+      console.log('Extracted referral code:', referralCode);
+    }
+    
+    // Alternative: Check URL parameters as fallback
+    if (!referralCode) {
+      const urlParams = new URLSearchParams(window.location.search);
+      const urlRefCode = urlParams.get('ref');
+      if (urlRefCode) {
+        referralCode = urlRefCode;
+        console.log('Found referral code in URL:', referralCode);
+      }
     }
     
     if (referralCode && user) {
+      console.log('User and referral code found, registering...');
       // Register user with referral code
       registerUserWithReferral(user, referralCode);
+    } else {
+      console.log('No referral code or user found');
+      console.log('User data:', user);
     }
   
     const fetchUserCoins = async (userId: number) => {
@@ -76,6 +94,8 @@ const Index = () => {
 
   const registerUserWithReferral = async (user: UserData, referralCode: string) => {
     try {
+      console.log('Registering user with referral code:', referralCode);
+      
       const response = await fetch('https://boostify-server.vercel.app/api/insertUser', {
         method: 'POST',
         headers: {
@@ -90,7 +110,10 @@ const Index = () => {
       });
       
       if (response.ok) {
-        console.log('User registered with referral code');
+        const result = await response.json();
+        console.log('User registered with referral code:', result);
+      } else {
+        console.error('Failed to register user with referral');
       }
     } catch (error) {
       console.error('Error registering user with referral:', error);
