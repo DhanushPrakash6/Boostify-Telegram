@@ -16,7 +16,7 @@ const app = express();
 const port = process.env.PORT || 3000;
 
 // Telegram Bot Configuration
-const TELEGRAM_BOT_USERNAME = process.env.TELEGRAM_BOT_USERNAME || "Quick_DBot"; // Your Telegram bot username
+const TELEGRAM_BOT_USERNAME = process.env.TELEGRAM_BOT_USERNAME || "BoostifySocialBot"; // Your Telegram bot username
 
 const uri = "mongodb+srv://Admin:vetrivel6@cluster0.jd3xg.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
 app.use(cors({}));
