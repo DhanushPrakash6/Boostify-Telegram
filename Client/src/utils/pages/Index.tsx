@@ -35,14 +35,16 @@ const Index = () => {
 
     // Check for referral code in Telegram start parameter
     const startParam = WebApp?.initDataUnsafe?.start_param;
+    console.log('=== REFERRAL DEBUG ===');
     console.log('Telegram start parameter:', startParam);
     console.log('Full WebApp data:', WebApp?.initDataUnsafe);
+    console.log('User data:', user);
     
     let referralCode = null;
     
     if (startParam && startParam.startsWith('ref_')) {
       referralCode = startParam.substring(4); // Remove 'ref_' prefix
-      console.log('Extracted referral code:', referralCode);
+      console.log('✅ Extracted referral code from start_param:', referralCode);
     }
     
     // Alternative: Check URL parameters as fallback
@@ -51,18 +53,32 @@ const Index = () => {
       const urlRefCode = urlParams.get('ref');
       if (urlRefCode) {
         referralCode = urlRefCode;
-        console.log('Found referral code in URL:', referralCode);
+        console.log('✅ Found referral code in URL:', referralCode);
+      }
+    }
+    
+    // Additional check: Look for referral in WebApp init data
+    if (!referralCode && WebApp?.initDataUnsafe?.query_id) {
+      console.log('Checking WebApp init data for referral...');
+      const initData = WebApp.initDataUnsafe;
+      if (initData.start_param && initData.start_param.startsWith('ref_')) {
+        referralCode = initData.start_param.substring(4);
+        console.log('✅ Found referral code in init data:', referralCode);
       }
     }
     
     if (referralCode && user) {
-      console.log('User and referral code found, registering...');
+      console.log('🎯 User and referral code found, registering...');
+      console.log('User ID:', user.id);
+      console.log('Referral Code:', referralCode);
       // Register user with referral code
       registerUserWithReferral(user, referralCode);
     } else {
-      console.log('No referral code or user found');
-      console.log('User data:', user);
+      console.log('❌ No referral code or user found');
+      console.log('Referral code:', referralCode);
+      console.log('User:', user);
     }
+    console.log('=== END REFERRAL DEBUG ===');
   
     const fetchUserCoins = async (userId: number) => {
       try {

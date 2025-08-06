@@ -54,6 +54,7 @@ const Referral = () => {
 
   const fetchReferralInfo = async (userId: number) => {
     try {
+      console.log('Fetching referral info for user:', userId);
       const response = await fetch(
         `https://boostify-server.vercel.app/api/getReferralInfo?userId=${userId}`
       );
@@ -61,6 +62,7 @@ const Referral = () => {
         throw new Error("Network response was not ok");
       }
       const data = await response.json();
+      console.log('Referral info received:', data);
       setReferralInfo(data);
     } catch (error) {
       console.error("Error fetching referral info:", error);
