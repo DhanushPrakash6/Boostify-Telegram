@@ -42,7 +42,7 @@ app.get('/', async (req, res) => {
 
 app.post('/api/insertUser', async (req, res) => {
   const { _id, name, coins, referralCode } = req.body;
-  console.log(_id);
+  console.log('Inserting user:', { _id, name, referralCode });
   
   try {
     const connection = await clientPromise;
@@ -52,6 +52,8 @@ app.post('/api/insertUser', async (req, res) => {
     const existingUser = await collection.findOne({ _id: Number(_id) });
 
     if (existingUser) {
+      console.log('User already exists, checking referral...');
+      
       // If user exists but has no referral code, generate one
       if (!existingUser.referralCode) {
         let userReferralCode = generateReferralCode();
@@ -69,12 +71,17 @@ app.post('/api/insertUser', async (req, res) => {
             }
           }
         );
+        console.log('Generated referral code for existing user:', userReferralCode);
       }
       
       // If referral code provided and user wasn't referred before
       if (referralCode && !existingUser.referredBy) {
+        console.log('Processing referral code:', referralCode);
         const referrer = await collection.findOne({ referralCode: referralCode });
+        
         if (referrer && referrer._id !== Number(_id)) {
+          console.log('Found referrer:', referrer.name, 'ID:', referrer._id);
+          
           await collection.updateOne(
             { _id: Number(_id) },
             { 
@@ -90,7 +97,13 @@ app.post('/api/insertUser', async (req, res) => {
             { _id: referrer._id },
             { $push: { referredUsers: { userId: _id, username: name, joinedAt: new Date() } } }
           );
+          
+          console.log('Successfully linked user to referrer');
+        } else {
+          console.log('Referrer not found or self-referral attempted');
         }
+      } else {
+        console.log('No referral code provided or user already referred');
       }
       
       return res.status(200).json({ message: "User already exists" });
@@ -114,8 +127,11 @@ app.post('/api/insertUser', async (req, res) => {
 
     // If user was referred by someone
     if (referralCode) {
+      console.log('Processing referral for new user:', referralCode);
       const referrer = await collection.findOne({ referralCode: referralCode });
+      
       if (referrer && referrer._id !== Number(_id)) {
+        console.log('Found referrer for new user:', referrer.name, 'ID:', referrer._id);
         userData.referredBy = referrer._id;
         userData.referredByUsername = referrer.name;
         
@@ -124,10 +140,16 @@ app.post('/api/insertUser', async (req, res) => {
           { _id: referrer._id },
           { $push: { referredUsers: { userId: _id, username: name, joinedAt: new Date() } } }
         );
+        console.log('Successfully linked new user to referrer');
+      } else {
+        console.log('Referrer not found for new user or self-referral attempted');
       }
+    } else {
+      console.log('No referral code provided for new user');
     }
 
     const result = await collection.insertOne(userData);
+    console.log('New user created successfully:', result);
     res.status(200).json({ message: "User inserted successfully", result });
   } catch (error) {
     console.error("Error inserting user data:", error);
@@ -352,16 +374,16 @@ app.get('/api/getReferralInfo', async (req, res) => {
       
       // Fetch updated user data
       const updatedUser = await collection.findOne({ _id: Number(userId) });
-             const referralInfo = {
-         referralCode: updatedUser.referralCode,
-         referralLink: `https://t.me/${TELEGRAM_BOT_USERNAME}?start=ref_${updatedUser.referralCode}`,
-         referredUsers: updatedUser.referredUsers || [],
-         referralEarnings: updatedUser.referralEarnings || 0,
-         referredBy: updatedUser.referredBy ? {
-           userId: updatedUser.referredBy,
-           username: updatedUser.referredByUsername
-         } : null
-       };
+      const referralInfo = {
+        referralCode: updatedUser.referralCode,
+        referralLink: `https://t.me/${TELEGRAM_BOT_USERNAME}?start=ref_${updatedUser.referralCode}`,
+        referredUsers: updatedUser.referredUsers || [],
+        referralEarnings: updatedUser.referralEarnings || 0,
+        referredBy: updatedUser.referredBy ? {
+          userId: updatedUser.referredBy,
+          username: updatedUser.referredByUsername
+        } : null
+      };
 
       return res.status(200).json(referralInfo);
     }
@@ -381,6 +403,36 @@ app.get('/api/getReferralInfo', async (req, res) => {
   } catch (error) {
     console.error("Error fetching referral info:", error);
     res.status(500).json({ error: "Error fetching referral info" });
+  }
+});
+
+// Test endpoint to check referral system
+app.get('/api/testReferral', async (req, res) => {
+  try {
+    const connection = await clientPromise;
+    const db = connection.db("Boostify");
+    const collection = db.collection("Users");
+
+    // Get all users with referral info
+    const users = await collection.find({}, { 
+      _id: 1, 
+      name: 1, 
+      referralCode: 1, 
+      referredBy: 1, 
+      referredUsers: 1,
+      referralEarnings: 1 
+    }).toArray();
+
+    res.status(200).json({
+      totalUsers: users.length,
+      usersWithReferralCodes: users.filter(u => u.referralCode).length,
+      usersWithReferrers: users.filter(u => u.referredBy).length,
+      usersWithReferredUsers: users.filter(u => u.referredUsers && u.referredUsers.length > 0).length,
+      users: users
+    });
+  } catch (error) {
+    console.error("Error testing referral system:", error);
+    res.status(500).json({ error: "Error testing referral system" });
   }
 });
 
