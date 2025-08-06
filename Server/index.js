@@ -42,6 +42,7 @@ app.get('/', async (req, res) => {
 
 app.post('/api/insertUser', async (req, res) => {
   const { _id, name, coins, referralCode } = req.body;
+  console.log('=== USER REGISTRATION DEBUG ===');
   console.log('Inserting user:', { _id, name, referralCode });
   
   try {
@@ -52,7 +53,14 @@ app.post('/api/insertUser', async (req, res) => {
     const existingUser = await collection.findOne({ _id: Number(_id) });
 
     if (existingUser) {
-      console.log('User already exists, checking referral...');
+      console.log('✅ User already exists, checking referral...');
+      console.log('Existing user data:', {
+        _id: existingUser._id,
+        name: existingUser.name,
+        referralCode: existingUser.referralCode,
+        referredBy: existingUser.referredBy,
+        referredUsers: existingUser.referredUsers?.length || 0
+      });
       
       // If user exists but has no referral code, generate one
       if (!existingUser.referralCode) {
@@ -71,18 +79,19 @@ app.post('/api/insertUser', async (req, res) => {
             }
           }
         );
-        console.log('Generated referral code for existing user:', userReferralCode);
+        console.log('✅ Generated referral code for existing user:', userReferralCode);
       }
       
       // If referral code provided and user wasn't referred before
       if (referralCode && !existingUser.referredBy) {
-        console.log('Processing referral code:', referralCode);
+        console.log('🎯 Processing referral code:', referralCode);
         const referrer = await collection.findOne({ referralCode: referralCode });
         
         if (referrer && referrer._id !== Number(_id)) {
-          console.log('Found referrer:', referrer.name, 'ID:', referrer._id);
+          console.log('✅ Found referrer:', referrer.name, 'ID:', referrer._id);
           
-          await collection.updateOne(
+          // Update the user to be referred
+          const updateResult = await collection.updateOne(
             { _id: Number(_id) },
             { 
               $set: { 
@@ -91,21 +100,36 @@ app.post('/api/insertUser', async (req, res) => {
               }
             }
           );
+          console.log('✅ Updated user referral status:', updateResult.modifiedCount > 0);
           
           // Add this user to referrer's referred users list
-          await collection.updateOne(
+          const referrerUpdateResult = await collection.updateOne(
             { _id: referrer._id },
             { $push: { referredUsers: { userId: _id, username: name, joinedAt: new Date() } } }
           );
+          console.log('✅ Updated referrer\'s referred users list:', referrerUpdateResult.modifiedCount > 0);
           
-          console.log('Successfully linked user to referrer');
+          console.log('🎉 Successfully linked user to referrer');
         } else {
-          console.log('Referrer not found or self-referral attempted');
+          console.log('❌ Referrer not found or self-referral attempted');
+          if (!referrer) {
+            console.log('❌ No user found with referral code:', referralCode);
+          }
+          if (referrer && referrer._id === Number(_id)) {
+            console.log('❌ User trying to refer themselves');
+          }
         }
       } else {
-        console.log('No referral code provided or user already referred');
+        console.log('ℹ️ No referral code provided or user already referred');
+        if (!referralCode) {
+          console.log('ℹ️ No referral code provided');
+        }
+        if (existingUser.referredBy) {
+          console.log('ℹ️ User already has a referrer:', existingUser.referredBy);
+        }
       }
       
+      console.log('=== END USER REGISTRATION DEBUG ===');
       return res.status(200).json({ message: "User already exists" });
     }
 
@@ -433,6 +457,73 @@ app.get('/api/testReferral', async (req, res) => {
   } catch (error) {
     console.error("Error testing referral system:", error);
     res.status(500).json({ error: "Error testing referral system" });
+  }
+});
+
+// Manual referral test endpoint
+app.post('/api/testReferralLink', async (req, res) => {
+  const { userId, referralCode } = req.body;
+  
+  try {
+    const connection = await clientPromise;
+    const db = connection.db("Boostify");
+    const collection = db.collection("Users");
+
+    console.log('=== MANUAL REFERRAL TEST ===');
+    console.log('Testing referral:', { userId, referralCode });
+
+    // Find the user
+    const user = await collection.findOne({ _id: Number(userId) });
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    // Find the referrer
+    const referrer = await collection.findOne({ referralCode: referralCode });
+    if (!referrer) {
+      return res.status(404).json({ error: 'Referrer not found' });
+    }
+
+    console.log('User:', { id: user._id, name: user.name, referredBy: user.referredBy });
+    console.log('Referrer:', { id: referrer._id, name: referrer.name, referralCode: referrer.referralCode });
+
+    // Test the referral process
+    if (user.referredBy) {
+      return res.status(400).json({ error: 'User already has a referrer' });
+    }
+
+    if (referrer._id === user._id) {
+      return res.status(400).json({ error: 'User cannot refer themselves' });
+    }
+
+    // Perform the referral
+    await collection.updateOne(
+      { _id: Number(userId) },
+      { 
+        $set: { 
+          referredBy: referrer._id,
+          referredByUsername: referrer.name
+        }
+      }
+    );
+
+    await collection.updateOne(
+      { _id: referrer._id },
+      { $push: { referredUsers: { userId: Number(userId), username: user.name, joinedAt: new Date() } } }
+    );
+
+    console.log('✅ Manual referral test successful');
+    console.log('=== END MANUAL REFERRAL TEST ===');
+
+    res.status(200).json({ 
+      success: true, 
+      message: 'Referral test successful',
+      user: { id: user._id, name: user.name },
+      referrer: { id: referrer._id, name: referrer.name }
+    });
+  } catch (error) {
+    console.error("Error in manual referral test:", error);
+    res.status(500).json({ error: "Error in manual referral test" });
   }
 });
 
