@@ -392,22 +392,14 @@ const Funds: React.FC = () => {
         background: modelOpen ? "rgba(0, 0, 0, 0.7)" : "linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%)"
       }}>
         {[
-          { src: home, alt: "Home" },
-          { src: group, alt: "Friends" },
-          { src: podium, alt: "Orders" },
-          { src: fund, alt: "Funds" },
+          { src: home, alt: "Home", path: "/" },
+          { src: group, alt: "Friends", path: "/referral" },
+          { src: podium, alt: "Orders", path: "/orders" },
+          { src: fund, alt: "Funds", path: "/funds" },
         ].map((item, index) => (
           <a
             key={index}
-            href={`${
-              item.alt === "Home"
-                ? "/"
-                : item.alt === "Friends"
-                ? "/friends"
-                : item.alt === "Orders"
-                ? "/orders"
-                : "/funds"
-            }`}
+            href={item.path}
             className={`flex flex-col items-center ${
               item.alt === "Funds" ? "border-2 border-white border-opacity-30" : ""
             }`}

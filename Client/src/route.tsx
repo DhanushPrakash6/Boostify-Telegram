@@ -14,6 +14,7 @@ import Whatsapp from "./utils/script/subfile/whatsapp.tsx";
 import Wifi from "./utils/script/subfile/wifi.tsx";
 import Orders from "./utils/pages/order.tsx";
 import Funds from "./utils/pages/fund.tsx";
+import Referral from "./utils/pages/referral.tsx";
 
   function App() {
     return (
@@ -21,6 +22,7 @@ import Funds from "./utils/pages/fund.tsx";
         <Route element={<Index />} path="/" />
         <Route element={<Orders />} path="/orders" />
         <Route element={<Funds />} path="/funds" />
+        <Route element={<Referral />} path="/referral" />
         <Route element={<Insta />} path="/subfile/instagram" />
         <Route element={<Telegram />} path="/subfile/telegram" />
         <Route element={<Youtube />} path="/subfile/youtube" />

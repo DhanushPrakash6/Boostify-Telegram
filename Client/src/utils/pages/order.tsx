@@ -116,7 +116,7 @@ const Orders = () => {
 
       <div className="m-3 w-full h-[410px] pb-[110px] flex flex-col gap-4 overflow-y-scroll no-scrollbar">
       {orders.length > 0 ? (
-        orders.map((order) => (
+        orders.slice().reverse().map((order) => (
           <div key={order._id} className="w-full border rounded-2xl bg-white bg-opacity-10 flex justify-between items-center p-4">
             <div className="w-full flex flex-col overflow-x-auto gap-1">
               <h1 className="font-normal text-white text-opacity-70 text-[1.7vh] sm:text-2xl md:text-3xl">
@@ -162,22 +162,14 @@ const Orders = () => {
         background: "linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%)"
       }}>
         {[
-          { src: home, alt: "Home" },
-          { src: group, alt: "Friends" },
-          { src: podium, alt: "Orders" },
-          { src: fund, alt: "Funds" },
+          { src: home, alt: "Home", path: "/" },
+          { src: group, alt: "Friends", path: "/referral" },
+          { src: podium, alt: "Orders", path: "/orders" },
+          { src: fund, alt: "Funds", path: "/funds" },
         ].map((item, index) => (
           <a
             key={index}
-            href={`${
-              item.alt === "Home"
-                ? "/"
-                : item.alt === "Friends"
-                ? "/friends"
-                : item.alt === "Orders"
-                ? "/orders"
-                : "/funds"
-            }`}
+            href={item.path}
             className={`flex flex-col items-center ${
               item.alt === "Orders" ? "border-2 border-white border-opacity-30" : ""
             }`}

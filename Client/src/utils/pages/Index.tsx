@@ -32,6 +32,15 @@ const Index = () => {
     if (user) {
       setUserData(user);
     }
+
+    // Check for referral code in URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const referralCode = urlParams.get('ref');
+    
+    if (referralCode && user) {
+      // Register user with referral code
+      registerUserWithReferral(user, referralCode);
+    }
   
     const fetchUserCoins = async (userId: number) => {
       try {
@@ -59,7 +68,30 @@ const Index = () => {
       fetchUserCoins(1011111);
     }
   
-  }, []); 
+  }, []);
+
+  const registerUserWithReferral = async (user: UserData, referralCode: string) => {
+    try {
+      const response = await fetch('https://boostify-server.vercel.app/api/insertUser', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          _id: user.id,
+          name: user.first_name + (user.last_name ? ' ' + user.last_name : ''),
+          coins: 0,
+          referralCode: referralCode
+        }),
+      });
+      
+      if (response.ok) {
+        console.log('User registered with referral code');
+      }
+    } catch (error) {
+      console.error('Error registering user with referral:', error);
+    }
+  }; 
   
 
   return (
@@ -136,24 +168,14 @@ const Index = () => {
           background: "linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%)"
         }}>
           {[
-            { src: home, alt: "Home" },
-            { src: group, alt: "Friends" },
-            { src: podium, alt: "Orders" },
-            { src: fund, alt: "Funds" },
+            { src: home, alt: "Home", path: "/" },
+            { src: group, alt: "Friends", path: "/referral" },
+            { src: podium, alt: "Orders", path: "/orders" },
+            { src: fund, alt: "Funds", path: "/funds" },
           ].map((item, index) => (
             <a
               key={index}
-              href={`${
-                item.alt === "Home"
-                  ? "/"
-                  : item.alt === "Friends"
-                  ? "/friends"
-                  : item.alt === "Orders"
-                  ? "/orders"
-                  : item.alt === "Funds"
-                  ? "/funds"
-                  : "/"
-              }`}
+              href={item.path}
               className={`flex flex-col items-center ${
                 item.alt === "Home" ? "border-2 border-white border-opacity-30" : ""
               }`}
