@@ -373,19 +373,8 @@ const Funds: React.FC = () => {
             {alert.type === "fill_Amount" && <Warning message="Fill the Amount"/>}
           </div>
       ))}
-      <button className={`close modal-button ${modelOpen ? '' : 'trans-button'}`} onClick={handleModel}>
-        <span></span>
-        <span></span>
-        <span></span>
-        <span></span>
-        <svg viewBox="0 0 36 36" className="circle">
-          <path
-            strokeDasharray="100, 100"
-            d="M18 2.0845
-              a 15.9155 15.9155 0 0 1 0 31.831
-              a 15.9155 15.9155 0 0 1 0 -31.831"
-          />
-        </svg>
+      <button className={`border close modal-button ${modelOpen ? '' : 'trans-button'} flex items-center justify-center `} onClick={handleModel}>
+        <svg height = "30px" width = "30px" viewBox="0 0 56.326 56.326" xmlns="http://www.w3.org/2000/svg" fill="#000000"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path id="Path_14" data-name="Path 14" d="M477.613,422.087l25.6-25.6a1.5,1.5,0,0,0-2.122-2.121l-25.6,25.6-25.6-25.6a1.5,1.5,0,1,0-2.121,2.121l25.6,25.6-25.6,25.6a1.5,1.5,0,0,0,2.121,2.122l25.6-25.6,25.6,25.6a1.5,1.5,0,0,0,2.122-2.122Z" transform="translate(-447.328 -393.924)" fill="#ffffff"></path> </g></svg>
       </button>
       {modelOpen && (<div className="fixed h-[150%] w-full top-0 bg-black opacity-70 z-50"></div>)}
       <footer className={`w-full flex justify-around items-center p-4 border-dashed border-t-2 border-white border-opacity-20 ${modelOpen ? 'bg-black bg-opacity-70' : ''} `} style={{

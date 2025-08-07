@@ -135,7 +135,7 @@ function Spotify() {
 
   return (
     <>
-      <div className="overflow-hidden w-full h-full p-5 flex flex-col min-h-screen items-center text-white font-medium pb-[110px]" style={{
+      <div className="overflow-y-auto w-full h-full p-5 flex flex-col min-h-screen items-center text-white font-medium pb-[120px]" style={{
         background: "linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%)"
       }}>
         <div className="w-full flex justify-left items-center">
@@ -151,7 +151,7 @@ function Spotify() {
             </div>
           </a>
         </div>
-        <h1 className="w-full flex justify-center items-center text-white text-opacity-90 font-normal text-2xl">
+        <h1 className="w-full flex justify-center items-center text-white text-opacity-90 font-normal text-lg">
           Spotify
         </h1>
         <h4 className="mt-2 w-[100%] justify-center items-center text-white text-opacity-60 text-center font-normal text-[14px]">
@@ -159,7 +159,7 @@ function Spotify() {
           few minutes after the transaction is completed.
         </h4>
         <hr className="border-[1px] border-white border-opacity-40 w-[150%] opacity-40 mt-3" />
-        <h1 className="w-full flex justify-left items-center text-white text-opacity-90 font-normal text-2xl mt-3">
+        <h1 className="w-full flex justify-left items-center text-white text-opacity-90 font-normal text-lg mt-3">
           Content Info
         </h1>
         <h4 className="mt-1 w-[100%] justify-left items-center text-white text-opacity-60 font-normal text-[14px]">
@@ -177,7 +177,7 @@ function Spotify() {
           />
         </div>
 
-        <h1 className="w-full flex justify-left items-center text-white text-opacity-90 font-normal text-2xl mt-4">
+        <h1 className="w-full flex justify-left items-center text-white text-opacity-90 font-normal text-lg mt-4">
           Engagement Metrics
         </h1>
         <h4 className="mt-1 w-[100%] justify-left text-white text-opacity-60 font-normal text-[14px]">
@@ -308,7 +308,7 @@ function Spotify() {
               <img
                 src={item.src}
                 alt={item.alt}
-                className={`h-10 w-10 h-12 w-12 ${
+                className={`h-10 w-10 ${
                   item.alt === "Home" ? "opacity-100" : "opacity-50"
                 }`}
                 style={{ filter: "brightness(0) invert(1)" }}
