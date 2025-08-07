@@ -68,12 +68,9 @@ const Index = () => {
   
   }, []);
 
- 
-  
-
   return (
     <>
-      <div className="overflow-auto w-full h-full p-5 flex flex-col min-h-screen items-center text-white font-medium" style={{
+      <div className="overflow-y-auto w-full h-full p-5 flex flex-col min-h-screen items-center text-white font-medium" style={{
         background: "linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%)"
       }}>
         <div className="w-full flex justify-end items-center">

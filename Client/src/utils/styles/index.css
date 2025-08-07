@@ -89,7 +89,7 @@ body {
 }
 
 footer {
-  position: fixed;
+  position: absolute;
   bottom: 0;
   display: flex;
   flex-direction: row;
@@ -104,7 +104,7 @@ footer {
   /* background: rgb(255,255,255);
   background: linear-gradient(200deg, rgba(255,255,255,1) 0%, rgba(123,195,111,1) 0%); */
   /* Ensure footer works with scaling system */
-  transform: scale(var(--scale-factor));
+  /* transform: scale(var(--scale-factor)); */
   transform-origin: bottom left;
   width: calc(100vw / var(--scale-factor));
 }
