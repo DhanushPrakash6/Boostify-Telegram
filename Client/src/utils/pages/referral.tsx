@@ -200,35 +200,35 @@ const Referral = () => {
               )}
             </div>
           </div>
-        )}
+        )} 
 
-        <footer className="w-full flex justify-around items-center p-4 border-dashed border-t-2 border-white border-opacity-20 mt-auto" style={{
-          background: "linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%)"
-        }}>
-          {[
-            { src: home, alt: "Home", path: "/" },
-            { src: group, alt: "Friends", path: "/referral" },
-            { src: podium, alt: "Orders", path: "/orders" },
-            { src: fund, alt: "Funds", path: "/funds" },
-          ].map((item, index) => (
-            <a
-              key={index}
-              href={item.path}
-              className={`flex flex-col items-center ${
-                item.alt === "Friends" ? "border-2 border-white border-opacity-30" : ""
-              }`}
-            >
-              <img
+<footer className="w-full flex justify-around items-center p-4 border-dashed border-t-2 border-white border-opacity-20" style={{
+        background: "linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%)"
+      }}>
+        {[
+          { src: home, alt: "Home", path: "/" },
+          { src: group, alt: "Friends", path: "/referral" },
+          { src: podium, alt: "Orders", path: "/orders" },
+          { src: fund, alt: "Funds", path: "/funds" },
+        ].map((item, index) => (
+          <a
+            key={index}
+            href={item.path}
+            className={`flex flex-col items-center ${
+              item.alt === "Friends" ? "border-2 border-white border-opacity-30" : ""
+            }`}
+          >
+                          <img
                 src={item.src}
                 alt={item.alt}
-                className={`h-10 w-10 h-10 w-10 ${
+                className={`h-12 w-12 ${
                   item.alt === "Friends" ? "opacity-100" : "opacity-50"
                 }`}
                 style={{ filter: "brightness(0) invert(1)" }}
               />
-            </a>
-          ))}
-        </footer>
+          </a>
+        ))}
+      </footer>
       </div>
     </>
   );

@@ -196,11 +196,11 @@ const Funds: React.FC = () => {
             alt="Coin"
             className="h-16 w-16"
           />
-          <span className="font-bold text-5xl">
+          <span className="font-bold text-4xl">
             {coinValue !== null ? coinValue : "Loading..."}
           </span>
         </div>
-        <h1 className="w-full flex justify-center items-center text-white text-opacity-70 font-normal text-2xl">
+        <h1 className="w-full flex justify-center items-center text-white text-opacity-70 font-normal text-xl">
           Available Balance
         </h1>
       </div>
