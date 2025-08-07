@@ -3,4 +3,6 @@
   margin: 0 auto;
   padding: 2rem;
   text-align: center;
+  /* Ensure root works with scaling system */
+  position: relative;
 }

@@ -1,6 +1,39 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Responsive Scaling System - Maintains 390x844 design across all resolutions */
+:root {
+  --base-width: 390px;
+  --base-height: 844px;
+  --scale-factor: min(100vw / var(--base-width), 100vh / var(--base-height));
+}
+
+/* Apply scaling to the entire app */
+#root {
+  transform: scale(var(--scale-factor));
+  transform-origin: top left;
+  width: calc(100vw / var(--scale-factor));
+  height: calc(100vh / var(--scale-factor));
+  overflow: hidden;
+  /* Ensure proper positioning */
+  position: relative;
+}
+
+/* Ensure all child elements inherit the scaling properly */
+#root * {
+  transform-origin: inherit;
+}
+
+/* Ensure body and html don't interfere with scaling */
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+}
+
 @layer utilities {
   .no-scrollbar::-webkit-scrollbar {
       display: none;
@@ -24,6 +57,8 @@
 
 body {
   font-family: "Mori-Serif", sans-serif !important;
+  /* Ensure body works with scaling system */
+  position: relative;
 }
 
 @keyframes float {
@@ -68,6 +103,10 @@ footer {
   background: linear-gradient(to right, #ffdde1, #ee9ca7);
   /* background: rgb(255,255,255);
   background: linear-gradient(200deg, rgba(255,255,255,1) 0%, rgba(123,195,111,1) 0%); */
+  /* Ensure footer works with scaling system */
+  transform: scale(var(--scale-factor));
+  transform-origin: bottom left;
+  width: calc(100vw / var(--scale-factor));
 }
 
 footer img {
@@ -106,6 +145,8 @@ footer a {
   transform: translateX(-50%);
   transition: all 0.5s ease;
   animation: alert-box 5s ease-in-out forwards;
+  /* Ensure alert works with scaling system */
+  transform-origin: center;
 }
 
 @keyframes alert-box {
@@ -201,6 +242,8 @@ footer a {
   padding: 1.25rem;
   transform: translateY(-150%);
   transition: transform 1s;
+  /* Ensure modal works with scaling system */
+  transform-origin: top left;
 }
 
 .trans-container {
@@ -218,6 +261,9 @@ footer a {
   position: fixed;
   transition: all 1s;
   bottom: 5%;
+  /* Ensure modal button works with scaling system */
+  transform: scale(var(--scale-factor));
+  transform-origin: bottom center;
 }
 
 .trans-button {

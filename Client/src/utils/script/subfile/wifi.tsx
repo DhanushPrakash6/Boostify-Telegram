@@ -149,18 +149,18 @@ function Wifi() {
             </div>
           </a>
         </div>
-        <h1 className="w-full flex justify-center items-center text-white text-opacity-90 font-normal text-xl sm:text-2xl md:text-3xl">
+        <h1 className="w-full flex justify-center items-center text-white text-opacity-90 font-normal text-2xl">
           Web Traffic
         </h1>
-        <h4 className="mt-2 w-[100%] justify-center items-center text-white text-opacity-60 text-center font-normal text-[13px] sm:text-[14px] md:text-[16px]">
+        <h4 className="mt-2 w-[100%] justify-center items-center text-white text-opacity-60 text-center font-normal text-[14px]">
           Note: Please complete the form below. The results will appear within a
           few minutes after the transaction is completed.
         </h4>
         <hr className="border-[1px] border-white border-opacity-40 w-[150%] opacity-40 mt-3" />
-        <h1 className="w-full flex justify-left items-center text-white text-opacity-90 font-normal text-xl sm:text-2xl md:text-3xl mt-3">
+        <h1 className="w-full flex justify-left items-center text-white text-opacity-90 font-normal text-2xl mt-3">
           Content Info
         </h1>
-        <h4 className="mt-1 w-[100%] justify-left items-center text-white text-opacity-60 font-normal text-[12px] sm:text-[14px] md:text-[16px]">
+        <h4 className="mt-1 w-[100%] justify-left items-center text-white text-opacity-60 font-normal text-[14px]">
           Provide exact information to avoid interruptions.
         </h4>
 
@@ -175,10 +175,10 @@ function Wifi() {
           />
         </div>
 
-        <h1 className="w-full flex justify-left items-center text-white text-opacity-90 font-normal text-xl sm:text-2xl md:text-3xl mt-4">
+        <h1 className="w-full flex justify-left items-center text-white text-opacity-90 font-normal text-2xl mt-4">
           Engagement Metrics
         </h1>
-        <h4 className="mt-1 w-[100%] justify-left text-white text-opacity-60 font-normal text-[11px] sm:text-[14px] md:text-[16px]">
+        <h4 className="mt-1 w-[100%] justify-left text-white text-opacity-60 font-normal text-[14px]">
           Please check the box if you need specific metrics for the post.
         </h4>
 
@@ -192,7 +192,7 @@ function Wifi() {
             max={50000}
           />
         </div>
-        <h4 className="mt-2 w-[100%] justify-left text-white text-opacity-60 font-normal text-[11px] sm:text-[14px] md:text-[16px]">
+        <h4 className="mt-2 w-[100%] justify-left text-white text-opacity-60 font-normal text-[14px]">
           (Minimum: 10 ; Maximum: 50,000)
         </h4>
 
@@ -206,7 +206,7 @@ function Wifi() {
             max={50000}
           />
         </div>
-        <h4 className="mt-2 w-[100%] justify-left text-white text-opacity-60 font-normal text-[11px] sm:text-[14px] md:text-[16px]">
+        <h4 className="mt-2 w-[100%] justify-left text-white text-opacity-60 font-normal text-[14px]">
           (Minimum: 50 ; Maximum: 50,000)
         </h4>
 
@@ -220,7 +220,7 @@ function Wifi() {
             max={100000}
           />
         </div>
-        <h4 className="mt-2 w-[100%] justify-left text-white text-opacity-60 font-normal text-[11px] sm:text-[14px] md:text-[16px]">
+        <h4 className="mt-2 w-[100%] justify-left text-white text-opacity-60 font-normal text-[14px]">
           (Minimum: 100 ; Maximum: 100,000)
         </h4>
 
@@ -234,7 +234,7 @@ function Wifi() {
             max={100000}
           />
         </div>
-        <h4 className="mt-2 w-[100%] justify-left text-white text-opacity-60 font-normal text-[11px] sm:text-[14px] md:text-[16px]">
+        <h4 className="mt-2 w-[100%] justify-left text-white text-opacity-60 font-normal text-[14px]">
           (Minimum: 10 ; Maximum: 100,000)
         </h4>
 
@@ -248,7 +248,7 @@ function Wifi() {
             max={5000}
           />
         </div>
-        <h4 className="mt-2 w-[100%] justify-left text-white text-opacity-60 font-normal text-[11px] sm:text-[14px] md:text-[16px]">
+        <h4 className="mt-2 w-[100%] justify-left text-white text-opacity-60 font-normal text-[14px]">
           (Minimum: 10 ; Maximum: 5,000)
         </h4>
 
@@ -262,7 +262,7 @@ function Wifi() {
             max={10000}
           />
         </div>
-        <h4 className="mt-2 w-[100%] justify-left text-white text-opacity-60 font-normal text-[11px] sm:text-[14px] md:text-[16px]">
+        <h4 className="mt-2 w-[100%] justify-left text-white text-opacity-60 font-normal text-[14px]">
           (Minimum: 50 ; Maximum: 10,000)
         </h4>
 
@@ -305,7 +305,7 @@ function Wifi() {
               <img
                 src={item.src}
                 alt={item.alt}
-                className={`h-10 w-10 sm:h-12 sm:w-12 md:h-14 md:w-14 ${
+                className={`h-10 w-10 h-12 w-12 ${
                   item.alt === "Home" ? "opacity-100" : "opacity-50"
                 }`}
                 style={{ filter: "brightness(0) invert(1)" }}

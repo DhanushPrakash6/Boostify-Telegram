@@ -194,19 +194,19 @@ const Funds: React.FC = () => {
           <img
             src={coin}
             alt="Coin"
-            className="h-14 w-14 sm:h-16 sm:w-16 md:h-20 md:w-20"
+            className="h-16 w-16"
           />
-          <span className="font-bold text-4xl sm:text-5xl md:text-6xl">
+          <span className="font-bold text-5xl">
             {coinValue !== null ? coinValue : "Loading..."}
           </span>
         </div>
-        <h1 className="w-full flex justify-center items-center text-white text-opacity-70 font-normal text-xl sm:text-2xl md:text-3xl">
+        <h1 className="w-full flex justify-center items-center text-white text-opacity-70 font-normal text-2xl">
           Available Balance
         </h1>
       </div>
 
       <div className="w-full">
-        <h1 className="w-full mt-7 flex justify-left text-white font-normal text-lg sm:text-1xl md:text-2xl">
+        <h1 className="w-full mt-7 flex justify-left text-white font-normal text-lg text-lg">
           Add Funds
         </h1>
         <div className="w-full flex flex-col justify-center items-center mt-3">
@@ -258,27 +258,27 @@ const Funds: React.FC = () => {
               <img src={usdt} alt="" width="30px" height="30px"/>
             </div>
             <div className="w-[300%] flex items-center flex-col gap-1">
-              <h1 className="text-[18px] sm:text-[2.1vh] md:text-[2.5vh] text-white">USDT (ERC-20)</h1>
-              <h1 className="text-white text-opacity-60 font-light text-[16px] sm:text-[2.1vh] md:text-[2.5vh]">Wallet Address</h1>
+              <h1 className="text-[18px] text-lg text-white">USDT (ERC-20)</h1>
+              <h1 className="text-white text-opacity-60 font-light text-[16px] text-lg">Wallet Address</h1>
               <h1 
                 onClick={(e) => handleLinkClick(e, "0xee7911f4beaa561ae4f18ffccf52ed49342cb723")} 
-                className="link-text text-white font-bold font-mono text-[14px] sm:text-[2.1vh] md:text-[2.5vh]"
+                className="link-text text-white font-bold font-mono text-[14px] text-lg"
               >
                 0xee7911f4beaa561ae4f18ffccf52ed49342cb723
               </h1>
               <h1 
-                className="text-white text-opacity-60 font-normal text-[13px] sm:text-[2.1vh] md:text-[2.5vh]"
+                className="text-white text-opacity-60 font-normal text-[13px] text-lg"
               >
                 Click on the above wallet address to copy it
               </h1>
               <input placeholder="Enter Transaction Hash" className="input-txn mt-3" type="text" onChange={(val) => {setTxnHash(val.target.value)}}/>
               <h1 
-                className="text-white text-opacity-60 font-normal text-[12px] sm:text-[2.1vh] md:text-[2.5vh] w-[80%] mt-3 text-center"
+                className="text-white text-opacity-60 font-normal text-[12px] text-lg w-[80%] mt-3 text-center"
               >
                 Please deposit exactly {fundInput} USDT to the provided wallet address on the Ethereum network (ERC-20)
               </h1>
               <h1 
-                className="text-white text-opacity-60 font-normal text-[12px] sm:text-[2.1vh] md:text-[2.5vh] w-[80%] text-center"
+                className="text-white text-opacity-60 font-normal text-[12px] text-lg w-[80%] text-center"
               >
                 After the deposit, kindly provide the correct Transaction ID for verification on the Ethereum network (ERC-20 USDT)
               </h1>
@@ -289,12 +289,12 @@ const Funds: React.FC = () => {
                 Submit →
               </button>
               <h1 
-                className="text-white text-opacity-60 font-normal text-[12px] sm:text-[2.1vh] md:text-[2.5vh] w-[70%] text-center mt-3"
+                className="text-white text-opacity-60 font-normal text-[12px] text-lg w-[70%] text-center mt-3"
               >
                 Once the transaction confirmation is submitted, it will take a few minutes to reflect in your wallet
               </h1>
               <h1 
-                className="text-white text-opacity-60 font-normal text-[12px] sm:text-[2.1vh] md:text-[2.5vh] w-[70%] text-center mt-3"
+                className="text-white text-opacity-60 font-normal text-[12px] text-lg w-[70%] text-center mt-3"
               >
                 Note: Only the value after deducting gasPrice will be added to your wallet once the transaction is completed.
               </h1>
@@ -302,20 +302,20 @@ const Funds: React.FC = () => {
           </div>
 
           <div className={`w-full gap-2 flex flex-col items-start justify-start transition-{transform} duration-[0.8s] ${moveDiv ? 'mov' : ''}`}>
-            <h1 className="text-white font-normal text-2xl sm:text-2xl md:text-1xl">Top up your wallet with any chains below</h1>
-            <h1 className="text-white text-opacity-60 font-light text-1xl sm:text-1xl md:text-sm">Choose coin for deposit</h1>
+            <h1 className="text-white font-normal text-2xl text-2xl">Top up your wallet with any chains below</h1>
+            <h1 className="text-white text-opacity-60 font-light text-1xl text-lg">Choose coin for deposit</h1>
           </div>
-          <h1 className={`text-white font-normal text-[1.8vh] sm:text-[1.8vh] md:text-[2.1vh] mt-3 w-full flex justify-center transition-{transform} duration-[0.8s] ${moveDiv ? 'mov' : ''}`}>Amount : {fundInput}</h1>
+          <h1 className={`text-white font-normal text-[1.8vh] text-lg mt-3 w-full flex justify-center transition-{transform} duration-[0.8s] ${moveDiv ? 'mov' : ''}`}>Amount : {fundInput}</h1>
           <div className="flex flex-col gap-4 mt-3 h-[85%] overflow-visible pb-[25px] no-scrollbar">
             <button name="usdt" onClick={movDiv} className={`w-full mt-1 h-[83px] rounded-3xl crypto-container flex items-center justify-between p-5 duration-[3s] ${moveDiv ? 'mov' : ''}`}>
               <div className="flex justify-center items-center">
                 <div className="w-[50px] h-[50px] rounded-full flex items-center justify-center crypto-icon">
                   <img src={usdt} alt="" width="30px" height="30px"/>
                 </div>
-                <h1 className="ml-5 font-bold text-[2.1vh] sm:text-[2.1vh] md:text-[2.5vh] text-white">USDT</h1>
+                <h1 className="ml-5 font-bold text-[2.1vh] text-lg text-white">USDT</h1>
               </div>
               <div>
-                <h1 className="ml-5 font-bold text-[2.1vh] sm:text-[2.1vh] md:text-[2.5vh] text-white">1.00$</h1>
+                <h1 className="ml-5 font-bold text-[2.1vh] text-lg text-white">1.00$</h1>
               </div>
             </button>
             
@@ -324,10 +324,10 @@ const Funds: React.FC = () => {
                 <div className="w-[50px] h-[50px] rounded-full flex items-center justify-center crypto-icon">
                   <img src={btc} alt="" width="30px" height="30px"/>
                 </div>
-                <h1 className="ml-5 font-bold text-[2.1vh] sm:text-[2.1vh] md:text-[2.5vh] text-white">BTC</h1>
+                <h1 className="ml-5 font-bold text-[2.1vh] text-lg text-white">BTC</h1>
               </div>
               <div>
-                <h1 className="ml-5 font-bold text-[2.1vh] sm:text-[2.1vh] md:text-[2.5vh] text-white">63,126.50$</h1>
+                <h1 className="ml-5 font-bold text-[2.1vh] text-lg text-white">63,126.50$</h1>
               </div>
             </button>
             
@@ -336,10 +336,10 @@ const Funds: React.FC = () => {
                 <div className="w-[50px] h-[50px] rounded-full flex items-center justify-center crypto-icon">
                   <img src={eth} alt="" width="30px" height="30px"/>
                 </div>
-                <h1 className="ml-5 font-bold text-[2.1vh] sm:text-[2.1vh] md:text-[2.5vh] text-white">ETH</h1>
+                <h1 className="ml-5 font-bold text-[2.1vh] text-lg text-white">ETH</h1>
               </div>
               <div>
-                <h1 className="ml-5 font-bold text-[2.1vh] sm:text-[2.1vh] md:text-[2.5vh] text-white">2376.40$</h1>
+                <h1 className="ml-5 font-bold text-[2.1vh] text-lg text-white">2376.40$</h1>
               </div>
             </button>
 
@@ -348,10 +348,10 @@ const Funds: React.FC = () => {
                 <div className="w-[50px] h-[50px] rounded-full flex items-center justify-center crypto-icon">
                   <img src={sol} alt="" width="30px" height="30px"/>
                 </div>
-                <h1 className="ml-5 font-bold text-[2.1vh] sm:text-[2.1vh] md:text-[2.5vh] text-white">SOL</h1>
+                <h1 className="ml-5 font-bold text-[2.1vh] text-lg text-white">SOL</h1>
               </div>
               <div>
-                <h1 className="ml-5 font-bold text-[2.1vh] sm:text-[2.1vh] md:text-[2.5vh] text-white">137.33$</h1>
+                <h1 className="ml-5 font-bold text-[2.1vh] text-lg text-white">137.33$</h1>
               </div>
             </button>
             
@@ -360,10 +360,10 @@ const Funds: React.FC = () => {
                 <div className="w-[50px] h-[50px] rounded-full flex items-center justify-center crypto-icon">
                   <img src={bnb} alt="" width="30px" height="30px"/>
                 </div>
-                <h1 className="ml-5 font-bold text-[2.1vh] sm:text-[2.1vh] md:text-[2.5vh] text-white">BNB</h1>
+                <h1 className="ml-5 font-bold text-[2.1vh] text-lg text-white">BNB</h1>
               </div>
               <div>
-                <h1 className="ml-5 font-bold text-[2.1vh] sm:text-[2.1vh] md:text-[2.5vh] text-white">563.84$</h1>
+                <h1 className="ml-5 font-bold text-[2.1vh] text-lg text-white">563.84$</h1>
               </div>
             </button>       
           </div>
@@ -407,7 +407,7 @@ const Funds: React.FC = () => {
             <img
               src={item.src}
               alt={item.alt}
-              className={`h-10 w-10 sm:h-12 sm:w-12 md:h-14 md:w-14 ${
+              className={`h-10 w-10 h-12 w-12 ${
                 item.alt === "Funds" ? "opacity-100" : "opacity-50"
               }`}
               style={{ filter: "brightness(0) invert(1)" }}

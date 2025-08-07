@@ -221,7 +221,7 @@ const Referral = () => {
               <img
                 src={item.src}
                 alt={item.alt}
-                className={`h-10 w-10 sm:h-12 sm:w-12 md:h-14 md:w-14 ${
+                className={`h-10 w-10 h-12 w-12 ${
                   item.alt === "Friends" ? "opacity-100" : "opacity-50"
                 }`}
                 style={{ filter: "brightness(0) invert(1)" }}

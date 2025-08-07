@@ -79,13 +79,13 @@ const Orders = () => {
           <img
             src={coin}
             alt="Coin"
-            className="h-14 w-14 sm:h-16 sm:w-16 md:h-20 md:w-20"
+            className="h-16 w-16"
           />
-          <span className="font-bold text-4xl sm:text-5xl md:text-6xl">
+          <span className="font-bold text-5xl">
             {coinValue !== null ? coinValue : "Loading..."}
           </span>
         </div>
-        <h1 className="w-full flex justify-center items-center text-white text-opacity-70 font-normal text-xl sm:text-2xl md:text-3xl">
+        <h1 className="w-full flex justify-center items-center text-white text-opacity-70 font-normal text-2xl">
           Available Balance
         </h1>
         <div
@@ -99,10 +99,10 @@ const Orders = () => {
             <img
               src={wallet}
               alt=""
-              className="h-6 w-6 sm:h-7 sm:w-7 md:h-8 md:w-8 drop-shadow-lg"
+              className="h-7 w-7 drop-shadow-lg"
               style={{ filter: "brightness(0) invert(1)" }}
             />
-            <h1 className="font-bold text-white text-opacity-95 text-lg sm:text-xl md:text-2xl tracking-wide">
+            <h1 className="font-bold text-white text-opacity-95 text-xl tracking-wide">
                 Add Money 
             </h1>
           </a>
@@ -110,7 +110,7 @@ const Orders = () => {
       </div>
 
       <span className="w-[500%] border-dashed border-t-2 border-white border-opacity-20 m-6" />
-      <h1 className="w-full flex justify-left items-center text-white text-opacity-90 font-normal text-l sm:text-2xl md:text-3xl">
+      <h1 className="w-full flex justify-left items-center text-white text-opacity-90 font-normal text-2xl">
         Transactions
       </h1>
 
@@ -119,22 +119,22 @@ const Orders = () => {
         orders.slice().reverse().map((order) => (
           <div key={order._id} className="w-full border rounded-2xl bg-white bg-opacity-10 flex justify-between items-center p-4">
             <div className="w-full flex flex-col overflow-x-auto gap-1">
-              <h1 className="font-normal text-white text-opacity-70 text-[1.7vh] sm:text-2xl md:text-3xl">
+              <h1 className="font-normal text-white text-opacity-70 text-2xl">
                 {order.social}
               </h1>
-              <h1 className="text-white text-opacity-60 font-medium text-xs sm:text-2xl md:text-3xl">
+              <h1 className="text-white text-opacity-60 font-medium text-sm">
                 {order.metrics.postLink}
               </h1>
               <div className="w-fit">
                 <details className="bg-white bg-opacity-10 rounded-lg p-2">
-                  <summary className="text-blue-400 font-normal text-xs sm:text-2xl md:text-3xl">
+                  <summary className="text-blue-400 font-normal text-sm">
                     Show Metrics
                   </summary>
                   <div className="flex flex-col mt-2 gap-1">
                     {Object.entries(order.metrics)
                       .filter(([key, value]) => key !== 'postLink' && value)
                       .map(([key, value]) => (
-                        <div key={key} className="text-white text-opacity-80 text-xs sm:text-2xl md:text-3xl">
+                        <div key={key} className="text-white text-opacity-80 text-sm">
                           <strong>{key.charAt(0).toUpperCase() + key.slice(1)}: </strong> {String(value)}
                         </div>
                       ))}
@@ -143,7 +143,7 @@ const Orders = () => {
               </div>
             </div>
             <div>
-              <h1 className="text-red-400 font-normal text-lg sm:text-2xl md:text-3xl text-opacity-90">
+              <h1 className="text-red-400 font-normal text-xl text-opacity-90">
                 -{order.amount}$
               </h1>
             </div>
@@ -151,7 +151,7 @@ const Orders = () => {
         ))
         ) : (
         <div className="w-full flex justify-center items-center">
-          <h1 className="text-white text-opacity-60 font-normal text-sm sm:text-2xl md:text-3xl">
+          <h1 className="text-white text-opacity-60 font-normal text-base">
             No Transactions Found
           </h1>
         </div>
@@ -174,14 +174,14 @@ const Orders = () => {
               item.alt === "Orders" ? "border-2 border-white border-opacity-30" : ""
             }`}
           >
-            <img
-              src={item.src}
-              alt={item.alt}
-              className={`h-10 w-10 sm:h-12 sm:w-12 md:h-14 md:w-14 ${
-                item.alt === "Orders" ? "opacity-100" : "opacity-50"
-              }`}
-              style={{ filter: "brightness(0) invert(1)" }}
-            />
+                          <img
+                src={item.src}
+                alt={item.alt}
+                className={`h-12 w-12 ${
+                  item.alt === "Orders" ? "opacity-100" : "opacity-50"
+                }`}
+                style={{ filter: "brightness(0) invert(1)" }}
+              />
           </a>
         ))}
       </footer>

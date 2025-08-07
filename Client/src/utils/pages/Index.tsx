@@ -87,13 +87,13 @@ const Index = () => {
             <img
               src={coin}
               alt=""
-              className="h-14 w-14 sm:h-16 sm:w-16 md:h-20 md:w-20"
+              className="h-16 w-16"
             />
-            <span className="font-bold text-4xl sm:text-5xl md:text-6xl">
+            <span className="font-bold text-5xl">
               {coinValue}
             </span>
           </div>
-          <h1 className="w-full flex justify-center items-center text-white text-opacity-70 font-normal text-xl sm:text-2xl md:text-3xl">
+          <h1 className="w-full flex justify-center items-center text-white text-opacity-70 font-normal text-2xl">
             Available Balance
           </h1>
           <div
@@ -110,10 +110,10 @@ const Index = () => {
               <img
                 src={wallet}
                 alt=""
-                className="h-6 w-6 sm:h-7 sm:w-7 md:h-8 md:w-8 drop-shadow-lg"
+                className="h-7 w-7 drop-shadow-lg"
                 style={{ filter: "brightness(0) invert(1)" }}
               />
-              <h1 className="font-bold text-white text-opacity-95 text-lg sm:text-xl md:text-2xl tracking-wide">
+              <h1 className="font-bold text-white text-opacity-95 text-xl tracking-wide">
                 Add Money 
               </h1>
             </a>
@@ -132,7 +132,7 @@ const Index = () => {
                 const IconComponent = StaticIcons[socialMedia as keyof typeof StaticIcons];
                 return (
                   <a key={idx} href={`/subfile/${socialMedia}`}>
-                    <div className="h-14 w-14 sm:h-16 sm:w-16 md:h-20 md:w-20 flex items-center justify-center">
+                    <div className="h-16 w-16 flex items-center justify-center">
                       <IconComponent />
                     </div>
                   </a>
@@ -160,7 +160,7 @@ const Index = () => {
               <img
                 src={item.src}
                 alt={item.alt}
-                className={`h-10 w-10 sm:h-12 sm:w-12 md:h-14 md:w-14 ${
+                className={`h-12 w-12 ${
                   item.alt === "Home" ? "opacity-100" : "opacity-50"
                 }`}
                 style={{ filter: "brightness(0) invert(1)" }}
