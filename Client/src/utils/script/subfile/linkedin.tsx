@@ -299,7 +299,7 @@ function Linkedin() {
             <a
               key={index}
               href={`${
-                item.alt === "Home" ? "/" : item.alt === "Friends" ? "/friends" : item.alt === "Orders" ? "/orders" : item.alt === "Funds" ? "/funds" : "/"
+                item.alt === "Home" ? "/" : item.alt === "Friends" ? "/referral" : item.alt === "Orders" ? "/orders" : item.alt === "Funds" ? "/funds" : "/"
               }`}
               className={`flex flex-col items-center ${
                 item.alt === "Home" ? "border-2 border-white border-opacity-30" : ""

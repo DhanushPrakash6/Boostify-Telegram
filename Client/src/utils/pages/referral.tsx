@@ -1,6 +1,7 @@
 import "../styles/index.css";
 import { useState, useEffect } from "react";
 import WebApp from "@twa-dev/sdk";
+import Home from "./data.tsx";
 import { StaticIcons } from "../../icons/StaticIcons";
 import {
   profile,
@@ -36,7 +37,7 @@ interface ReferralInfo {
   } | null;
 }
 
-const Referral = () => {
+const Referral = () => { 
   const [userData, setUserData] = useState<UserData | null>(null);
   const [referralInfo, setReferralInfo] = useState<ReferralInfo | null>(null);
   const [copied, setCopied] = useState(false);
@@ -95,12 +96,23 @@ const Referral = () => {
         <div className="w-full flex justify-end items-center">
           <div className="w-full flex justify-left items-center">
             <img src={profile} alt="" className="h-10 w-10" />
-            <h1 className="text-2xl font-bold ml-3">Referral Program</h1>
+            <Home />
           </div>
         </div>
-
-        {referralInfo && (
+        <h2 className="text-xl font-bold mt-3 text-center">Referral Program</h2>
+                {referralInfo && (
           <div className="w-full flex flex-col gap-6 pt-5">
+            {/* Earnings Section */}
+            <div className="bg-gradient-to-r from-green-600 to-emerald-600 rounded-2xl p-6 shadow-lg">
+              <h2 className="text-xl font-bold mb-4 text-center">Your Earnings</h2>
+              <div className="text-center">
+                <div className="text-4xl font-bold mb-2">
+                  ${referralInfo.referralEarnings.toFixed(2)}
+                </div>
+                <p className="text-gray-200">Total earned from referrals</p>
+              </div>
+            </div>
+
             {/* Referral Code Section */}
             <div className="bg-gradient-to-r from-purple-600 to-blue-600 rounded-2xl p-6 shadow-lg">
               <h2 className="text-xl font-bold mb-4 text-center">Your Referral Code</h2>
@@ -119,7 +131,7 @@ const Referral = () => {
               <div className="bg-white bg-opacity-10 rounded-xl p-4">
                 <h3 className="text-lg font-semibold mb-2">Your Referral Link</h3>
                 <div className="flex items-center justify-between">
-                  <span className="text-sm text-gray-300 break-all mr-2">{referralInfo.referralLink}</span>
+                  <span className="text-sm text-gray-300 truncate mr-3 flex-1">{referralInfo.referralLink}</span>
                   <button
                     onClick={() => copyToClipboard(referralInfo.referralLink)}
                     className="bg-white bg-opacity-20 hover:bg-opacity-30 rounded-lg px-3 py-1 text-sm transition-all duration-200 flex-shrink-0"
@@ -128,47 +140,6 @@ const Referral = () => {
                   </button>
                 </div>
               </div>
-            </div>
-
-            {/* Earnings Section */}
-            <div className="bg-gradient-to-r from-green-600 to-emerald-600 rounded-2xl p-6 shadow-lg">
-              <h2 className="text-xl font-bold mb-4 text-center">Your Earnings</h2>
-              <div className="text-center">
-                <div className="text-4xl font-bold mb-2">
-                  ${referralInfo.referralEarnings.toFixed(2)}
-                </div>
-                <p className="text-gray-200">Total earned from referrals</p>
-              </div>
-            </div>
-
-            {/* Referred Users Section */}
-            <div className="bg-gradient-to-r from-indigo-600 to-purple-600 rounded-2xl p-6 shadow-lg">
-              <h2 className="text-xl font-bold mb-4 text-center">Referred Users</h2>
-              {referralInfo.referredUsers.length > 0 ? (
-                <div className="space-y-3">
-                  {referralInfo.referredUsers.map((user, index) => (
-                    <div key={index} className="bg-white bg-opacity-10 rounded-xl p-4">
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <div className="font-semibold">{user.username}</div>
-                          <div className="text-sm text-gray-300">
-                            Joined: {formatDate(user.joinedAt)}
-                          </div>
-                        </div>
-                        <div className="text-green-400 font-semibold">
-                          Active
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <div className="text-center py-8">
-                  <div className="text-6xl mb-4">👥</div>
-                  <p className="text-gray-300">No referred users yet</p>
-                  <p className="text-sm text-gray-400 mt-2">Share your referral link to start earning!</p>
-                </div>
-              )}
             </div>
 
             {/* How it works */}
@@ -197,6 +168,36 @@ const Referral = () => {
                   </div>
                 </div>
               </div>
+            </div>
+
+            {/* Referred Users Section */}
+            <div className="bg-gradient-to-r from-indigo-600 to-purple-600 rounded-2xl p-6 shadow-lg mb-[120px]">
+              <h2 className="text-xl font-bold mb-4 text-center">Referred Users</h2>
+              {referralInfo.referredUsers.length > 0 ? (
+                <div className="space-y-3">
+                  {referralInfo.referredUsers.map((user, index) => (
+                    <div key={index} className="bg-white bg-opacity-10 rounded-xl p-4">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <div className="font-semibold">{user.username}</div>
+                          <div className="text-sm text-gray-300">
+                            Joined: {formatDate(user.joinedAt)}
+                          </div>
+                        </div>
+                        <div className="text-green-400 font-semibold">
+                          Active
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-8">
+                  <div className="text-6xl mb-4">👥</div>
+                  <p className="text-gray-300">No referred users yet</p>
+                  <p className="text-sm text-gray-400 mt-2">Share your referral link to start earning!</p>
+                </div>
+              )}
             </div>
           </div>
         )}
