@@ -5,6 +5,7 @@ const cors = require('cors');
 const { Network, Alchemy } = require("alchemy-sdk");
 const axios = require('axios');
 const crypto = require('crypto');
+const CryptoPaymentService = require('./cryptoPaymentService');
 
 const settings = {
   apiKey: "yv2uBTVdxcrjGhFHoLkX8r1DVBYYGCVW",
@@ -12,6 +13,7 @@ const settings = {
 };
 
 const alchemy = new Alchemy(settings);
+const cryptoPaymentService = new CryptoPaymentService();
 const app = express();
 const port = process.env.PORT || 3000;
 
@@ -345,6 +347,128 @@ app.get('/api/txn', async (req, res) => {
     });
   } catch (error) {
     res.status(500).json({ error: 'Invalid Transaction Hash' });
+  }
+});
+
+// New crypto payment endpoints
+app.post('/api/createDeposit', async (req, res) => {
+  const { userId, coin, amountUSD } = req.body;
+
+  if (!userId || !coin || !amountUSD) {
+    return res.status(400).json({ error: 'Missing required parameters' });
+  }
+
+  try {
+    const depositInfo = await cryptoPaymentService.generateDepositAddress(userId, coin, amountUSD);
+    
+    // Store deposit record in database
+    const connection = await clientPromise;
+    const db = connection.db("Boostify");
+    const depositsCollection = db.collection("Deposits");
+    
+    await depositsCollection.insertOne(depositInfo.depositRecord);
+
+    res.json({
+      success: true,
+      depositId: depositInfo.depositId,
+      depositAddress: depositInfo.depositAddress,
+      qrCode: depositInfo.qrCode,
+      expectedAmount: depositInfo.expectedAmount,
+      coin: depositInfo.coin,
+      amountUSD: depositInfo.amountUSD,
+      expiresAt: depositInfo.depositRecord.expiresAt
+    });
+  } catch (error) {
+    console.error('Error creating deposit:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.get('/api/checkDepositStatus', async (req, res) => {
+  const { depositId, coin } = req.query;
+
+  if (!depositId || !coin) {
+    return res.status(400).json({ error: 'Missing required parameters' });
+  }
+
+  try {
+    const connection = await clientPromise;
+    const db = connection.db("Boostify");
+    const depositsCollection = db.collection("Deposits");
+    
+    // Get deposit record from database
+    const depositRecord = await depositsCollection.findOne({ depositId });
+    
+    if (!depositRecord) {
+      return res.status(404).json({ error: 'Deposit not found' });
+    }
+
+    // Check if deposit has been received
+    const status = await cryptoPaymentService.checkDepositStatus(depositId, coin);
+    
+    if (status.status === 'confirmed' && !depositRecord.confirmed) {
+      // Update user balance
+      const usersCollection = db.collection("Users");
+      const user = await usersCollection.findOne({ _id: depositRecord.userId });
+      
+      if (user) {
+        const updatedCoins = user.coins + depositRecord.amountUSD;
+        await usersCollection.updateOne(
+          { _id: depositRecord.userId },
+          { $set: { coins: updatedCoins } }
+        );
+
+        // Mark deposit as confirmed
+        await depositsCollection.updateOne(
+          { depositId },
+          { $set: { confirmed: true, confirmedAt: new Date() } }
+        );
+
+        // Handle referral bonus
+        if (user.referredBy) {
+          const referralBonus = depositRecord.amountUSD * 0.01;
+          await usersCollection.updateOne(
+            { _id: user.referredBy },
+            { 
+              $inc: { 
+                coins: referralBonus,
+                referralEarnings: referralBonus
+              }
+            }
+          );
+        }
+      }
+    }
+
+    res.json({
+      success: true,
+      status: status.status,
+      depositRecord,
+      transaction: status.transaction
+    });
+  } catch (error) {
+    console.error('Error checking deposit status:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.get('/api/getCryptoPrices', async (req, res) => {
+  try {
+    const prices = await cryptoPaymentService.getCurrentPrices();
+    res.json({ success: true, prices });
+  } catch (error) {
+    console.error('Error fetching crypto prices:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.get('/api/getSupportedCoins', async (req, res) => {
+  try {
+    const coins = cryptoPaymentService.getSupportedCoins();
+    res.json({ success: true, coins });
+  } catch (error) {
+    console.error('Error getting supported coins:', error);
+    res.status(500).json({ error: error.message });
   }
 });
 
