@@ -5,7 +5,6 @@ const cors = require('cors');
 const { Network, Alchemy } = require("alchemy-sdk");
 const axios = require('axios');
 const crypto = require('crypto');
-const crypto_webhook = require('crypto');
 
 const settings = {
   apiKey: "yv2uBTVdxcrjGhFHoLkX8r1DVBYYGCVW",
@@ -37,103 +36,6 @@ function generateReferralCode() {
 
 app.get('/', async (req, res) => {
   res.status(200).send("The server is running perfectly");
-});
-
-// NOWPayments webhook endpoint
-app.post('/api/payment-webhook', async (req, res) => {
-  try {
-    const signature = req.headers['x-nowpayments-sig'];
-    const payload = JSON.stringify(req.body);
-    
-    // Verify webhook signature (you should add your webhook secret)
-    // const expectedSignature = crypto_webhook
-    //   .createHmac('sha512', 'YOUR_WEBHOOK_SECRET')
-    //   .update(payload)
-    //   .digest('hex');
-    
-    // if (signature !== expectedSignature) {
-    //   console.log('Invalid webhook signature');
-    //   return res.status(400).send('Invalid signature');
-    // }
-
-    const { payment_id, payment_status, pay_amount, pay_currency, order_id } = req.body;
-    
-    console.log('NOWPayments webhook received:', {
-      payment_id,
-      payment_status,
-      pay_amount,
-      pay_currency,
-      order_id
-    });
-
-    // Only process confirmed or finished payments
-    if (payment_status === 'confirmed' || payment_status === 'finished') {
-      // Here you would typically update the user's balance
-      // For now, we'll just log the successful payment
-      console.log('Payment successful:', payment_id);
-      
-      // You can add logic here to update user balance based on order_id
-      // The order_id contains the user ID that was passed when creating the payment
-    }
-
-    res.status(200).send('OK');
-  } catch (error) {
-    console.error('Webhook error:', error);
-    res.status(500).send('Internal server error');
-  }
-});
-
-// Update user balance endpoint
-app.post('/api/updateBalance', async (req, res) => {
-  try {
-    const { userId, amount, paymentId, paymentMethod } = req.body;
-    
-    console.log('Updating balance for user:', userId, 'amount:', amount);
-    
-    const connection = await clientPromise;
-    const db = connection.db("Boostify");
-    const collection = db.collection("Users");
-
-    // Update user's coins
-    const result = await collection.updateOne(
-      { _id: Number(userId) },
-      { $inc: { coins: Number(amount) } }
-    );
-
-    if (result.modifiedCount > 0) {
-      console.log('Balance updated successfully for user:', userId);
-      
-      // Log the payment transaction
-      const paymentLog = {
-        userId: Number(userId),
-        amount: Number(amount),
-        paymentId: paymentId,
-        paymentMethod: paymentMethod,
-        timestamp: new Date(),
-        status: 'completed'
-      };
-      
-      // You can store payment logs in a separate collection if needed
-      // await db.collection("PaymentLogs").insertOne(paymentLog);
-      
-      res.status(200).json({ 
-        success: true, 
-        message: 'Balance updated successfully',
-        newBalance: amount
-      });
-    } else {
-      res.status(404).json({ 
-        success: false, 
-        message: 'User not found' 
-      });
-    }
-  } catch (error) {
-    console.error('Error updating balance:', error);
-    res.status(500).json({ 
-      success: false, 
-      message: 'Internal server error' 
-    });
-  }
 });
 
 app.post('/api/insertUser', async (req, res) => {
@@ -604,6 +506,113 @@ app.post('/api/testReferralLink', async (req, res) => {
   }
 });
 
+
+// NOWPayments webhook endpoint
+app.post('/api/payment-webhook', async (req, res) => {
+  try {
+    const webhookData = req.body;
+    console.log('=== NOWPayments Webhook Received ===');
+    console.log('Webhook data:', webhookData);
+
+    const {
+      payment_id,
+      payment_status,
+      pay_address,
+      price_amount,
+      price_currency,
+      pay_amount,
+      pay_currency,
+      order_id,
+      order_description,
+      outcome_amount,
+      outcome_currency
+    } = webhookData;
+
+    // Verify the webhook signature (optional but recommended)
+    // const signature = req.headers['x-nowpayments-sig'];
+    // You can add signature verification here
+
+    if (payment_status === 'confirmed' || payment_status === 'finished') {
+      // Extract user ID from order_id (format: boostify_${userId}_${timestamp})
+      const orderIdParts = order_id.split('_');
+      if (orderIdParts.length >= 2) {
+        const userId = parseInt(orderIdParts[1]);
+        
+        // Calculate coins to add (1 USD = 10 coins)
+        const coinsToAdd = Math.floor(price_amount * 10);
+        
+        const connection = await clientPromise;
+        const db = connection.db("Boostify");
+        const collection = db.collection("Users");
+        
+        // Add coins to user account
+        const updateResult = await collection.updateOne(
+          { _id: userId },
+          { $inc: { coins: coinsToAdd } }
+        );
+
+        if (updateResult.modifiedCount > 0) {
+          // Log the successful payment
+          const paymentLog = {
+            payment_id,
+            user_id: userId,
+            payment_status,
+            price_amount,
+            price_currency,
+            pay_amount,
+            pay_currency,
+            coins_added: coinsToAdd,
+            order_id,
+            order_description,
+            outcome_amount,
+            outcome_currency,
+            timestamp: new Date(),
+            webhook_received: true
+          };
+
+          const paymentsCollection = db.collection("Payments");
+          await paymentsCollection.insertOne(paymentLog);
+
+          console.log(`✅ Payment processed successfully for user ${userId}: ${coinsToAdd} coins added`);
+        } else {
+          console.log(`❌ User ${userId} not found for payment processing`);
+        }
+      } else {
+        console.log('❌ Invalid order_id format:', order_id);
+      }
+    } else {
+      console.log(`ℹ️ Payment ${payment_id} status: ${payment_status} - no action needed`);
+    }
+
+    // Always respond with 200 OK to acknowledge receipt
+    res.status(200).json({ received: true });
+  } catch (error) {
+    console.error('Error processing NOWPayments webhook:', error);
+    res.status(500).json({ error: 'Webhook processing failed' });
+  }
+});
+
+// Get payment history for a user
+app.get('/api/payment-history', async (req, res) => {
+  const { userId } = req.query;
+  
+  try {
+    const connection = await clientPromise;
+    const db = connection.db("Boostify");
+    const paymentsCollection = db.collection("Payments");
+    
+    const payments = await paymentsCollection
+      .find({ user_id: parseInt(userId) })
+      .sort({ timestamp: -1 })
+      .limit(20)
+      .toArray();
+    
+    res.status(200).json({ payments });
+  } catch (error) {
+    console.error('Error fetching payment history:', error);
+    res.status(500).json({ error: 'Failed to fetch payment history' });
+  }
+});
 
 async function getETHPriceInUSD() {
   try {
