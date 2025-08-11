@@ -507,110 +507,174 @@ app.post('/api/testReferralLink', async (req, res) => {
 });
 
 
-// NOWPayments webhook endpoint
-app.post('/api/payment-webhook', async (req, res) => {
-  try {
-    const webhookData = req.body;
-    console.log('=== NOWPayments Webhook Received ===');
-    console.log('Webhook data:', webhookData);
-
-    const {
-      payment_id,
-      payment_status,
-      pay_address,
-      price_amount,
-      price_currency,
-      pay_amount,
-      pay_currency,
-      order_id,
-      order_description,
-      outcome_amount,
-      outcome_currency
-    } = webhookData;
-
-    // Verify the webhook signature (optional but recommended)
-    // const signature = req.headers['x-nowpayments-sig'];
-    // You can add signature verification here
-
-    if (payment_status === 'confirmed' || payment_status === 'finished') {
-      // Extract user ID from order_id (format: boostify_${userId}_${timestamp})
-      const orderIdParts = order_id.split('_');
-      if (orderIdParts.length >= 2) {
-        const userId = parseInt(orderIdParts[1]);
-        
-        // Calculate coins to add (1 USD = 10 coins)
-        const coinsToAdd = Math.floor(price_amount * 10);
-        
-        const connection = await clientPromise;
-        const db = connection.db("Boostify");
-        const collection = db.collection("Users");
-        
-        // Add coins to user account
-        const updateResult = await collection.updateOne(
-          { _id: userId },
-          { $inc: { coins: coinsToAdd } }
-        );
-
-        if (updateResult.modifiedCount > 0) {
-          // Log the successful payment
-          const paymentLog = {
-            payment_id,
-            user_id: userId,
-            payment_status,
-            price_amount,
-            price_currency,
-            pay_amount,
-            pay_currency,
-            coins_added: coinsToAdd,
-            order_id,
-            order_description,
-            outcome_amount,
-            outcome_currency,
-            timestamp: new Date(),
-            webhook_received: true
-          };
-
-          const paymentsCollection = db.collection("Payments");
-          await paymentsCollection.insertOne(paymentLog);
-
-          console.log(`✅ Payment processed successfully for user ${userId}: ${coinsToAdd} coins added`);
-        } else {
-          console.log(`❌ User ${userId} not found for payment processing`);
-        }
-      } else {
-        console.log('❌ Invalid order_id format:', order_id);
-      }
-    } else {
-      console.log(`ℹ️ Payment ${payment_id} status: ${payment_status} - no action needed`);
-    }
-
-    // Always respond with 200 OK to acknowledge receipt
-    res.status(200).json({ received: true });
-  } catch (error) {
-    console.error('Error processing NOWPayments webhook:', error);
-    res.status(500).json({ error: 'Webhook processing failed' });
-  }
-});
-
-// Get payment history for a user
-app.get('/api/payment-history', async (req, res) => {
-  const { userId } = req.query;
+// Get user's wallet addresses
+app.get('/api/get-wallets', async (req, res) => {
+  const { id } = req.query;
   
   try {
     const connection = await clientPromise;
     const db = connection.db("Boostify");
-    const paymentsCollection = db.collection("Payments");
+    const collection = db.collection("Users");
+
+    const user = await collection.findOne({ _id: Number(id) });
     
-    const payments = await paymentsCollection
-      .find({ user_id: parseInt(userId) })
-      .sort({ timestamp: -1 })
-      .limit(20)
-      .toArray();
-    
-    res.status(200).json({ payments });
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    // If user doesn't have wallets, generate them
+    if (!user.wallets) {
+      const wallets = {
+        BTC: "bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh",
+        ETH: "0x742d35Cc6634C0532925a3b8D4C9db96C4b4d8b6",
+        SOL: "7xKXtg2CW87d97TXJSDpbD5jBkheTqA83TZRuJosgAsU",
+        USDT_ERC20: "0x742d35Cc6634C0532925a3b8D4C9db96C4b4d8b6",
+        USDT_SPL: "7xKXtg2CW87d97TXJSDpbD5jBkheTqA83TZRuJosgAsU"
+      };
+
+      await collection.updateOne(
+        { _id: Number(id) },
+        { $set: { wallets: wallets } }
+      );
+
+      return res.status(200).json({ wallets: wallets });
+    }
+
+    res.status(200).json({ wallets: user.wallets });
   } catch (error) {
-    console.error('Error fetching payment history:', error);
-    res.status(500).json({ error: 'Failed to fetch payment history' });
+    console.error("Error fetching wallets:", error);
+    res.status(500).json({ error: "Error fetching wallets" });
+  }
+});
+
+// Get user's credits
+app.get('/api/get-credits', async (req, res) => {
+  const { id } = req.query;
+  
+  try {
+    const connection = await clientPromise;
+    const db = connection.db("Boostify");
+    const collection = db.collection("Users");
+
+    const user = await collection.findOne({ _id: Number(id) });
+    
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    res.status(200).json({ credits: user.credits || 0 });
+  } catch (error) {
+    console.error("Error fetching credits:", error);
+    res.status(500).json({ error: "Error fetching credits" });
+  }
+});
+
+// Crypto webhook endpoint for processing deposits
+app.post('/api/crypto-webhook', async (req, res) => {
+  const { 
+    txid, 
+    address, 
+    amount, 
+    currency, 
+    confirmations, 
+    network 
+  } = req.body;
+
+  try {
+    const connection = await clientPromise;
+    const db = connection.db("Boostify");
+    const collection = db.collection("Users");
+    const transactionsCollection = db.collection("Transactions");
+
+    // Find user by wallet address
+    const user = await collection.findOne({
+      $or: [
+        { "wallets.BTC": address },
+        { "wallets.ETH": address },
+        { "wallets.SOL": address },
+        { "wallets.USDT_ERC20": address },
+        { "wallets.USDT_SPL": address }
+      ]
+    });
+
+    if (!user) {
+      console.log(`No user found for address: ${address}`);
+      return res.status(404).json({ error: 'User not found for this address' });
+    }
+
+    // Check if transaction already processed
+    const existingTx = await transactionsCollection.findOne({ txid: txid });
+    if (existingTx) {
+      console.log(`Transaction ${txid} already processed`);
+      return res.status(200).json({ message: 'Transaction already processed' });
+    }
+
+    // Convert amount to USD and then to credits
+    let usdAmount = 0;
+    
+    try {
+      // Fetch current crypto prices
+      const response = await axios.get(`https://api.coingecko.com/api/v3/simple/price?ids=${currency.toLowerCase()}&vs_currencies=usd`);
+      const price = response.data[currency.toLowerCase()]?.usd;
+      
+      if (price) {
+        usdAmount = amount * price;
+      } else {
+        // Fallback rates if API fails
+        const fallbackRates = {
+          'bitcoin': 45000,
+          'ethereum': 3000,
+          'solana': 100,
+          'tether': 1
+        };
+        usdAmount = amount * (fallbackRates[currency.toLowerCase()] || 1);
+      }
+    } catch (error) {
+      console.error('Error fetching crypto price:', error);
+      // Use fallback rate
+      const fallbackRates = {
+        'bitcoin': 45000,
+        'ethereum': 3000,
+        'solana': 100,
+        'tether': 1
+      };
+      usdAmount = amount * (fallbackRates[currency.toLowerCase()] || 1);
+    }
+
+    // Convert USD to credits (1 USD = 100 credits)
+    const creditsToAdd = Math.floor(usdAmount * 100);
+
+    // Update user's credits
+    await collection.updateOne(
+      { _id: user._id },
+      { $inc: { credits: creditsToAdd } }
+    );
+
+    // Log the transaction
+    await transactionsCollection.insertOne({
+      txid: txid,
+      userId: user._id,
+      address: address,
+      amount: amount,
+      currency: currency,
+      usdAmount: usdAmount,
+      creditsAdded: creditsToAdd,
+      network: network,
+      confirmations: confirmations,
+      timestamp: new Date(),
+      status: 'completed'
+    });
+
+    console.log(`✅ Deposit processed: ${amount} ${currency} = ${creditsToAdd} credits for user ${user._id}`);
+
+    res.status(200).json({ 
+      success: true, 
+      message: 'Deposit processed successfully',
+      creditsAdded: creditsToAdd
+    });
+  } catch (error) {
+    console.error("Error processing crypto webhook:", error);
+    res.status(500).json({ error: "Error processing deposit" });
   }
 });
 
