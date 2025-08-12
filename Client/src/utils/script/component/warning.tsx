@@ -1,7 +1,7 @@
 import "./warning.css";
 const Warning = ({message}) => {
   return (
-    <>
+    <> 
       <div className="card">
         <svg
           className="wave"

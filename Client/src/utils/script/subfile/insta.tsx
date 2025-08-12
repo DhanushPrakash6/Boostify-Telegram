@@ -271,7 +271,7 @@ function Insta() {
           <Confirm text={`Confirm - $${calculateTotal().toFixed(2)}`} onClick={handleConfirmClick} />
         </div>
 
-        {/* Alert Display */}
+        {/* Alert Display */} 
         {alerts.map((alert) => (
           <div key={alert.id} className="fixed top-3 alert">
             {alert.type === "empty" && <Warning message="Fill the Link"/>}

@@ -10,7 +10,7 @@
 }
 
 /* Apply scaling to the entire app */
-#root {
+#root { 
   transform: scale(var(--scale-factor));
   transform-origin: top left;
   width: calc(100vw / var(--scale-factor));
