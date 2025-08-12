@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import WebApp from "@twa-dev/sdk";
 import { StaticIcons } from "../../icons/StaticIcons";
 import Home from "./data.tsx";
+
 import {
   profile,
   coin,
@@ -86,9 +87,13 @@ const Index = () => {
               alt=""
               className="h-16 w-16"
             />
-            <span className="font-bold text-4xl">
-              {coinValue}
-            </span>
+            {coinValue ? (
+              <span className="font-bold text-4xl">
+                {coinValue}
+              </span>
+            ) : (
+              <div className="h-12 w-32 bg-white bg-opacity-20 rounded-lg animate-pulse" />
+            )}
           </div>
           <h1 className="w-full flex justify-center items-center text-white text-opacity-70 font-normal text-xl">
             Available Balance
