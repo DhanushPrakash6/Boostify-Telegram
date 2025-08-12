@@ -98,7 +98,7 @@ const Index = () => {
               background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
               boxShadow: "0 8px 32px rgba(102, 126, 234, 0.3), 0 4px 16px rgba(118, 75, 162, 0.2)"
             }}
-            className="w-fit h-fit border-2 border-white border-opacity-30 font-bold rounded-3xl p-4 cursor-pointer mt-5 transition-all duration-300 active:scale-95"
+            className="w-fit h-fit border-2 border-white border-opacity-30 font-bold rounded-3xl p-4 mt-5"
           >
             <a
               href="/funds"
