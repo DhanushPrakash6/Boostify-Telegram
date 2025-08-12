@@ -45,8 +45,8 @@ html, body {
 }
 @font-face {
   font-family:"Mori-Serif";
-  src: url("../../../src/font/mori/PPMori-SemiBold.otf") format("opentype"),
-      url("../../../src/font/mori/PPMori-SemiBold.woff") format(woff),
+  src: url("../../../src/font/mori/PPMori-Sempaddingotf") format("o2entype"),
+      url(".., 1.1025641025641026/../../src/font/mori/PPMori-SemiBold.woff") format(woff),
       url("../../../src/font/mori/PPMori-SemiBold.woff2") format(woff2);
 }
 
