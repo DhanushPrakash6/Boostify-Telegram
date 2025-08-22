@@ -273,19 +273,17 @@ function Facebook() {
         </div>
 
         {/* Alert Display */}
-        <div className="fixed top-4 right-4 z-50 space-y-2">
-          {alerts.map((alert) => (
-            <div key={alert.id} className="fixed top-3 alert">
-              {alert.type === "empty" && <Warning message="Fill the Link"/>}
-              {alert.type === "warning" && <Warning message="Choose any Service"/>}
-              {alert.type === "failure" && <Failure message = "Insufficient Funds"/>}
-              {alert.type == "error" && <Failure message="Error Occurred"/>}
-              {alert.type === "success" && (
-                <Success amount={Number(calculateTotal().toFixed(2))} />
-              )}
-            </div>
-          ))}
-        </div>
+        {alerts.map((alert) => (
+          <div key={alert.id} className="fixed top-3 alert">
+            {alert.type === "empty" && <Warning message="Fill the Link"/>}
+            {alert.type === "warning" && <Warning message="Choose any Service"/>}
+            {alert.type === "failure" && <Failure message = "Insufficient Funds"/>}
+            {alert.type == "error" && <Failure message="Error Occurred"/>}
+            {alert.type === "success" && (
+              <Success amount={Number(calculateTotal().toFixed(2))} />
+            )}
+          </div>
+        ))}
 
         <footer className="w-full flex justify-around items-center p-4 border-dashed border-t-2 border-white border-opacity-20" style={{
           background: "linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%)"
@@ -322,3 +320,4 @@ function Facebook() {
 }
 
 export default Facebook;
+ 

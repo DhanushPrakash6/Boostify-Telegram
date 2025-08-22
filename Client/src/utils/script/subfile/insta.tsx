@@ -283,7 +283,7 @@ function Insta() {
             )}
           </div>
         ))}
-
+ 
         <footer className="w-full flex justify-around items-center p-4 border-dashed border-t-2 border-white border-opacity-20" style={{
           background: "linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%)"
         }}>
