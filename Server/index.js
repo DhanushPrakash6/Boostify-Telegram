@@ -5,6 +5,7 @@ const cors = require('cors');
 const { Network, Alchemy } = require("alchemy-sdk");
 const axios = require('axios');
 const crypto = require('crypto');
+const PaymentService = require('./paymentService');
 
 const settings = {
   apiKey: "yv2uBTVdxcrjGhFHoLkX8r1DVBYYGCVW",
@@ -14,6 +15,9 @@ const settings = {
 const alchemy = new Alchemy(settings);
 const app = express();
 const port = process.env.PORT || 3000;
+
+// Initialize payment service
+const paymentService = new PaymentService();
 
 const TELEGRAM_BOT_USERNAME = "BoostifySocialBot"; 
 
@@ -506,6 +510,162 @@ app.post('/api/testReferralLink', async (req, res) => {
   }
 });
 
+// ===== PAYMENT SYSTEM ENDPOINTS =====
+
+// Get supported coins
+app.get('/api/payment/coins', async (req, res) => {
+  try {
+    const coins = paymentService.getSupportedCoins();
+    res.status(200).json({ coins });
+  } catch (error) {
+    console.error("Error getting supported coins:", error);
+    res.status(500).json({ error: "Error getting supported coins" });
+  }
+});
+
+// Get coin price
+app.get('/api/payment/price/:coin', async (req, res) => {
+  try {
+    const { coin } = req.params;
+    const price = await paymentService.getCoinPrice(coin);
+    res.status(200).json({ coin, price });
+  } catch (error) {
+    console.error(`Error getting ${req.params.coin} price:`, error);
+    res.status(500).json({ error: `Error getting ${req.params.coin} price` });
+  }
+});
+
+// Create payment request
+app.post('/api/payment/create', async (req, res) => {
+  try {
+    const { userId, coin, amount, description } = req.body;
+    
+    if (!userId || !coin || !amount) {
+      return res.status(400).json({ error: 'Missing required fields: userId, coin, amount' });
+    }
+
+    const paymentRequest = await paymentService.createPaymentRequest(userId, coin, amount, description);
+    
+    console.log('Payment request created:', {
+      paymentId: paymentRequest.paymentId,
+      userId,
+      coin,
+      amount,
+      walletAddress: paymentRequest.walletAddress
+    });
+
+    res.status(200).json(paymentRequest);
+  } catch (error) {
+    console.error("Error creating payment request:", error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Verify payment
+app.post('/api/payment/verify', async (req, res) => {
+  try {
+    const { paymentId, txHash } = req.body;
+    
+    if (!paymentId || !txHash) {
+      return res.status(400).json({ error: 'Missing required fields: paymentId, txHash' });
+    }
+
+    const verificationResult = await paymentService.verifyPayment(paymentId, txHash);
+    
+    if (verificationResult.success) {
+      // Credit the user's account
+      const connection = await clientPromise;
+      const db = connection.db("Boostify");
+      const collection = db.collection("Users");
+      
+      const user = await collection.findOne({ _id: verificationResult.userId });
+      if (!user) {
+        return res.status(404).json({ error: 'User not found' });
+      }
+
+      const updatedCoins = user.coins + verificationResult.amountInUSD;
+      
+      await collection.updateOne(
+        { _id: verificationResult.userId },
+        { $set: { coins: updatedCoins } }
+      );
+
+      // Handle referral bonus
+      if (user.referredBy) {
+        const referralBonus = verificationResult.amountInUSD * 0.01; // 1% referral bonus
+        
+        await collection.updateOne(
+          { _id: user.referredBy },
+          { 
+            $inc: { 
+              coins: referralBonus,
+              referralEarnings: referralBonus
+            }
+          }
+        );
+      }
+
+      console.log('Payment verified and user credited:', {
+        paymentId,
+        userId: verificationResult.userId,
+        amount: verificationResult.amount,
+        amountInUSD: verificationResult.amountInUSD,
+        txHash
+      });
+
+      res.status(200).json({
+        success: true,
+        message: 'Payment verified successfully',
+        amount: verificationResult.amount,
+        amountInUSD: verificationResult.amountInUSD,
+        newBalance: updatedCoins
+      });
+    } else {
+      res.status(400).json({ error: 'Payment verification failed' });
+    }
+  } catch (error) {
+    console.error("Error verifying payment:", error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Get payment status
+app.get('/api/payment/status/:paymentId', async (req, res) => {
+  try {
+    const { paymentId } = req.params;
+    const status = await paymentService.getPaymentStatus(paymentId);
+    res.status(200).json(status);
+  } catch (error) {
+    console.error("Error getting payment status:", error);
+    res.status(500).json({ error: "Error getting payment status" });
+  }
+});
+
+// Get user payments
+app.get('/api/payment/user/:userId', async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const payments = await paymentService.getUserPayments(userId);
+    res.status(200).json({ payments });
+  } catch (error) {
+    console.error("Error getting user payments:", error);
+    res.status(500).json({ error: "Error getting user payments" });
+  }
+});
+
+// Cleanup expired payments (admin endpoint)
+app.post('/api/payment/cleanup', async (req, res) => {
+  try {
+    const cleanedCount = await paymentService.cleanupExpiredPayments();
+    res.status(200).json({ 
+      success: true, 
+      message: `Cleaned up ${cleanedCount} expired payments` 
+    });
+  } catch (error) {
+    console.error("Error cleaning up payments:", error);
+    res.status(500).json({ error: "Error cleaning up payments" });
+  }
+});
 
 async function getETHPriceInUSD() {
   try {
