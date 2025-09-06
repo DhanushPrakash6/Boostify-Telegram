@@ -21,12 +21,12 @@ const Funds: React.FC = () => {
   const [coinValue, setCoinValue] = useState<string | null>(null);
   const [userData, setUserData] = useState<UserData | null>(null);
   const [paymentLink, setPaymentLink] = useState<string | null>(null);
-  const [depositAmount, setDepositAmount] = useState<string>("0.1");
+  const [depositAmountUSD, setDepositAmountUSD] = useState<string>("10");
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [solPrice, setSolPrice] = useState<number | null>(null);
   const [isVerifying, setIsVerifying] = useState<boolean>(false);
   const [verificationStatus, setVerificationStatus] = useState<string | null>(null);
-  const [isAutoChecking, setIsAutoChecking] = useState<boolean>(false);
+  const [txnSignature, setTxnSignature] = useState<string>("");
   useEffect(() => {
     const user = WebApp.initDataUnsafe.user as UserData | undefined;
     if (user) setUserData(user);
@@ -64,39 +64,52 @@ const Funds: React.FC = () => {
   }, [userData]);
   
   const handleDeposit = async () => {
-    const amount = parseFloat(depositAmount);
-    if (isNaN(amount) || amount <= 0) {
-      alert("Please enter a valid amount");
+    const amountUSD = parseFloat(depositAmountUSD);
+    if (isNaN(amountUSD) || amountUSD <= 0) {
+      setVerificationStatus("❌ Please enter a valid USD amount");
+      setTimeout(() => setVerificationStatus(null), 3000);
       return;
     }
+
+    if (!solPrice) {
+      setVerificationStatus("❌ SOL price not available. Please try again.");
+      setTimeout(() => setVerificationStatus(null), 3000);
+      return;
+    }
+
+    const amountSOL = amountUSD / solPrice;
 
     setIsLoading(true);
     try {
       const response = await fetch("https://boostify-server.vercel.app/api/createSolPayment", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ userId: userData?.id, amount })
+        body: JSON.stringify({ userId: userData?.id, amount: amountSOL })
       });
       const data = await response.json();
       setPaymentLink(data.solanaPayLink);
     } catch (err) {
       console.error("Error creating payment:", err);
-      alert("Error creating payment. Please try again.");
+      setVerificationStatus("❌ Error creating payment. Please try again.");
+      setTimeout(() => setVerificationStatus(null), 5000);
     } finally {
       setIsLoading(false);
     }
   };
 
   const handleVerifyPayment = async () => {
-    const signature = prompt("Enter your transaction signature:");
-    if (!signature) return;
+    if (!txnSignature.trim()) {
+      setVerificationStatus("❌ Please enter a transaction signature");
+      setTimeout(() => setVerificationStatus(null), 3000);
+      return;
+    }
 
     setIsVerifying(true);
     setVerificationStatus("Verifying transaction...");
     
     try {
       const response = await fetch(
-        `https://boostify-server.vercel.app/api/verifySolPayment?userId=${userData?.id}&signature=${signature}`
+        `https://boostify-server.vercel.app/api/verifySolPayment?userId=${userData?.id}&signature=${txnSignature.trim()}`
       );
       const data = await response.json();
       
@@ -113,10 +126,11 @@ const Funds: React.FC = () => {
           maximumFractionDigits: 2,
         }));
         
-        // Clear payment link after successful verification
+        // Clear payment link and signature after successful verification
         setTimeout(() => {
           setPaymentLink(null);
           setVerificationStatus(null);
+          setTxnSignature("");
         }, 3000);
       } else {
         setVerificationStatus(`❌ Error: ${data.error}`);
@@ -134,60 +148,25 @@ const Funds: React.FC = () => {
   const copyToClipboard = async (text: string) => {
     try {
       await navigator.clipboard.writeText(text);
-      alert("Payment link copied to clipboard!");
+      setVerificationStatus("📋 Payment link copied to clipboard!");
+      setTimeout(() => setVerificationStatus(null), 2000);
     } catch (err) {
       console.error("Failed to copy:", err);
+      setVerificationStatus("❌ Failed to copy link");
+      setTimeout(() => setVerificationStatus(null), 2000);
     }
   };
 
-  const checkForRecentPayments = async () => {
-    if (!userData?.id) return;
-    
-    setIsAutoChecking(true);
-    try {
-      const response = await fetch(
-        `https://boostify-server.vercel.app/api/checkRecentSolPayments?userId=${userData.id}`
-      );
-      const data = await response.json();
-      
-      if (data.success && data.newTransactions.length > 0) {
-        const totalValue = data.newTransactions.reduce((sum: number, txn: any) => sum + parseFloat(txn.valueInUSD), 0);
-        setVerificationStatus(`🎉 Found ${data.newTransactions.length} new payment(s) worth $${totalValue.toFixed(2)}!`);
-        
-        // Refresh user coins
-        const userId = userData.id;
-        const coinResponse = await fetch(
-          `https://boostify-server.vercel.app/api/getUserCoin?id=${userId}`
-        );
-        const coinData = await coinResponse.json();
-        setCoinValue(Number(coinData.coins).toLocaleString(undefined, {
-          minimumFractionDigits: 2,
-          maximumFractionDigits: 2,
-        }));
-        
-        // Clear payment link after successful auto-verification
-        setTimeout(() => {
-          setPaymentLink(null);
-          setVerificationStatus(null);
-        }, 5000);
-      }
-    } catch (err) {
-      console.error("Error checking recent payments:", err);
-    } finally {
-      setIsAutoChecking(false);
-    }
+  // Calculate SOL equivalent when USD amount or SOL price changes
+  const getSOLEquivalent = () => {
+    if (!solPrice || !depositAmountUSD) return "0";
+    const amountUSD = parseFloat(depositAmountUSD);
+    if (isNaN(amountUSD)) return "0";
+    return (amountUSD / solPrice).toFixed(6);
   };
-
-  // Auto-check for payments every 30 seconds when payment link is active
-  useEffect(() => {
-    if (!paymentLink || !userData?.id) return;
-    
-    const interval = setInterval(checkForRecentPayments, 30000); // Check every 30 seconds
-    return () => clearInterval(interval);
-  }, [paymentLink, userData?.id]);
 
   return (
-    <div className={`overflow-hidden w-full h-full p-5 flex flex-col min-h-screen items-center text-white font-medium`} style={{
+    <div className={`overflow-scroll w-full h-full p-5 flex flex-col min-h-screen items-center text-white font-medium`} style={{
       background: "linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%)"
     }}>
       <div className="w-full flex justify-end items-center">
@@ -219,20 +198,20 @@ const Funds: React.FC = () => {
       <div className="mt-6 w-full max-w-sm">
         <div className="mb-4">
           <label className="block text-white text-sm font-medium mb-2">
-            Deposit Amount (SOL)
+            Deposit Amount (USD)
           </label>
           <input
             type="number"
             step="0.01"
             min="0.01"
-            value={depositAmount}
-            onChange={(e) => setDepositAmount(e.target.value)}
+            value={depositAmountUSD}
+            onChange={(e) => setDepositAmountUSD(e.target.value)}
             className="w-full px-4 py-2 bg-white bg-opacity-10 border border-white border-opacity-20 rounded-lg text-white placeholder-white placeholder-opacity-50 focus:outline-none focus:border-purple-400"
-            placeholder="0.1"
+            placeholder="10.00"
           />
           {solPrice && (
             <p className="text-white text-opacity-70 text-xs mt-1">
-              ≈ ${(parseFloat(depositAmount || "0") * solPrice).toFixed(2)} USD
+              ≈ {getSOLEquivalent()} SOL
             </p>
           )}
         </div>
@@ -247,7 +226,7 @@ const Funds: React.FC = () => {
       </div>
 
       {paymentLink && (
-        <div className="mt-6 w-full max-w-sm text-center">
+        <div className="mt-6 mb-[100px] w-full max-w-sm text-center">
           <div className="bg-white bg-opacity-10 p-6 rounded-xl">
             <p className="mb-4 text-white font-medium text-lg">Payment Link Created!</p>
             
@@ -281,27 +260,32 @@ const Funds: React.FC = () => {
             
             {/* Verification Section */}
             <div className="space-y-3">
-              <div className="grid grid-cols-2 gap-2">
-                <button
-                  onClick={handleVerifyPayment}
-                  disabled={isVerifying || isLoading}
-                  className="px-3 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed text-sm font-medium"
-                >
-                  {isVerifying ? "Verifying..." : "Manual Verify"}
-                </button>
-                
-                <button
-                  onClick={checkForRecentPayments}
-                  disabled={isAutoChecking || isLoading}
-                  className="px-3 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed text-sm font-medium"
-                >
-                  {isAutoChecking ? "Checking..." : "Auto Check"}
-                </button>
+              {/* Transaction Signature Input */}
+              <div>
+                <label className="block text-white text-sm font-medium mb-2">
+                  Transaction Signature
+                </label>
+                <input
+                  type="text"
+                  value={txnSignature}
+                  onChange={(e) => setTxnSignature(e.target.value)}
+                  placeholder="Enter your transaction signature here..."
+                  className="w-full px-3 py-2 bg-white bg-opacity-10 border border-white border-opacity-20 rounded-lg text-white placeholder-white placeholder-opacity-50 focus:outline-none focus:border-green-400 text-sm"
+                />
               </div>
+              
+              {/* Verification Button */}
+              <button
+                onClick={handleVerifyPayment}
+                disabled={isVerifying || isLoading || !txnSignature.trim()}
+                className="w-full px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed text-sm font-medium"
+              >
+                {isVerifying ? "Verifying..." : "Verify Payment"}
+              </button>
               
               {verificationStatus && (
                 <div className={`p-3 rounded-lg text-sm ${
-                  verificationStatus.includes('✅') || verificationStatus.includes('🎉')
+                  verificationStatus.includes('✅') || verificationStatus.includes('🎉') || verificationStatus.includes('📋')
                     ? 'bg-green-900 bg-opacity-50 text-green-200' 
                     : 'bg-red-900 bg-opacity-50 text-red-200'
                 }`}>
@@ -310,15 +294,14 @@ const Funds: React.FC = () => {
               )}
               
               <div className="text-white text-opacity-50 text-xs text-center">
-                <p>💡 Auto-check runs every 30 seconds</p>
-                <p>Or manually verify with transaction signature</p>
+                <p>💡 Enter your transaction signature above to verify payment</p>
               </div>
             </div>
             
             <div className="mt-4 text-white text-opacity-50 text-xs">
               <p>1. Scan QR code with your Solana wallet</p>
               <p>2. Complete the payment</p>
-              <p>3. Click "Verify Payment" and enter transaction signature</p>
+              <p>3. Enter transaction signature above and click "Verify Payment"</p>
             </div>
           </div>
         </div>
