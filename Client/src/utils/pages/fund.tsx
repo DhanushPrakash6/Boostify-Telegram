@@ -2,6 +2,7 @@ import "../styles/index.css";
 import React, { useState, useEffect } from "react";
 import WebApp from "@twa-dev/sdk";
 import Home from "./data.tsx";
+import { QRCodeSVG } from "qrcode.react";
 
 import {
   profile, coin, podium, fund, home, group
@@ -23,6 +24,9 @@ const Funds: React.FC = () => {
   const [depositAmount, setDepositAmount] = useState<string>("0.1");
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [solPrice, setSolPrice] = useState<number | null>(null);
+  const [isVerifying, setIsVerifying] = useState<boolean>(false);
+  const [verificationStatus, setVerificationStatus] = useState<string | null>(null);
+  const [isAutoChecking, setIsAutoChecking] = useState<boolean>(false);
   useEffect(() => {
     const user = WebApp.initDataUnsafe.user as UserData | undefined;
     if (user) setUserData(user);
@@ -87,7 +91,9 @@ const Funds: React.FC = () => {
     const signature = prompt("Enter your transaction signature:");
     if (!signature) return;
 
-    setIsLoading(true);
+    setIsVerifying(true);
+    setVerificationStatus("Verifying transaction...");
+    
     try {
       const response = await fetch(
         `https://boostify-server.vercel.app/api/verifySolPayment?userId=${userData?.id}&signature=${signature}`
@@ -95,7 +101,7 @@ const Funds: React.FC = () => {
       const data = await response.json();
       
       if (data.success) {
-        alert(`Payment verified! You received $${data.valueInUSD} worth of coins.`);
+        setVerificationStatus(`✅ Payment verified! You received $${data.valueInUSD} worth of coins.`);
         // Refresh user coins
         const userId = userData?.id || 1011111;
         const coinResponse = await fetch(
@@ -106,17 +112,79 @@ const Funds: React.FC = () => {
           minimumFractionDigits: 2,
           maximumFractionDigits: 2,
         }));
-        setPaymentLink(null);
+        
+        // Clear payment link after successful verification
+        setTimeout(() => {
+          setPaymentLink(null);
+          setVerificationStatus(null);
+        }, 3000);
       } else {
-        alert(`Error: ${data.error}`);
+        setVerificationStatus(`❌ Error: ${data.error}`);
+        setTimeout(() => setVerificationStatus(null), 5000);
       }
     } catch (err) {
       console.error("Error verifying payment:", err);
-      alert("Error verifying payment. Please try again.");
+      setVerificationStatus("❌ Error verifying payment. Please try again.");
+      setTimeout(() => setVerificationStatus(null), 5000);
     } finally {
-      setIsLoading(false);
+      setIsVerifying(false);
     }
   };
+
+  const copyToClipboard = async (text: string) => {
+    try {
+      await navigator.clipboard.writeText(text);
+      alert("Payment link copied to clipboard!");
+    } catch (err) {
+      console.error("Failed to copy:", err);
+    }
+  };
+
+  const checkForRecentPayments = async () => {
+    if (!userData?.id) return;
+    
+    setIsAutoChecking(true);
+    try {
+      const response = await fetch(
+        `https://boostify-server.vercel.app/api/checkRecentSolPayments?userId=${userData.id}`
+      );
+      const data = await response.json();
+      
+      if (data.success && data.newTransactions.length > 0) {
+        const totalValue = data.newTransactions.reduce((sum: number, txn: any) => sum + parseFloat(txn.valueInUSD), 0);
+        setVerificationStatus(`🎉 Found ${data.newTransactions.length} new payment(s) worth $${totalValue.toFixed(2)}!`);
+        
+        // Refresh user coins
+        const userId = userData.id;
+        const coinResponse = await fetch(
+          `https://boostify-server.vercel.app/api/getUserCoin?id=${userId}`
+        );
+        const coinData = await coinResponse.json();
+        setCoinValue(Number(coinData.coins).toLocaleString(undefined, {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2,
+        }));
+        
+        // Clear payment link after successful auto-verification
+        setTimeout(() => {
+          setPaymentLink(null);
+          setVerificationStatus(null);
+        }, 5000);
+      }
+    } catch (err) {
+      console.error("Error checking recent payments:", err);
+    } finally {
+      setIsAutoChecking(false);
+    }
+  };
+
+  // Auto-check for payments every 30 seconds when payment link is active
+  useEffect(() => {
+    if (!paymentLink || !userData?.id) return;
+    
+    const interval = setInterval(checkForRecentPayments, 30000); // Check every 30 seconds
+    return () => clearInterval(interval);
+  }, [paymentLink, userData?.id]);
 
   return (
     <div className={`overflow-hidden w-full h-full p-5 flex flex-col min-h-screen items-center text-white font-medium`} style={{
@@ -180,27 +248,77 @@ const Funds: React.FC = () => {
 
       {paymentLink && (
         <div className="mt-6 w-full max-w-sm text-center">
-          <div className="bg-white bg-opacity-10 p-4 rounded-xl">
-            <p className="mb-3 text-white font-medium">Payment Link Created!</p>
-            <p className="mb-2 text-white text-opacity-70 text-sm">
-              Scan with Phantom / Solflare:
+          <div className="bg-white bg-opacity-10 p-6 rounded-xl">
+            <p className="mb-4 text-white font-medium text-lg">Payment Link Created!</p>
+            
+            {/* QR Code */}
+            <div className="mb-4 flex justify-center">
+              <div className="bg-white p-4 rounded-lg">
+                <QRCodeSVG 
+                  value={paymentLink} 
+                  size={200}
+                  level="M"
+                  includeMargin={true}
+                />
+              </div>
+            </div>
+            
+            <p className="mb-3 text-white text-opacity-70 text-sm">
+              Scan QR code with Phantom / Solflare wallet:
             </p>
-            <a 
-              href={paymentLink} 
-              target="_blank" 
-              rel="noopener noreferrer" 
-              className="text-blue-400 underline break-all text-sm"
-            >
-              {paymentLink}
-            </a>
-            <div className="mt-4">
+            
+            {/* Payment Link */}
+            <div className="mb-4 p-3 bg-black bg-opacity-30 rounded-lg">
+              <p className="text-white text-opacity-70 text-xs mb-2">Payment Link:</p>
+              <p className="text-blue-400 break-all text-xs mb-2">{paymentLink}</p>
               <button
-                onClick={handleVerifyPayment}
-                disabled={isLoading}
-                className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed text-sm"
+                onClick={() => copyToClipboard(paymentLink)}
+                className="px-3 py-1 bg-blue-600 text-white rounded text-xs hover:bg-blue-700"
               >
-                {isLoading ? "Verifying..." : "Verify Payment"}
+                Copy Link
               </button>
+            </div>
+            
+            {/* Verification Section */}
+            <div className="space-y-3">
+              <div className="grid grid-cols-2 gap-2">
+                <button
+                  onClick={handleVerifyPayment}
+                  disabled={isVerifying || isLoading}
+                  className="px-3 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed text-sm font-medium"
+                >
+                  {isVerifying ? "Verifying..." : "Manual Verify"}
+                </button>
+                
+                <button
+                  onClick={checkForRecentPayments}
+                  disabled={isAutoChecking || isLoading}
+                  className="px-3 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed text-sm font-medium"
+                >
+                  {isAutoChecking ? "Checking..." : "Auto Check"}
+                </button>
+              </div>
+              
+              {verificationStatus && (
+                <div className={`p-3 rounded-lg text-sm ${
+                  verificationStatus.includes('✅') || verificationStatus.includes('🎉')
+                    ? 'bg-green-900 bg-opacity-50 text-green-200' 
+                    : 'bg-red-900 bg-opacity-50 text-red-200'
+                }`}>
+                  {verificationStatus}
+                </div>
+              )}
+              
+              <div className="text-white text-opacity-50 text-xs text-center">
+                <p>💡 Auto-check runs every 30 seconds</p>
+                <p>Or manually verify with transaction signature</p>
+              </div>
+            </div>
+            
+            <div className="mt-4 text-white text-opacity-50 text-xs">
+              <p>1. Scan QR code with your Solana wallet</p>
+              <p>2. Complete the payment</p>
+              <p>3. Click "Verify Payment" and enter transaction signature</p>
             </div>
           </div>
         </div>

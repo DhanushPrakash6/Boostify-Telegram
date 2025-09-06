@@ -525,107 +525,166 @@ app.get('/api/verifySolPayment', async (req, res) => {
   }
 
   try {
+    const result = await verifySolTransaction(signature, Number(userId));
+    res.json(result);
+  } catch (error) {
+    console.error('Error verifying SOL payment:', error);
+    res.status(500).json({ error: 'Error verifying transaction' });
+  }
+});
+
+// Helper function to verify SOL transaction
+async function verifySolTransaction(signature, userId) {
+  const connection = new Connection('https://api.mainnet-beta.solana.com');
+  const treasuryWallet = new PublicKey("dP6Zrkt7fJbYSzD17kM44TXUgVBfj3L8fhFpbuZC98L");
+  
+  const transaction = await connection.getTransaction(signature, {
+    commitment: 'confirmed',
+    maxSupportedTransactionVersion: 0
+  });
+
+  if (!transaction) {
+    throw new Error('Transaction not found');
+  }
+
+  const transactionDetails = transaction.transaction;
+  const message = transactionDetails.message;
+  const accountKeys = message.accountKeys;
+  
+  // Find the treasury wallet in the transaction
+  const treasuryIndex = accountKeys.findIndex(key => key.equals(treasuryWallet));
+  
+  if (treasuryIndex === -1) {
+    throw new Error('Invalid transaction - treasury wallet not found');
+  }
+
+  // Get the pre and post balances
+  const preBalances = transaction.meta.preBalances;
+  const postBalances = transaction.meta.postBalances;
+  
+  if (treasuryIndex >= preBalances.length || treasuryIndex >= postBalances.length) {
+    throw new Error('Invalid transaction data');
+  }
+
+  const solReceived = (postBalances[treasuryIndex] - preBalances[treasuryIndex]) / 1e9; // Convert lamports to SOL
+
+  if (solReceived <= 0) {
+    throw new Error('No SOL received in this transaction');
+  }
+
+  // Get SOL price in USD
+  const solPriceResponse = await axios.get('https://api.coingecko.com/api/v3/simple/price?ids=solana&vs_currencies=usd');
+  const solPriceInUSD = solPriceResponse.data.solana.usd;
+  const valueInUSD = solReceived * solPriceInUSD;
+
+  const connection_db = await clientPromise;
+  const db = connection_db.db("Boostify");
+  const txnCollection = db.collection("Transactions");
+  
+  const existingTxn = await txnCollection.findOne({ txnHash: signature });
+
+  if (existingTxn) {
+    throw new Error('Transaction already processed');
+  }
+
+  await txnCollection.insertOne({ 
+    txnHash: signature, 
+    userId: Number(userId), 
+    valueInUSD: valueInUSD, 
+    coin: "SOL",
+    solAmount: solReceived,
+    solPriceUSD: solPriceInUSD,
+    timestamp: new Date()
+  });
+
+  const usersCollection = db.collection("Users");
+  const user = await usersCollection.findOne({ _id: Number(userId) });
+
+  if (!user) {
+    throw new Error('User not found');
+  }
+
+  const updatedCoins = user.coins + valueInUSD;
+
+  await usersCollection.updateOne(
+    { _id: Number(userId) },
+    { $set: { coins: updatedCoins } }
+  );
+
+  // Add referral bonus if user was referred
+  if (user.referredBy) {
+    const referralBonus = valueInUSD * 0.01; // 1% referral bonus
+    
+    await usersCollection.updateOne(
+      { _id: user.referredBy },
+      { 
+        $inc: { 
+          coins: referralBonus,
+          referralEarnings: referralBonus
+        }
+      }
+    );
+  }
+
+  return {
+    success: true,
+    transactionHash: signature,
+    solReceived: solReceived,
+    valueInUSD: valueInUSD.toFixed(2),
+    solPriceUSD: solPriceInUSD,
+    newBalance: updatedCoins
+  };
+}
+
+// Endpoint to check for recent transactions to treasury wallet
+app.get('/api/checkRecentSolPayments', async (req, res) => {
+  const { userId } = req.query;
+  
+  if (!userId) {
+    return res.status(400).json({ error: 'UserId is required' });
+  }
+
+  try {
     const connection = new Connection('https://api.mainnet-beta.solana.com');
     const treasuryWallet = new PublicKey("dP6Zrkt7fJbYSzD17kM44TXUgVBfj3L8fhFpbuZC98L");
     
-    const transaction = await connection.getTransaction(signature, {
-      commitment: 'confirmed',
-      maxSupportedTransactionVersion: 0
+    // Get recent signatures for the treasury wallet
+    const signatures = await connection.getSignaturesForAddress(treasuryWallet, {
+      limit: 10
     });
-
-    if (!transaction) {
-      return res.status(404).json({ error: 'Transaction not found' });
-    }
-
-    const transactionDetails = transaction.transaction;
-    const message = transactionDetails.message;
-    const accountKeys = message.accountKeys;
-    
-    // Find the treasury wallet in the transaction
-    const treasuryIndex = accountKeys.findIndex(key => key.equals(treasuryWallet));
-    
-    if (treasuryIndex === -1) {
-      return res.status(400).json({ error: 'Invalid transaction - treasury wallet not found' });
-    }
-
-    // Get the pre and post balances
-    const preBalances = transaction.meta.preBalances;
-    const postBalances = transaction.meta.postBalances;
-    
-    if (treasuryIndex >= preBalances.length || treasuryIndex >= postBalances.length) {
-      return res.status(400).json({ error: 'Invalid transaction data' });
-    }
-
-    const solReceived = (postBalances[treasuryIndex] - preBalances[treasuryIndex]) / 1e9; // Convert lamports to SOL
-
-    if (solReceived <= 0) {
-      return res.status(400).json({ error: 'No SOL received in this transaction' });
-    }
-
-    // Get SOL price in USD
-    const solPriceResponse = await axios.get('https://api.coingecko.com/api/v3/simple/price?ids=solana&vs_currencies=usd');
-    const solPriceInUSD = solPriceResponse.data.solana.usd;
-    const valueInUSD = solReceived * solPriceInUSD;
 
     const connection_db = await clientPromise;
     const db = connection_db.db("Boostify");
     const txnCollection = db.collection("Transactions");
     
-    const existingTxn = await txnCollection.findOne({ txnHash: signature });
-
-    if (existingTxn) {
-      return res.status(400).json({ error: 'Transaction already processed' });
-    }
-
-    await txnCollection.insertOne({ 
-      txnHash: signature, 
-      userId: Number(userId), 
-      valueInUSD: valueInUSD, 
+    const processedTxns = await txnCollection.find({ 
       coin: "SOL",
-      solAmount: solReceived,
-      solPriceUSD: solPriceInUSD
-    });
-
-    const usersCollection = db.collection("Users");
-    const user = await usersCollection.findOne({ _id: Number(userId) });
-
-    if (!user) {
-      return res.status(404).json({ error: 'User not found' });
-    }
-
-    const updatedCoins = user.coins + valueInUSD;
-
-    await usersCollection.updateOne(
-      { _id: Number(userId) },
-      { $set: { coins: updatedCoins } }
-    );
-
-    // Add referral bonus if user was referred
-    if (user.referredBy) {
-      const referralBonus = valueInUSD * 0.01; // 1% referral bonus
-      
-      await usersCollection.updateOne(
-        { _id: user.referredBy },
-        { 
-          $inc: { 
-            coins: referralBonus,
-            referralEarnings: referralBonus
-          }
+      userId: Number(userId)
+    }).toArray();
+    
+    const processedSignatures = new Set(processedTxns.map(t => t.txnHash));
+    
+    // Check for new transactions
+    const newTransactions = [];
+    for (const sig of signatures) {
+      if (!processedSignatures.has(sig.signature)) {
+        try {
+          const result = await verifySolTransaction(sig.signature, Number(userId));
+          newTransactions.push(result);
+        } catch (error) {
+          console.log(`Transaction ${sig.signature} not for this user or already processed`);
         }
-      );
+      }
     }
 
     res.json({
       success: true,
-      transactionHash: signature,
-      solReceived: solReceived,
-      valueInUSD: valueInUSD.toFixed(2),
-      solPriceUSD: solPriceInUSD,
-      newBalance: updatedCoins
+      newTransactions: newTransactions,
+      totalFound: newTransactions.length
     });
   } catch (error) {
-    console.error('Error verifying SOL payment:', error);
-    res.status(500).json({ error: 'Error verifying transaction' });
+    console.error('Error checking recent SOL payments:', error);
+    res.status(500).json({ error: 'Error checking recent payments' });
   }
 });
 
