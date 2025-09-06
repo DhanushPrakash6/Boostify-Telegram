@@ -506,6 +506,15 @@ app.post('/api/testReferralLink', async (req, res) => {
   }
 });
 
+app.post("/api/createSolPayment", async (req, res) => {
+  const { userId, amount } = req.body;
+
+  const treasuryWallet = new PublicKey("dP6Zrkt7fJbYSzD17kM44TXUgVBfj3L8fhFpbuZC98L");
+
+  const solanaPayLink = `solana:${treasuryWallet.toBase58()}?amount=${amount}&label=Boostify&message=Deposit%20for%20User%20${userId}`;
+
+  res.json({ solanaPayLink, treasuryWallet: treasuryWallet.toBase58() });
+});
 
 async function getETHPriceInUSD() {
   try {
