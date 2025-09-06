@@ -19,6 +19,10 @@ interface UserData {
 const Funds: React.FC = () => {
   const [coinValue, setCoinValue] = useState<string | null>(null);
   const [userData, setUserData] = useState<UserData | null>(null);
+  const [paymentLink, setPaymentLink] = useState<string | null>(null);
+  const [depositAmount, setDepositAmount] = useState<string>("0.1");
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [solPrice, setSolPrice] = useState<number | null>(null);
   useEffect(() => {
     const user = WebApp.initDataUnsafe.user as UserData | undefined;
     if (user) setUserData(user);
@@ -40,10 +44,80 @@ const Funds: React.FC = () => {
       }
     };
 
+    const fetchSolPrice = async () => {
+      try {
+        const response = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=solana&vs_currencies=usd');
+        const data = await response.json();
+        setSolPrice(data.solana.usd);
+      } catch (error) {
+        console.error("Error fetching SOL price:", error);
+      }
+    };
+
     const userId = user?.id || 1011111; 
-    fetchUserCoins(userId); 
+    fetchUserCoins(userId);
+    fetchSolPrice();
   }, [userData]);
   
+  const handleDeposit = async () => {
+    const amount = parseFloat(depositAmount);
+    if (isNaN(amount) || amount <= 0) {
+      alert("Please enter a valid amount");
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      const response = await fetch("https://boostify-server.vercel.app/api/createSolPayment", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userId: userData?.id, amount })
+      });
+      const data = await response.json();
+      setPaymentLink(data.solanaPayLink);
+    } catch (err) {
+      console.error("Error creating payment:", err);
+      alert("Error creating payment. Please try again.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleVerifyPayment = async () => {
+    const signature = prompt("Enter your transaction signature:");
+    if (!signature) return;
+
+    setIsLoading(true);
+    try {
+      const response = await fetch(
+        `https://boostify-server.vercel.app/api/verifySolPayment?userId=${userData?.id}&signature=${signature}`
+      );
+      const data = await response.json();
+      
+      if (data.success) {
+        alert(`Payment verified! You received $${data.valueInUSD} worth of coins.`);
+        // Refresh user coins
+        const userId = userData?.id || 1011111;
+        const coinResponse = await fetch(
+          `https://boostify-server.vercel.app/api/getUserCoin?id=${userId}`
+        );
+        const coinData = await coinResponse.json();
+        setCoinValue(Number(coinData.coins).toLocaleString(undefined, {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2,
+        }));
+        setPaymentLink(null);
+      } else {
+        alert(`Error: ${data.error}`);
+      }
+    } catch (err) {
+      console.error("Error verifying payment:", err);
+      alert("Error verifying payment. Please try again.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <div className={`overflow-hidden w-full h-full p-5 flex flex-col min-h-screen items-center text-white font-medium`} style={{
       background: "linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%)"
@@ -74,6 +148,63 @@ const Funds: React.FC = () => {
           Available Balance
         </h1>
       </div>
+      <div className="mt-6 w-full max-w-sm">
+        <div className="mb-4">
+          <label className="block text-white text-sm font-medium mb-2">
+            Deposit Amount (SOL)
+          </label>
+          <input
+            type="number"
+            step="0.01"
+            min="0.01"
+            value={depositAmount}
+            onChange={(e) => setDepositAmount(e.target.value)}
+            className="w-full px-4 py-2 bg-white bg-opacity-10 border border-white border-opacity-20 rounded-lg text-white placeholder-white placeholder-opacity-50 focus:outline-none focus:border-purple-400"
+            placeholder="0.1"
+          />
+          {solPrice && (
+            <p className="text-white text-opacity-70 text-xs mt-1">
+              ≈ ${(parseFloat(depositAmount || "0") * solPrice).toFixed(2)} USD
+            </p>
+          )}
+        </div>
+        
+        <button
+          onClick={handleDeposit}
+          disabled={isLoading}
+          className="w-full px-6 py-3 bg-purple-600 text-white rounded-xl shadow-lg hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          {isLoading ? "Creating Payment..." : "Create SOL Payment"}
+        </button>
+      </div>
+
+      {paymentLink && (
+        <div className="mt-6 w-full max-w-sm text-center">
+          <div className="bg-white bg-opacity-10 p-4 rounded-xl">
+            <p className="mb-3 text-white font-medium">Payment Link Created!</p>
+            <p className="mb-2 text-white text-opacity-70 text-sm">
+              Scan with Phantom / Solflare:
+            </p>
+            <a 
+              href={paymentLink} 
+              target="_blank" 
+              rel="noopener noreferrer" 
+              className="text-blue-400 underline break-all text-sm"
+            >
+              {paymentLink}
+            </a>
+            <div className="mt-4">
+              <button
+                onClick={handleVerifyPayment}
+                disabled={isLoading}
+                className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed text-sm"
+              >
+                {isLoading ? "Verifying..." : "Verify Payment"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       <footer className="w-full flex justify-around items-center p-4 border-dashed border-t-2 border-white border-opacity-20" style={{
           background: "linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%)"
