@@ -5,6 +5,7 @@ const cors = require('cors');
 const { Network, Alchemy } = require("alchemy-sdk");
 const axios = require('axios');
 const crypto = require('crypto');
+const { PublicKey, Connection } = require('@solana/web3.js');
 
 const settings = {
   apiKey: "yv2uBTVdxcrjGhFHoLkX8r1DVBYYGCVW",
@@ -514,6 +515,118 @@ app.post("/api/createSolPayment", async (req, res) => {
   const solanaPayLink = `solana:${treasuryWallet.toBase58()}?amount=${amount}&label=Boostify&message=Deposit%20for%20User%20${userId}`;
 
   res.json({ solanaPayLink, treasuryWallet: treasuryWallet.toBase58() });
+});
+
+app.get('/api/verifySolPayment', async (req, res) => {
+  const { userId, signature } = req.query;
+
+  if (!signature || !userId) {
+    return res.status(400).json({ error: 'Signature and userId are required' });
+  }
+
+  try {
+    const connection = new Connection('https://api.mainnet-beta.solana.com');
+    const treasuryWallet = new PublicKey("dP6Zrkt7fJbYSzD17kM44TXUgVBfj3L8fhFpbuZC98L");
+    
+    const transaction = await connection.getTransaction(signature, {
+      commitment: 'confirmed',
+      maxSupportedTransactionVersion: 0
+    });
+
+    if (!transaction) {
+      return res.status(404).json({ error: 'Transaction not found' });
+    }
+
+    const transactionDetails = transaction.transaction;
+    const message = transactionDetails.message;
+    const accountKeys = message.accountKeys;
+    
+    // Find the treasury wallet in the transaction
+    const treasuryIndex = accountKeys.findIndex(key => key.equals(treasuryWallet));
+    
+    if (treasuryIndex === -1) {
+      return res.status(400).json({ error: 'Invalid transaction - treasury wallet not found' });
+    }
+
+    // Get the pre and post balances
+    const preBalances = transaction.meta.preBalances;
+    const postBalances = transaction.meta.postBalances;
+    
+    if (treasuryIndex >= preBalances.length || treasuryIndex >= postBalances.length) {
+      return res.status(400).json({ error: 'Invalid transaction data' });
+    }
+
+    const solReceived = (postBalances[treasuryIndex] - preBalances[treasuryIndex]) / 1e9; // Convert lamports to SOL
+
+    if (solReceived <= 0) {
+      return res.status(400).json({ error: 'No SOL received in this transaction' });
+    }
+
+    // Get SOL price in USD
+    const solPriceResponse = await axios.get('https://api.coingecko.com/api/v3/simple/price?ids=solana&vs_currencies=usd');
+    const solPriceInUSD = solPriceResponse.data.solana.usd;
+    const valueInUSD = solReceived * solPriceInUSD;
+
+    const connection_db = await clientPromise;
+    const db = connection_db.db("Boostify");
+    const txnCollection = db.collection("Transactions");
+    
+    const existingTxn = await txnCollection.findOne({ txnHash: signature });
+
+    if (existingTxn) {
+      return res.status(400).json({ error: 'Transaction already processed' });
+    }
+
+    await txnCollection.insertOne({ 
+      txnHash: signature, 
+      userId: Number(userId), 
+      valueInUSD: valueInUSD, 
+      coin: "SOL",
+      solAmount: solReceived,
+      solPriceUSD: solPriceInUSD
+    });
+
+    const usersCollection = db.collection("Users");
+    const user = await usersCollection.findOne({ _id: Number(userId) });
+
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    const updatedCoins = user.coins + valueInUSD;
+
+    await usersCollection.updateOne(
+      { _id: Number(userId) },
+      { $set: { coins: updatedCoins } }
+    );
+
+    // Add referral bonus if user was referred
+    if (user.referredBy) {
+      const referralBonus = valueInUSD * 0.01; // 1% referral bonus
+      
+      await usersCollection.updateOne(
+        { _id: user.referredBy },
+        { 
+          $inc: { 
+            coins: referralBonus,
+            referralEarnings: referralBonus
+          }
+        }
+      );
+    }
+
+    res.json({
+      success: true,
+      transactionHash: signature,
+      solReceived: solReceived,
+      valueInUSD: valueInUSD.toFixed(2),
+      solPriceUSD: solPriceInUSD,
+      newBalance: updatedCoins
+    });
+  } catch (error) {
+    console.error('Error verifying SOL payment:', error);
+    res.status(500).json({ error: 'Error verifying transaction' });
+  }
 });
 
 async function getETHPriceInUSD() {
